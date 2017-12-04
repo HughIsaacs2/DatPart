@@ -27,6 +27,8 @@ Basically all this does is use the Chrome Extension WebRequest API and Proxy API
 * Notifications! For everything possible (optional of course).
 * Options! (A real options page)
   * Let the user set the port of the local server via options using the [Native Messaging API](https://developer.chrome.com/apps/nativeMessaging).
+* Use the omnibox API to let users just type the dat:// URL or the hash itself as a search to load the site.
+  * Come up with a fallback for when the dat can't be found (Maybe a "Did you mean?" page or something).
 * Optional background functionality.
 * WebRTC support (for Chrome OS and providing a web proxy).
 * UDP support on Chrome OS.
