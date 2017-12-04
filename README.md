@@ -16,7 +16,9 @@ Basically all this does is use the Chrome Extension WebRequest API and Proxy API
 ### To-Do
 
 * Firefox support (this is trouble as [the Firefox WebExtension Proxy API](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/proxy) is different).
+  * Firefox for Android support.
 * Opera support.
+* Chrome OS support.
 * dat:// link support.
   * This'll require coming up with a way to simply parse Dat URLs in a regular web browser, as [parse-dat-url](https://github.com/pfrazee/parse-dat-url "parse-dat-url") doesn't work very well on the web (there's likely a fix that can be done with regular expressions but I suck at them so... yeah).
 * Provide the dat:// URL to the current site via the extension popup.
