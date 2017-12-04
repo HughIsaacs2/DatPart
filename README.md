@@ -7,4 +7,13 @@ For example you can load the Acrylic Style Dat site at http://1c7639eedaf8f7533f
 
 Oh also, Chrome's Omnibar treats all non-standard TLDs as searches, so you'll have to type the inital HTTP:// or put a slash at the end of the URL for it to load the site.
 
-(BitTorrent/WebTorrent support coming soon, it's already coded into the extension)
+(BitTorrent/WebTorrent support coming soon, it's already coded into the extension just not the server app)
+
+### ToDo
+
+* dat:// link support.
+  * This'll require coming up with a way to simply parse Dat URLs.
+* Provide the dat:// URL to the current site via the extension popup.
+* Polyfill the Beaker Browser APIs (don't necessarily need all of them, just the ones to make sure the sites are viewable, e.g. Rotonde sites).
+* WebRTC support (for Chrome OS and providing a web proxy).
+* UDP support on Chrome OS.
