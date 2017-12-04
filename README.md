@@ -1,5 +1,5 @@
 # DatPart
-Proof of concept Dat site viewer for Chrome.
+Proof of concept [Dat](https://datproject.org/) site viewer for Chrome.
 
 Sites can be loaded via the .dat_site. top-level domain.
 
