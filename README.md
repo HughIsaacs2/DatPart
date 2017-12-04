@@ -15,16 +15,17 @@ Basically all this does is use the Chrome Extension WebRequest API and Proxy API
 
 ### To-Do
 
-* Firefox support (this is trouble as the Firefox WebExtension Proxy API is different).
+* Firefox support (this is trouble as [the Firefox WebExtension Proxy API](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/proxy) is different).
 * Opera support.
 * dat:// link support.
   * This'll require coming up with a way to simply parse Dat URLs in a regular web browser, as [parse-dat-url](https://github.com/pfrazee/parse-dat-url "parse-dat-url") doesn't work very well on the web (there's likely a fix that can be done with regular expressions but I suck at them so... yeah).
 * Provide the dat:// URL to the current site via the extension popup.
-* Have the extension automatically open the app in the background when a .dat_site is requested via the Native Messaging API.
-* Polyfill the Beaker Browser APIs (don't necessarily need all of them, just the ones to make sure the sites are viewable, e.g. Rotonde sites).
+* Have the extension automatically open the app in the background when a .dat_site is requested via the [Native Messaging API](https://developer.chrome.com/apps/nativeMessaging).
+* Polyfill [the Beaker Browser APIs](https://beakerbrowser.com/docs/apis/) (don't necessarily need all of them, just the ones to make sure the sites are viewable, e.g. Rotonde sites).
 * Notifications! For everything possible (optional of course).
 * Options! (A real options page)
-  * Let the user set the port of the local server via options using the Native Messaging API.
+  * Let the user set the port of the local server via options using the [Native Messaging API](https://developer.chrome.com/apps/nativeMessaging).
 * Optional background functionality.
 * WebRTC support (for Chrome OS and providing a web proxy).
 * UDP support on Chrome OS.
+* Maybe support regular domain names the way Beaker Browser does, I don't know how this would be done but I feel like it might be possible (if well executed this could be useful for easing bandwidth/data use on certain sites).
