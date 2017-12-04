@@ -9,6 +9,10 @@ Oh also, Chrome's Omnibar treats all non-standard TLDs as searches, so you'll ha
 
 (BitTorrent/WebTorrent support coming soon, it's already coded into the extension just not the server app. Also it'll load the same torrent sites as [PeerCloud](https://github.com/jhiesey/peercloud))
 
+### How this works
+
+Basically all this does is use the Chrome Extension WebRequest API and Proxy API to intercept any requests to the top level domain .dat_site. When that TLD is requested, Chrome uses the Proxy API to redirect the request to the local Electron server at http://127.0.0.1:9989/ and from there the server loads the Dat (using sparse mode) and returns the page or file that was requested.
+
 ### To-Do
 
 * Firefox support (this is trouble as the Firefox WebExtension Proxy API is different).
@@ -16,6 +20,7 @@ Oh also, Chrome's Omnibar treats all non-standard TLDs as searches, so you'll ha
 * dat:// link support.
   * This'll require coming up with a way to simply parse Dat URLs in a regular web browser, as [parse-dat-url](https://github.com/pfrazee/parse-dat-url "parse-dat-url") doesn't work very well on the web (there's likely a fix that can be done with regular expressions but I suck at them so... yeah).
 * Provide the dat:// URL to the current site via the extension popup.
+* Have the extension automatically open the app in the background when a .dat_site is requested via the Native Messaging API.
 * Polyfill the Beaker Browser APIs (don't necessarily need all of them, just the ones to make sure the sites are viewable, e.g. Rotonde sites).
 * Notifications! For everything possible (optional of course).
 * Options! (A real options page)
