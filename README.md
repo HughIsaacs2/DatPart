@@ -11,7 +11,7 @@ Oh also, Chrome's Omnibar treats all non-standard TLDs as searches, so you'll ha
 
 ### To-Do
 
-* Firefox support.
+* Firefox support (this is trouble as the Firefox WebExtension Proxy API is different).
 * Opera support.
 * dat:// link support.
   * This'll require coming up with a way to simply parse Dat URLs in a regular web browser, as [parse-dat-url](https://github.com/pfrazee/parse-dat-url "parse-dat-url") doesn't work very well on the web (there's likely a fix that can be done with regular expressions but I suck at them so... yeah).
