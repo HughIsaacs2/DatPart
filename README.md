@@ -7,7 +7,7 @@ For example you can load the Acrylic Style Dat site at http://1c7639eedaf8f7533f
 
 Oh also, Chrome's Omnibar treats all non-standard TLDs as searches, so you'll have to type the inital HTTP:// or put a slash at the end of the URL for it to load the site.
 
-(BitTorrent/WebTorrent support coming soon, it's already coded into the extension just not the server app)
+(BitTorrent/WebTorrent support coming soon, it's already coded into the extension just not the server app. Also it'll load the same torrent sites as [PeerCloud](https://github.com/jhiesey/peercloud))
 
 ### To-Do
 
