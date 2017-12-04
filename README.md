@@ -30,4 +30,4 @@ Basically all this does is use the Chrome Extension WebRequest API and Proxy API
 * Optional background functionality.
 * WebRTC support (for Chrome OS and providing a web proxy).
 * UDP support on Chrome OS.
-* Maybe support regular domain names the way Beaker Browser does, I don't know how this would be done but I feel like it might be possible (if well executed this could be useful for easing bandwidth/data use on certain sites).
+* Maybe support regular domain names [the way Beaker Browser does](https://beakerbrowser.com/2017/02/22/beaker-0-6-1.html), I don't know how this would be done via a browser extension but I feel like it might be possible (if well executed this could be useful for easing bandwidth/data use on certain sites).
