@@ -1,4 +1,4 @@
-var server_app_id = chrome.runtime.getManifest().externally_connectable.ids[0];
+var chromeos_server_app_id = chrome.runtime.getManifest().externally_connectable.ids[0];
 
 chrome.omnibox.onInputChanged.addListener(function(text, suggest) {
     console.log('inputChanged: ' + text);
@@ -21,7 +21,7 @@ chrome.webNavigation.onBeforeNavigate.addListener(function(details) {
 	if (currentTLD != 'dat_site') {
 		//Do nothing
 	  } else {
-	    chrome.runtime.sendMessage(server_app_id, { launch: true });
+	    chrome.runtime.sendMessage(chromeos_server_app_id, { launch: true });
 	    console.log('inputEntered: ' + details.url + "|" + currentTLD);
 	  }
 });
@@ -35,8 +35,8 @@ chrome.webRequest.onBeforeRequest.addListener(function(details) {
 	
 	if (currentTLD != 'dat_site') {
 		return;
-	} else { 
-	//chrome.runtime.sendMessage(server_app_id, { launch: true }); 
+	} else {
+	//chrome.runtime.sendMessage(chromeos_server_app_id, { launch: true });
 	};
 	
 	var bithost = currentURLRequest.hostname;
@@ -62,8 +62,8 @@ chrome.webRequest.onBeforeRequest.addListener(function(details) {
     //return {cancel: true, redirectUrl: "redirect.html"};
 }, {urls: ["*://*.dat_site/*"]}, ["blocking"]);
 
-chrome.webRequest.onErrorOccurred.addListener(function(details) 
-{    
+chrome.webRequest.onErrorOccurred.addListener(function(details)
+{
     var currentURLRequest = document.createElement('a');
 	currentURLRequest.href = details.url;
 	var currentTLD = currentURLRequest.hostname.split(".").pop();
@@ -77,8 +77,8 @@ chrome.webRequest.onErrorOccurred.addListener(function(details)
 },
 {urls: ["*://*.dat_site/*"], types: ["main_frame"]});
 
-chrome.webRequest.onErrorOccurred.addListener(function(details) 
-{    
+chrome.webRequest.onErrorOccurred.addListener(function(details)
+{
     var currentURLRequest = document.createElement('a');
 	currentURLRequest.href = details.url;
 	var currentTLD = currentURLRequest.hostname.split(".").pop();
@@ -92,8 +92,8 @@ chrome.webRequest.onErrorOccurred.addListener(function(details)
 },
 {urls: ["*://*.torrent_site/*"], types: ["main_frame"]});
 
-chrome.webRequest.onErrorOccurred.addListener(function(details) 
-{    
+chrome.webRequest.onErrorOccurred.addListener(function(details)
+{
     console.log(details);
 },
 {urls: ["dat://*"], types: ["main_frame"]});

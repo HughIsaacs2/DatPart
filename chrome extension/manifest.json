@@ -8,7 +8,7 @@
         "permissions": ["tabs", "webRequestBlocking", "webRequest", "webNavigation", "proxy", "*://*.dat_site/*", "*://*.torrent_site/*", "storage", "unlimitedStorage"],
 		"optional_permissions": [ "tabs", "notifications", "background", "*://*/", "<all_urls>" ],
 		"externally_connectable": { "ids": [ "pgdnnmekclkafnpfofleebhhnmolopgl" ] },
-		"omnibox": { "keyword" : "other_web" },
+		"omnibox": { "keyword" : "DatPart" },
 		  "web_accessible_resources": [
     "redirector.html",
     "redirector_script.js"
@@ -38,7 +38,7 @@
             "32": "logo.png",
 			"128": "logo_128.png"
           },
-          "default_title": "Stellar",
+          "default_title": "DatPart",
           "default_popup": "popup.html"
         }
 }
