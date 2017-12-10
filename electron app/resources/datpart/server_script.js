@@ -14,8 +14,13 @@
 		if (typeof process.versions['electron'] !== 'undefined') {
 		
 		// content of index.js
+		const {shell} = require('electron');
 		const http = require('http');
 		var dat = require('dat-node');
+		
+		document.querySelectorAll("a.external-link").forEach(function (el) {
+		  el.onclick = function(){shell.openExternal(el.href);return false;};
+		});
 
 const requestHandler = (request, response) => {
   console.log(request.url);
