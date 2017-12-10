@@ -1,3 +1,5 @@
+var dev = false;
+
 if (typeof process === 'object') {
   if (typeof process.versions === 'object') {
     if (typeof process.versions['electron'] !== 'undefined') {
@@ -63,7 +65,9 @@ function createWindow () {
   
   
   // Open the DevTools.
+  if(dev == true) {
   win.webContents.openDevTools({mode:'detach'})
+  }
 
   // Emitted when the window is closed.
   win.on('closed', () => {
