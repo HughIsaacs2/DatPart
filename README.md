@@ -1,5 +1,5 @@
-# DatPart
-Proof of concept [Dat](https://datproject.org/) site viewer for Chrome.
+# DatPart - Experimental Branch
+Proof of concept [Dat](https://datproject.org/) site viewer extension [and app] for Chrome.
 
 Sites can be loaded via the .dat_site. top-level domain.
 
@@ -8,6 +8,14 @@ For example you can load the Acrylic Style Dat site at http://1c7639eedaf8f7533f
 Oh also, Chrome's Omnibar treats all non-standard TLDs as searches, so you'll have to type the inital HTTP:// or put a slash at the end of the URL for it to load the site.
 
 (BitTorrent/WebTorrent support coming soon, it's already coded into the extension just not the server app. Also it'll load the same torrent sites as [PeerCloud](https://github.com/jhiesey/peercloud))
+
+### Try it
+
+[Get the Chrome extension here](https://chrome.google.com/webstore/detail/datpart-extension/hnblaajbillhajijlbaepnjglfgepdgm)
+
+[Get the Desktop app here](https://github.com/HughIsaacs2/DatPart/releases)
+
+Note: You need both for this to work.
 
 ### How this works
 
