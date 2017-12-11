@@ -72,7 +72,7 @@ chrome.webRequest.onErrorOccurred.addListener(function(details)
 	if (currentTLD != 'dat_site') {
 		return;
 	} else {
-		chrome.tabs.update(details.tabId, {url: "/dat_error.html#"+currentURLhostNoTLD});
+		chrome.tabs.update(details.tabId, {url: "/dat_error.html?datHash="+currentURLhostNoTLD});
 	}
 },
 {urls: ["*://*.dat_site/*"], types: ["main_frame"]});
@@ -87,7 +87,7 @@ chrome.webRequest.onErrorOccurred.addListener(function(details)
 	if (currentTLD != 'torrent_site') {
 		return;
 	} else {
-		chrome.tabs.update(details.tabId, {url: "/torrent_error.html#"+currentURLhostNoTLD});
+		chrome.tabs.update(details.tabId, {url: "/torrent_error.html?torrentHash="+currentURLhostNoTLD});
 	}
 },
 {urls: ["*://*.torrent_site/*"], types: ["main_frame"]});

@@ -4,7 +4,7 @@
   "description": "Load Dat's in your web browser.",
   "homepage": "https://github.com/HughIsaacs2/DatPart",
   "repository": { "type" : "git", "url" : "https://github.com/HughIsaacs2/DatPart.git" },
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "Hugh Isaacs II <hughisaacs@acrylicstyle.com>",
   "license": "MIT",
   "main": "launch.js",
@@ -15,7 +15,12 @@
   },
   "build":{
   "win": {
+      "target": [{
       "target": "zip",
+      "arch": [
+        "ia32"
+      ]
+    }],
       "icon": "favicon.ico"
     }
 	}

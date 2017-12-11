@@ -13,28 +13,42 @@ const url = require('url')
 let win
 let tray = null
 
+var versionNumber = app.getVersion();
+var appName = app.getName();
+var appIcon = __dirname+'/logo_128.png'
+
 app.on('ready', () => {
-  tray = new Tray(__dirname+'/logo_128.png')
+  tray = new Tray(appIcon)
   const contextMenu = Menu.buildFromTemplate([
-    {role: 'quit'}
+  {label: 'Show', icon: appIcon, click: function() {win.show();}},
+  {label: 'Quit', click: function() {app.isQuiting = true; app.quit();}}
   ])
-  tray.setToolTip(app.getName())
+  tray.setToolTip(appName)
   tray.setContextMenu(contextMenu)
 	tray.on('click', () => {
 	  win.show()
 	})
 	
+	if(app.isDefaultProtocolClient(appName)) {
+		
+	} else {
+		app.setAsDefaultProtocolClient(appName)
+	}
+	
+	/*
 	if(app.isDefaultProtocolClient('dat')) {
 		
 	} else {
 		app.setAsDefaultProtocolClient('dat')
 	}
+	*/
 })
 
 const isSecondInstance = app.makeSingleInstance((commandLine, workingDirectory) => {
   // Someone tried to run a second instance, we should focus our window.
   if (win) {
     if (win.isMinimized()) win.restore()
+	win.show()
     win.focus()
   }
 })
@@ -50,24 +64,28 @@ function createWindow () {
 	  width: 800,
 	  height: 600,
 	  icon: __dirname+'/logo_128.png',
-	  backgroundColor: '#424242'
+	  backgroundColor: '#424242',
+	  show: false
   })
   
   win.setMenu(null)
 
   // and load the index.html of the app.
   win.loadURL('file://' + __dirname + '/server_app.html')
-/* url.format({
-    pathname: path.join(__dirname, 'server_app.html'),
-    protocol: 'file:',
-    slashes: true
-  }) */
   
   
-  // Open the DevTools.
+  // Open the DevTools if dev is true.
   if(dev == true) {
   win.webContents.openDevTools({mode:'detach'})
   }
+  
+    win.on('close', function (event) {
+        if( !app.isQuiting){
+            event.preventDefault()
+            win.hide();
+        }
+        return false;
+    });
 
   // Emitted when the window is closed.
   win.on('closed', () => {
@@ -83,15 +101,6 @@ function createWindow () {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', createWindow)
-
-// Quit when all windows are closed.
-app.on('window-all-closed', () => {
-  // On macOS it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
-})
 
 app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the
