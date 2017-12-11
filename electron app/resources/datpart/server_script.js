@@ -1,30 +1,16 @@
 "use strict";
 
-  var host = "127.0.0.1";
-  var port = "9989";
-  
-  var serverSocketId = null;
-  var filesMap = {};
-  
-  var rootDir = null;
-  var packDir = null;
-  
-  if (typeof process === 'object') {
-	if (typeof process.versions === 'object') {
-		if (typeof process.versions['electron'] !== 'undefined') {
+	// content of index.js
+	const {shell} = require('electron');
+	const http = require('http');
+	const dat = require('dat-node');
+
+	var host = "127.0.0.1";
+	var port = "9989";
 		
-		// content of index.js
-		const {shell} = require('electron');
-		const http = require('http');
-		var dat = require('dat-node');
-		
-		//var versionNumber = app.getVersion();
-		//var appName = app.getName();
-		//var appIcon = __dirname+'/logo_128.png';
-		
-		document.querySelectorAll("a.external-link").forEach(function (el) {
-		  el.onclick = function(){shell.openExternal(el.href);return false;};
-		});
+	document.querySelectorAll("a.external-link").forEach(function (el) {
+		el.onclick = function(){shell.openExternal(el.href);return false;};
+	});
 
 const requestHandler = (request, response) => {
   console.log(request.url);
@@ -42,12 +28,14 @@ const requestHandler = (request, response) => {
 	console.log("TLD: " + currentTLD + " Hash: " + currentURLhostNoTLD);
 	/*
 	if(currentTLD == 'dat_site') {
-		fileSearch = "/dat/" + currentURLhostNoTLD + currentURLRequest.pathname;
+		fileSearch = "/dats/" + currentURLhostNoTLD + currentURLRequest.pathname;
 		console.log(fileSearch);
 	}
 */
-   
-dat( __dirname + '/dats/'+currentURLhostNoTLD, {
+
+if(currentTLD == 'dat_site') {
+
+dat( __dirname + '/../../dats/'+currentURLhostNoTLD, {
   // 2. Tell Dat what link I want
   key: currentURLhostNoTLD, temp: false, sparse: true // (a 64 character hash from above)
 }, function (err, dat) {
@@ -84,6 +72,12 @@ if (lastChar == '/') {         // If the last character is not a slash
   
 });
 
+} else {
+	
+	console.log(request.url);
+	
+}
+
 };
 
 const server = http.createServer(requestHandler);
@@ -95,5 +89,3 @@ server.listen(port, (err) => {
 
   console.log(`server is listening on ${port}`);
 });
-
-  }}}

@@ -3,7 +3,10 @@
   "productName": "DatPart",
   "description": "Load Dat's in your web browser.",
   "homepage": "https://github.com/HughIsaacs2/DatPart",
-  "repository": { "type" : "git", "url" : "https://github.com/HughIsaacs2/DatPart.git" },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/HughIsaacs2/DatPart.git"
+  },
   "version": "0.0.5",
   "author": "Hugh Isaacs II <hughisaacs@acrylicstyle.com>",
   "license": "MIT",
@@ -13,16 +16,20 @@
     "dat-node": "^3.5.4",
     "node-dat-archive": "^1.5.0"
   },
-  "build":{
-    "appId": "com.electron.${name}",
-	  "win": {
-		  "target": [{
-			"target": "zip",
-			  "arch": [
-				"ia32"
-			  ]
-		  }],
-		  "icon": "favicon.ico"
-		}
+  "build": {
+    "win": {
+      "target": [
+        {
+          "target": "zip",
+          "arch": [
+            "ia32"
+          ]
+        }
+      ],
+      "icon": "favicon.ico"
+    }
+  },
+  "devDependencies": {
+    "electron": "1.7.9"
   }
 }
