@@ -13,9 +13,22 @@ function queryObj() {
 }
 
 var datHash = queryObj()["datHash"];
+var datPath = queryObj()["path"];
+
+var retryLink = document.createElement('a');
+retryLink.href = "http://"+datHash+".dat_site"+datPath;
+retryLink.innerText = "Retry";
+retryLink.className = "button";
+document.body.appendChild(retryLink);
+
+var thaBr = document.createElement('br');
+document.body.appendChild(thaBr);
+
+var onx = document.createElement('br');
+document.body.appendChild(onx);
 
 var datLink = document.createElement('a');
-datLink.href = "dat://"+datHash+"/";
-datLink.innerText = "dat://"+datHash+"/";
+datLink.href = "dat://"+datHash+"/"+datPath;
+datLink.innerText = "Dat link";
 datLink.className = "button";
 document.body.appendChild(datLink);

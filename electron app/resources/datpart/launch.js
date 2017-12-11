@@ -15,15 +15,15 @@ let tray = null
 
 var versionNumber = app.getVersion();
 var appName = app.getName();
-var appIcon = __dirname+'/logo_128.png'
+var appIcon = __dirname+'/logo_128.png';
 
 app.on('ready', () => {
   tray = new Tray(appIcon)
   const contextMenu = Menu.buildFromTemplate([
-  {label: 'Show', icon: appIcon, click: function() {win.show();}},
+  {label: 'Show', click: function() {win.show();}},
   {label: 'Quit', click: function() {app.isQuiting = true; app.quit();}}
   ])
-  tray.setToolTip(appName)
+  tray.setToolTip(appName + " v" + versionNumber)
   tray.setContextMenu(contextMenu)
 	tray.on('click', () => {
 	  win.show()
@@ -42,6 +42,11 @@ app.on('ready', () => {
 		app.setAsDefaultProtocolClient('dat')
 	}
 	*/
+	
+	process.argv.forEach(function (val, index, array) {
+  console.log(index + ': ' + val);
+});
+
 })
 
 const isSecondInstance = app.makeSingleInstance((commandLine, workingDirectory) => {

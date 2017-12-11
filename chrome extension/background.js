@@ -66,13 +66,14 @@ chrome.webRequest.onErrorOccurred.addListener(function(details)
 {
     var currentURLRequest = document.createElement('a');
 	currentURLRequest.href = details.url;
+	var currentURLpage = currentURLRequest.pathname;
 	var currentTLD = currentURLRequest.hostname.split(".").pop();
 	var currentURLhostNoTLD = currentURLRequest.hostname.split(".")[0];
 	
 	if (currentTLD != 'dat_site') {
 		return;
 	} else {
-		chrome.tabs.update(details.tabId, {url: "/dat_error.html?datHash="+currentURLhostNoTLD});
+		chrome.tabs.update(details.tabId, {url: "/dat_error.html?datHash="+currentURLhostNoTLD+"&path="+currentURLpage});
 	}
 },
 {urls: ["*://*.dat_site/*"], types: ["main_frame"]});
@@ -97,6 +98,16 @@ chrome.webRequest.onErrorOccurred.addListener(function(details)
     console.log(details);
 },
 {urls: ["dat://*"], types: ["main_frame"]});
+
+// Check whether new version is installed
+chrome.runtime.onInstalled.addListener(function(details){
+    if(details.reason == "install"){
+        console.log("This is a first install!");
+    }else if(details.reason == "update"){
+        var thisVersion = chrome.runtime.getManifest().version;
+        console.log("Updated from " + details.previousVersion + " to " + thisVersion + "!");
+    }
+});
 
 /*
 
