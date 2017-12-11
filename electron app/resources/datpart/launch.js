@@ -1,4 +1,4 @@
-var dev = false;
+var dev = true;
 
 if (typeof process === 'object') {
   if (typeof process.versions === 'object') {
@@ -7,6 +7,7 @@ if (typeof process === 'object') {
 const {app, BrowserWindow, Menu, Tray} = require('electron')
 const path = require('path')
 const url = require('url')
+const fs = require('fs');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -16,6 +17,11 @@ let tray = null
 var versionNumber = app.getVersion();
 var appName = app.getName();
 var appIcon = __dirname+'/logo_128.png';
+var appPath = app.getAppPath();
+
+if (fs.existsSync(appPath + "/dats/")) {
+    fs.mkdir(appPath + "/dats/");
+}
 
 app.on('ready', () => {
   tray = new Tray(appIcon)

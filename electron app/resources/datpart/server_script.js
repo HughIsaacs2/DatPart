@@ -1,5 +1,10 @@
 "use strict";
 
+		// content of index.js
+		const {shell} = require('electron');
+		const http = require('http');
+		var dat = require('dat-node');
+
   var host = "127.0.0.1";
   var port = "9989";
   
@@ -8,19 +13,11 @@
   
   var rootDir = null;
   var packDir = null;
-  
-  if (typeof process === 'object') {
-	if (typeof process.versions === 'object') {
-		if (typeof process.versions['electron'] !== 'undefined') {
-		
-		// content of index.js
-		const {shell} = require('electron');
-		const http = require('http');
-		var dat = require('dat-node');
 		
 		//var versionNumber = app.getVersion();
 		//var appName = app.getName();
 		//var appIcon = __dirname+'/logo_128.png';
+		//app.getAppPath()
 		
 		document.querySelectorAll("a.external-link").forEach(function (el) {
 		  el.onclick = function(){shell.openExternal(el.href);return false;};
@@ -47,7 +44,7 @@ const requestHandler = (request, response) => {
 	}
 */
    
-dat( __dirname + '/dats/'+currentURLhostNoTLD, {
+dat( __dirname + '/../../dats/'+currentURLhostNoTLD, {
   // 2. Tell Dat what link I want
   key: currentURLhostNoTLD, temp: false, sparse: true // (a 64 character hash from above)
 }, function (err, dat) {
@@ -95,5 +92,3 @@ server.listen(port, (err) => {
 
   console.log(`server is listening on ${port}`);
 });
-
-  }}}
