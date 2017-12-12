@@ -15,8 +15,8 @@ var appName = app.getName();
 var appIcon = __dirname+'/logo_128.png';
 var appPath = app.getAppPath();
 
-	if (!fs.existsSync(appPath + "/dats/")) {
-		fs.mkdirSync(appPath + "/dats/");
+	if (!fs.existsSync(__dirname + '/../../dats/')) {
+		fs.mkdirSync(__dirname + '/../../dats/');
 	}
 
 function createWindow () {
@@ -87,8 +87,8 @@ function createWindow () {
 	}
 
 app.on('ready', () => {
-	if (!fs.existsSync(appPath + "/dats/")) {
-		fs.mkdirSync(appPath + "/dats/");
+	if (!fs.existsSync(__dirname + '/../../dats/')) {
+		fs.mkdirSync(__dirname + '/../../dats/');
 	}
 	
   tray = new Tray(appIcon)
