@@ -1,4 +1,4 @@
-# DatPart - Experimental Branch
+# DatPart
 Proof of concept [Dat](https://datproject.org/) site viewer extension [and app] for Chrome.
 
 Sites can be loaded via the .dat_site. top-level domain.
