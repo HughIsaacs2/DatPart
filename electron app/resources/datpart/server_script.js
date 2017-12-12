@@ -4,6 +4,7 @@
 	const {shell} = require('electron');
 	const http = require('http');
 	const dat = require('dat-node');
+	const fs = require('fs')
 
 	var host = "127.0.0.1";
 	var port = "9989";
@@ -11,6 +12,10 @@
 	document.querySelectorAll("a.external-link").forEach(function (el) {
 		el.onclick = function(){shell.openExternal(el.href);return false;};
 	});
+	
+	if (!fs.existsSync(__dirname + '/../../dats/')) {
+		fs.mkdirSync(__dirname + '/../../dats/');
+	}
 
 const requestHandler = (request, response) => {
   console.log(request.url);
@@ -33,7 +38,7 @@ const requestHandler = (request, response) => {
 	}
 */
 
-if(currentTLD == 'dat_site') {
+if(currentTLD == 'dat_site' && fs.existsSync(__dirname + "/../../dats/")) {
 
 dat( __dirname + '/../../dats/'+currentURLhostNoTLD, {
   // 2. Tell Dat what link I want
@@ -72,8 +77,25 @@ if (lastChar == '/') {         // If the last character is not a slash
   
 });
 
+} else if(fs.existsSync(__dirname + "/../../dats/")) { 
+
+console.log(request.url);
+
+	var currentURLRequest = document.createElement('a');
+	currentURLRequest.href = request.url;
+	
+	var currentTLD = currentURLRequest.hostname.split(".").pop();
+	var currentURLhostNoTLD = currentURLRequest.hostname.split(".")[0];
+	
+	var fileSearch = currentURLRequest.pathname;
+	
+	console.log(fileSearch);
+	
+	console.log("TLD: " + currentTLD + " Hash: " + currentURLhostNoTLD);
+
 } else {
 	
+	fs.mkdirSync(appPath + "/dats/");
 	console.log(request.url);
 	
 }

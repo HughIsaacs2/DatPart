@@ -3,7 +3,7 @@ var dev = true;
 const {app, BrowserWindow, Menu, Tray} = require('electron')
 const path = require('path')
 const url = require('url')
-var fs = require('fs')
+const fs = require('fs')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -15,8 +15,8 @@ var appName = app.getName();
 var appIcon = __dirname+'/logo_128.png';
 var appPath = app.getAppPath();
 
-	if (fs.existsSync(appPath + "/dats/")) {
-		fs.mkdir(appPath + "/dats/");
+	if (!fs.existsSync(appPath + "/dats/")) {
+		fs.mkdirSync(appPath + "/dats/");
 	}
 
 function createWindow () {
@@ -83,8 +83,8 @@ function createWindow () {
 	}
 
 app.on('ready', () => {
-	if (fs.existsSync(appPath + "/dats/")) {
-		fs.mkdir(appPath + "/dats/");
+	if (!fs.existsSync(appPath + "/dats/")) {
+		fs.mkdirSync(appPath + "/dats/");
 	}
 	
   tray = new Tray(appIcon)
