@@ -1,4 +1,4 @@
-var dev = false;
+var dev = true;
 	
 const {app, BrowserWindow, Menu, Tray} = require('electron')
 const path = require('path')
