@@ -1,4 +1,4 @@
-var dev = true;
+var dev = false;
 	
 const {app, BrowserWindow, Menu, Tray} = require('electron')
 const path = require('path')
@@ -39,11 +39,18 @@ function createWindow () {
   	  win.setMenu(devTopMenu)
 	  win.setThumbnailToolTip(appName + " v" + versionNumber + " dev mode")
 	  win.setTitle(appName + " v" + versionNumber + " dev mode")
+	  win.webContents.openDevTools({mode:'detach'})
   } else if (dev != true) {
 	  win.setMenu(null)
 	  win.setThumbnailToolTip(appName + " v" + versionNumber)
 	  win.setTitle(appName + " v" + versionNumber)
   }
+  
+  win.on('show', () => {
+		if(dev == true) {
+    	  win.webContents.openDevTools({mode:'detach'})
+		}
+	})
   
     // and load the index.html of the app.
     win.loadURL('file://' + __dirname + '/server_app.html')
@@ -63,10 +70,7 @@ function createWindow () {
     // when you should delete the corresponding element.
     win = null
   })
-  
-    win.on('show', () => {
-    	  win.webContents.openDevTools({mode:'detach'})
-	})
+
 }
 
   const isSecondInstance = app.makeSingleInstance((commandLine, workingDirectory) => {
