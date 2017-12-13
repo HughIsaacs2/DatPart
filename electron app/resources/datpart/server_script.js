@@ -98,15 +98,15 @@ const requestHandler = (request, response) => {
 	var currentTLD = currentURLRequest.hostname.split(".").pop();
 	var currentURLhostNoTLD = currentURLRequest.hostname.split(".")[0];
 	
-	var fileSearch = currentURLRequest.pathname;
+	var datPath = currentURLRequest.pathname;
 	
-	console.log(fileSearch);
+	console.log(datPath);
 	
 	console.log("TLD: " + currentTLD + " Hash: " + currentURLhostNoTLD);
 	/*
 	if(currentTLD == 'dat_site') {
-		fileSearch = "/dats/" + currentURLhostNoTLD + currentURLRequest.pathname;
-		console.log(fileSearch);
+		datPath = "/dats/" + currentURLhostNoTLD + currentURLRequest.pathname;
+		console.log(datPath);
 	}
 */
   var uri = url.parse(request.url).pathname, 
@@ -122,7 +122,7 @@ if(currentTLD == 'dat_site' && fs.existsSync(__dirname + "/../../dats/")) {
 
 dat( __dirname + '/../../dats/'+currentURLhostNoTLD, {
   // 2. Tell Dat what link I want
-  key: currentURLhostNoTLD, temp: false, sparse: true // (a 64 character hash from above)
+  key: currentURLhostNoTLD, temp: true, sparse: true // (a 64 character hash from above)
 }, function (err, dat) {
   if (err) {throw err;console.log(err)}
   
@@ -130,16 +130,20 @@ dat( __dirname + '/../../dats/'+currentURLhostNoTLD, {
 
   // 3. Join the network & download (files are automatically downloaded)
   dat.joinNetwork();
-  /*
-  dat.archive.readFile(fileSearch+'/dat.json', function (err, content) {
+  
+  var datJSON;
+
+  dat.archive.readFile(datPath+'/dat.json', function (err, content) {
     console.log(JSON.parse(content));
+	datJSON = JSON.parse(content);
+	console.log(datJSON["fallback_page"]);
 	if (err) {throw err;console.log(err)}
   });
-  */
+
   var lastChar = request.url.substr(-1); // Selects the last character
 if (lastChar == '/') {         // If the last character is not a slash
   
-  dat.archive.readFile(fileSearch+'/index.html', function (err, content) {
+  dat.archive.readFile(datPath+'/index.html', function (err, content) {
     console.log(content);
 	response.writeHead(200, { "Content-Type": "text/html" });
 	response.end(content);
@@ -148,11 +152,13 @@ if (lastChar == '/') {         // If the last character is not a slash
 
 } else {
 	
-  dat.archive.readFile(fileSearch, function (err, content) {
+  dat.archive.readFile(datPath, function (err, content) {
     console.log(content);
 	response.writeHead(200, { "Content-Type": mimeType });
 	response.end(content);
-	if (err) {throw err;console.log(err)}
+	if (err) {
+		throw err;console.log(err)
+		}
   });
   
 }
@@ -169,9 +175,9 @@ console.log(request.url);
 	var currentTLD = currentURLRequest.hostname.split(".").pop();
 	var currentURLhostNoTLD = currentURLRequest.hostname.split(".")[0];
 	
-	var fileSearch = currentURLRequest.pathname;
+	var datPath = currentURLRequest.pathname;
 	
-	console.log(fileSearch);
+	console.log(datPath);
 	
 	console.log("TLD: " + currentTLD + " Hash: " + currentURLhostNoTLD);
 
