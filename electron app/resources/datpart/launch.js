@@ -15,9 +15,13 @@ var appName = app.getName();
 var appIcon = __dirname+'/logo_128.png';
 var appPath = app.getAppPath();
 
-	if (!fs.existsSync(__dirname + '/../../dats/')) {
-		fs.mkdirSync(__dirname + '/../../dats/');
-	}
+if (fs.existsSync(__dirname + '/../../dev.hta')) {
+	dev = true;
+}
+
+if (!fs.existsSync(__dirname + '/../../dats/')) {
+	fs.mkdirSync(__dirname + '/../../dats/');
+}
 
 function createWindow () {
   // Create the browser window.

@@ -26,6 +26,8 @@ Basically all this does is use the Chrome Extension WebRequest API and Proxy API
 * Firefox support (this is trouble as [the Firefox WebExtension Proxy API](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/proxy) is different).
   * Firefox for Android support.
 * Opera support.
+* Mac OS support.
+* Linux support.
 * Chrome OS support.
 * dat:// link support.
   * This'll require coming up with a way to simply parse Dat URLs in a regular web browser, as [parse-dat-url](https://github.com/pfrazee/parse-dat-url "parse-dat-url") doesn't work very well on the web (there's likely a fix that can be done with regular expressions but I suck at them so... yeah).
@@ -44,3 +46,14 @@ Basically all this does is use the Chrome Extension WebRequest API and Proxy API
 * Edge support? (Not possible yet, needs the Proxy API, if it ever gets it)
 * Safari support? (I'm unsure if this is possible)
 * Internet Explorer support? (I'm being ridiculous here, but again unsure if this is possible)
+
+## To-Do [Short term + more specific list]
+* Dat URL for current tab in the extension pop up.
+* Support for 404 pages by reading “fallback_page” in dat.json.
+* An button in the extension pop up to tell the app to download the entire Dat.
+* A button in the extension pop up to tell the app to delete the entire Dat.
+* A landing page for introducing users to the extension/app.
+* A page for deleting torrents/dats and other information.
+* The ability to submit dat links or hashes as searches in the extension (needs Dat parse for web).
+* Grey out extension icon when not on a Dat site.
+
