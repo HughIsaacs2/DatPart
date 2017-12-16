@@ -1,0 +1,160 @@
+html {
+font-size: 100%;
+-webkit-text-size-adjust: 100%;
+-ms-text-size-adjust: 100%;
+text-size-adjust: none;
+-moz-osx-font-smoothing: grayscale;
+-webkit-font-smoothing: antialiased;
+-webkit-overflow-scrolling: touch;
+-ms-overflow-style: scrollbar;
+scroll-behavior: smooth;
+}
+
+html, body {
+width: 100%;
+height: 100%;
+}
+
+body {
+display: block;
+margin: 0;
+padding: 0;
+border: none;
+width: 100%;
+height: auto;
+min-height: 100%;
+text-align: center;
+font-size: 100%;
+-webkit-text-size-adjust: none;
+-ms-text-size-adjust: none;
+text-size-adjust: none;
+-moz-osx-font-smoothing: grayscale;
+-webkit-font-smoothing: antialiased;
+overflow: auto;
+-ms-overflow-style: scrollbar;
+-webkit-overflow-scrolling: touch;
+-ms-touch-action: auto;
+touch-action: auto;
+scroll-behavior: smooth;
+font-family: -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, Lucida Sans, Lucida Grande, Lucida Sans Unicode, HelveticaNeue-Light, HelveticaNeue, Helvetica, Arial, Verdana, sans-serif, caption, noto, 'Segoe UI Symbol', 'emoji', 'Apple Color Emoji','EmojiSymbols', 'Symbola';
+background-attachment: fixed;
+z-index: -1;
+-ms-word-break: break-all;
+word-break: break-all;
+word-break: break-word;
+overflow-wrap: break-word;
+word-wrap: break-word;
+-webkit-hyphens: auto;
+-ms-hyphens: auto;
+-moz-hyphens: auto;
+hyphens: auto;
+background-color: #424242;
+color: #ffffff;
+}
+
+a, a:visited {
+    color: #ffffff;
+}
+
+#browser {
+    display: block;
+    border: 0;
+    padding: 0;
+    margin: 0;
+width: 100%;
+height: 100%;
+overflow: auto;
+-ms-overflow-style: scrollbar;
+-webkit-overflow-scrolling: touch;
+-ms-touch-action: auto;
+touch-action: auto;
+scroll-behavior: smooth;
+background-color: #ffffff;
+}
+
+@font-face {
+  font-family: emoji;
+
+  /* Fonts for text outside emoji blocks */
+  src: local('Droid Sans Mono'),
+       local('Lucida Console'),
+       local('Arial Monospaced'),
+       local(Arial);
+}
+@font-face {
+  font-family: emoji;
+
+  src: local('Apple Color Emoji'),
+       local('Android Emoji'),
+       local('Segoe UI'),
+	   local('Segoe UI Symbol'),
+       local(EmojiSymbols),
+       local(Symbola),/*,
+       url('fonts/Symbola-Emoji.eot?#iefix') format('embedded-opentype'),
+       url('fonts/Symbola-Emoji.woff') format('woff'),
+       url('fonts/Symbola-Emoji.ttf') format('truetype')*/
+       local(emoji);
+
+  /* Emoji unicode blocks */
+  unicode-range: U+1F300-1F5FF, U+1F600-1F64F, U+1F680-1F6FF, U+2600-26FF;
+}
+
+.button {
+border: 0;
+outline: 0;
+-webkit-appearance: none;
+-moz-appearance: none;
+-webkit-user-select: none;
+-khtml-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+user-select: none;
+cursor: pointer;
+vertical-align: middle;
+text-decoration: none;
+display: block;
+display: inline-block;
+position: relative;
+color: #ffffff;
+background-color: #262C32;
+background-color: rgba(38, 44, 50, 0.9);
+font-size: 80%;
+padding-left: 1em;
+padding-right: 1em;
+margin-top: 1px;
+margin-bottom: 1px;
+text-align: center;
+display: inline-block;
+min-height: 2.1em;
+max-width: 80%;
+height: auto;
+line-height: 2.125em;
+text-decoration: none;
+text-transform: uppercase;
+text-shadow: none;
+border-radius: 4px;
+background-repeat: repeat;
+box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
+border: none;
+border-bottom: 1px solid transparent;
+}
+
+.button:hover, .button:focus {
+color: #ffffff;
+border: 0;
+background-color: rgba(255, 255, 255, 0.3);
+box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.1), 0 8px 17px 0 rgba(0, 0, 0, 0.2);
+border: none;
+border-bottom: 1px solid transparent;
+}
+
+.button:active {
+background-color: rgba(255, 255, 255, 0.2);
+box-shadow: inset 0 2px 0 0 rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.12);
+border: none;
+border-top: 1px solid transparent;
+}
+
+.button:visited {
+color: #ffffff;
+}
