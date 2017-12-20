@@ -7,6 +7,10 @@
 	const path = require("path");
 	const dat = require('dat-node');
 	const fs = require('fs')
+	
+	document.querySelectorAll("a.external-link").forEach(function (el) {
+		el.onclick = function(){shell.openExternal(el.href);return false;};
+	});
 
 	var host = "127.0.0.1";
 	var port = "9989";
@@ -89,10 +93,6 @@
       "ptf": "application/x-psp-theme",
       "pbp": "application/x-psp-game"
     };
-		
-	document.querySelectorAll("a.external-link").forEach(function (el) {
-		el.onclick = function(){shell.openExternal(el.href);return false;};
-	});
 	
 	if (!fs.existsSync(__dirname + '/../../dats/')) {
 		fs.mkdirSync(__dirname + '/../../dats/');
@@ -101,24 +101,7 @@
 const requestHandler = (request, response) => {
   console.log(request.url);
   
-	var currentURLRequest = document.createElement('a');
-	currentURLRequest.href = request.url;
-	
-	var currentTLD = currentURLRequest.hostname.split(".").pop();
-	var currentURLhostNoTLD = currentURLRequest.hostname.split(".")[0];
-	
-	var datPath = currentURLRequest.pathname;
-	
-	console.log(datPath);
-	
-	console.log("TLD: " + currentTLD + " Hash: " + currentURLhostNoTLD);
-	/*
-	if(currentTLD == 'dat_site') {
-		datPath = "/dats/" + currentURLhostNoTLD + currentURLRequest.pathname;
-		console.log(datPath);
-	}
-*/
-  var uri = url.parse(request.url).pathname,
+    var uri = url.parse(request.url).pathname,
       filename = path.join(process.cwd(), uri);
 	  
       var mimeType = mimeTypes[filename.split('.').pop()];
@@ -126,8 +109,48 @@ const requestHandler = (request, response) => {
       if (!mimeType) {
         mimeType = 'text/plain';
       }
+	
+	var currentTLD = url.parse(request.url).hostname.split(".").pop();
+	
+	var currentURLhostNoTLD = url.parse(request.url).hostname.split(".")[0];
+	
+	var datPath = url.parse(request.url).pathname;
+	
+	console.log(datPath);
+	
+	console.log("TLD: " + currentTLD + " Hash: " + currentURLhostNoTLD);
 
-if(currentTLD == 'dat_site' && fs.existsSync(__dirname + "/../../dats/")) {
+	  /*
+if (request.url.substr(1) == "/" && request.url == "/") {
+
+	fs.readFile(__dirname + "/index.html", function(err, data){
+if(err){
+   response.writeHead(404, {'Content-type':'text/plain'});
+   response.write('Page Was Not Found');
+   response.end( );
+}else{
+   response.writeHead(200, {'Content-type':'text/html'});
+   response.write(data);
+   response.end( );
+}
+});
+	
+} else if (request.url.substr(1) == "/" && request.url.substr(-1) != "/") {
+	
+	var pathName = url.parse(request.url).pathname;
+fs.readFile(__dirname  + "/../../dats/" + pathName, function(err, data){
+if(err){
+   response.writeHead(404, {'Content-type':'text/plain'});
+   response.write('Page Was Not Found');
+   response.end( );
+}else{
+   response.writeHead(200, {'Content-type':'text/plan'});
+   response.write(data);
+   response.end( );
+}
+});
+	
+} else */ if(currentTLD == 'dat_site' && fs.existsSync(__dirname + "/../../dats/")) {
 
 dat( __dirname + '/../../dats/'+currentURLhostNoTLD, {
   // 2. Tell Dat what link I want
@@ -154,7 +177,8 @@ if (lastChar == '/') {         // If the last character is not a slash
   
   dat.archive.readFile(datPath+'/index.html', function (err, content) {
     console.log(content);
-	response.writeHead(200, { "Content-Type": "text/html" });
+	response.writeHead(200, { "Content-Type": "text/html", "Alt-Svc": "dat='dat://"+currentURLhostNoTLD+datPath+"'", "Dat-Url": "dat://"+currentURLhostNoTLD+datPath });
+	//response.setHeader('Alt-Svc', 'dat="'+currentURLhostNoTLD+datPath+'"');
 	response.end(content);
 	if (err) {throw err;console.log(err)}
   });
@@ -163,7 +187,8 @@ if (lastChar == '/') {         // If the last character is not a slash
 	
   dat.archive.readFile(datPath, function (err, content) {
     console.log(content);
-	response.writeHead(200, { "Content-Type": mimeType });
+	response.writeHead(200, { "Content-Type": mimeType, "Alt-Svc": "dat='dat://"+currentURLhostNoTLD+datPath+"'", "Dat-Url": "dat://"+currentURLhostNoTLD+datPath });
+	//response.setHeader('Alt-Svc', 'dat="'+currentURLhostNoTLD+datPath+'"');
 	response.end(content);
 	if (err) {
 		throw err;console.log(err)
@@ -178,13 +203,11 @@ if (lastChar == '/') {         // If the last character is not a slash
 
 console.log(request.url);
 
-	var currentURLRequest = document.createElement('a');
-	currentURLRequest.href = request.url;
+	var currentTLD = url.parse(request.url).hostname.split(".").pop();
 	
-	var currentTLD = currentURLRequest.hostname.split(".").pop();
-	var currentURLhostNoTLD = currentURLRequest.hostname.split(".")[0];
+	var currentURLhostNoTLD = url.parse(request.url).hostname.split(".")[0];
 	
-	var datPath = currentURLRequest.pathname;
+	var datPath = url.parse(request.url).pathname;
 	
 	console.log(datPath);
 	
