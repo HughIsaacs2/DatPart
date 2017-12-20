@@ -10,6 +10,7 @@ chrome.omnibox.onInputChanged.addListener(function(text, suggest) {
 
 chrome.omnibox.onInputEntered.addListener(function(text) {
     console.log('inputEntered: ' + text);
+	
 });
 
 chrome.webNavigation.onBeforeNavigate.addListener(function(details) {
@@ -39,24 +40,24 @@ chrome.webRequest.onBeforeRequest.addListener(function(details) {
 	//chrome.runtime.sendMessage(chromeos_server_app_id, { launch: true });
 	};
 	
-	var bithost = currentURLRequest.hostname;
+	var dathost = currentURLRequest.hostname;
 	var port = "9989";
 	var access = "PROXY";
-	var bitip = "127.0.0.1";
+	var appip = "127.0.0.1";
 	
 	var config = {
 		mode: "pac_script",
 		pacScript: {
 			data: "function FindProxyForURL(url, host) {\n" +
-			"  if (dnsDomainIs(host, '"+bithost+"'))\n" +
-			"    return '"+access+" "+bitip+":"+port+"';\n" +
+			"  if (dnsDomainIs(host, '"+dathost+"'))\n" +
+			"    return '"+access+" "+appip+":"+port+"';\n" +
 			"  return 'DIRECT';\n" +
 			"}"
 		}
 	};
 	
 	chrome.proxy.settings.set({value: config, scope: 'regular'},function() {});
-	console.log('IP '+bitip+' for '+bithost+' found, config is changed: '+JSON.stringify(config));
+	console.log('IP '+appip+' for '+dathost+' found, config is changed: '+JSON.stringify(config));
 	
 	//var redirectBackup = "redirect.html#"+currentURLhostNoTLD;
     //return {cancel: true, redirectUrl: "redirect.html"};
@@ -92,12 +93,6 @@ chrome.webRequest.onErrorOccurred.addListener(function(details)
 	}
 },
 {urls: ["*://*.torrent_site/*"], types: ["main_frame"]});
-
-chrome.webRequest.onErrorOccurred.addListener(function(details)
-{
-    console.log(details);
-},
-{urls: ["dat://*"], types: ["main_frame"]});
 
 // Check whether new version is installed
 chrome.runtime.onInstalled.addListener(function(details){

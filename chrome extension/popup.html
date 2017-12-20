@@ -1,14 +1,36 @@
 <html>
 <head>
+<title>DatPart!</title>
+<script src="popup.js"></script>
 <link type="text/css" href="/style.css" rel="stylesheet" lazyload="1" />
 <style>
 body {
 width: 300px;
 }
+
+#site-info {
+font-size: 1em;
+}
+
+#site-favicon {
+display: inline-block;
+width: 1em;
+height: 1em;
+}
+
+#site-title {
+
+}
+
+#site-url {
+resize: none;
+}
 </style>
 </head>
 <body>
-    Dat Part!<br/>
-	<a href="options.html" target="_blank" class="button">Options</a>
+    <h3>DatPart!</h3>
+	<main id="site-info"><img id="site-favicon" src="/logo.svg" width="5px" height="5px" /><span id="site-title"></span>
+	<textarea id="site-url" name="site-url" rows="1" cols="40" title="Dat URL" placeholder="dat://" readonly="true" spellcheck="false"></textarea></main><br/>
+	<a href="options.html" target="_blank" class="button">Options</a><br/>
 </body>
 </html>
