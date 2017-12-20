@@ -28,6 +28,15 @@
       "png": "image/png",
       "apng": "image/png",
       "webp": "image/webp",
+      "jxr": "image/vnd.ms-photo",
+      "hdp": "image/vnd.ms-photo",
+      "wdp": "image/vnd.ms-photo",
+      "flif": "image/flif",
+      "heif": "image/heif",
+      "heic": "image/heic",
+      "tiff": "image/tiff",
+      "tif": "image/tiff",
+      "mpo": "image/mpo",
       "gif": "image/gif",
       "ico": "image/x-icon",
 	//font formats
@@ -109,7 +118,7 @@ const requestHandler = (request, response) => {
 		console.log(datPath);
 	}
 */
-  var uri = url.parse(request.url).pathname, 
+  var uri = url.parse(request.url).pathname,
       filename = path.join(process.cwd(), uri);
 	  
       var mimeType = mimeTypes[filename.split('.').pop()];
@@ -165,7 +174,7 @@ if (lastChar == '/') {         // If the last character is not a slash
   
 });
 
-} else if(fs.existsSync(__dirname + "/../../dats/")) { 
+} else if(fs.existsSync(__dirname + "/../../dats/")) {
 
 console.log(request.url);
 
