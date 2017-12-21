@@ -1,5 +1,63 @@
 var chromeos_server_app_id = chrome.runtime.getManifest().externally_connectable.ids[0];
 
+var appip = "127.0.0.1";
+var port = "9989";
+
+function fakeDisable() {
+	chrome.browserAction.setBadgeBackgroundColor({color: "red"});
+	//chrome.browserAction.setPopup({popup: ""});
+}
+
+function fakeEnable() {
+	chrome.browserAction.setBadgeBackgroundColor({color: "green"});
+	chrome.browserAction.setPopup({popup: chrome.runtime.getManifest().browser_action.default_popup});
+}
+
+chrome.tabs.onActivated.addListener(function (tab) {
+	console.log(tab);
+	
+		  chrome.tabs.query (
+                { currentWindow: true, active: true }, 
+                function(tabs) {
+                    var activeTab = tabs[0];
+                    console.log(JSON.stringify(activeTab));
+					
+					var currentURLRequest = document.createElement('a');
+					currentURLRequest.href = activeTab.url;
+					
+					var currentTLD = currentURLRequest.hostname.split(".").pop();
+					console.log(currentTLD);
+					
+				if (currentTLD != 'dat_site') {
+					//chrome.browserAction.disable();
+					fakeDisable();
+				} else {
+					//chrome.browserAction.enable();
+					fakeEnable();
+				}
+
+      });
+});
+
+chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
+	console.log(changeInfo); console.log(changeInfo.url);
+	
+					var currentURLRequest = document.createElement('a');
+					currentURLRequest.href = changeInfo.url;
+					
+					var currentTLD = currentURLRequest.hostname.split(".").pop();
+					console.log(currentTLD);
+					
+				if (currentTLD != 'dat_site') {
+					//chrome.browserAction.disable();
+					fakeDisable();
+				} else {
+					//chrome.browserAction.enable();
+					fakeEnable();
+				}
+
+});
+
 chrome.omnibox.onInputChanged.addListener(function(text, suggest) {
     console.log('inputChanged: ' + text);
     suggest([
@@ -41,9 +99,7 @@ chrome.webRequest.onBeforeRequest.addListener(function(details) {
 	};
 	
 	var dathost = currentURLRequest.hostname;
-	var port = "9989";
 	var access = "PROXY";
-	var appip = "127.0.0.1";
 	
 	var config = {
 		mode: "pac_script",

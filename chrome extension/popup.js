@@ -1,4 +1,8 @@
-	  chrome.tabs.query (
+var appip = "127.0.0.1";
+var port = "9989";
+
+function checkTab() {	
+	chrome.tabs.query (
                 { currentWindow: true, active: true }, 
                 function(tabs) {
                     var activeTab = tabs[0];
@@ -22,6 +26,7 @@
 					
 					var faviconIMG = document.getElementById("site-favicon");
 					faviconIMG.src = activeTab.favIconUrl;
+					faviconIMG.title = activeTab.title;
 					
 					var currentURLhostNoTLD = currentURLRequest.hostname.split(".")[0];
 					console.log(currentURLhostNoTLD);
@@ -36,3 +41,44 @@
 				}
 
       });
+}
+
+window.onload = function(){
+
+chrome.tabs.onUpdated.addListener(checkTab);
+
+checkTab();
+
+document.getElementById("pin").addEventListener("click",function(){
+	
+		chrome.tabs.query (
+                { currentWindow: true, active: true }, 
+                function(tabs) {
+                    var activeTab = tabs[0];
+                    console.log(JSON.stringify(activeTab));
+					
+					var currentURLRequest = document.createElement('a');
+					currentURLRequest.href = activeTab.url;
+					
+					var currentTLD = currentURLRequest.hostname.split(".").pop();
+					console.log(currentTLD);
+					
+				if (currentTLD != 'dat_site') {
+					return;
+				} else {
+					
+					var currentURLhostNoTLD = currentURLRequest.hostname.split(".")[0];
+					console.log(currentURLhostNoTLD);
+
+					fetch("http://"+ appip +":" + port + "/pin/", {
+						method: "POST",
+						body: "{'dat': "+currentURLhostNoTLD+", 'task':'pin'}"
+					});
+				
+				}
+
+      });
+
+});
+
+};

@@ -56,6 +56,12 @@ a, a:visited {
     color: #ffffff;
 }
 
+.icon {
+display: inline-block;
+width: 1em;
+height: 1em;
+}
+
 #browser {
     display: block;
     border: 0;

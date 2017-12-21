@@ -1,20 +1,15 @@
 "use strict";
 
-	// content of index.js
-	const {shell} = require('electron');
+	//const {shell} = require('electron');
 	const http = require('http');
 	const url = require("url");
 	const path = require("path");
 	const dat = require('dat-node');
-	const fs = require('fs')
-	
-	document.querySelectorAll("a.external-link").forEach(function (el) {
-		el.onclick = function(){shell.openExternal(el.href);return false;};
-	});
+	const fs = require('fs');
 
 	var host = "127.0.0.1";
 	var port = "9989";
-	
+
 	var mimeTypes = {
 	//text formats
       "html": "text/html",
@@ -100,6 +95,7 @@
 
 const requestHandler = (request, response) => {
   console.log(request.url);
+    console.log(request);
   
     var uri = url.parse(request.url).pathname,
       filename = path.join(process.cwd(), uri);
@@ -117,8 +113,6 @@ const requestHandler = (request, response) => {
 	var datPath = url.parse(request.url).pathname;
 	
 	console.log(datPath);
-	
-	console.log("TLD: " + currentTLD + " Hash: " + currentURLhostNoTLD);
 
 	  /*
 if (request.url.substr(1) == "/" && request.url == "/") {
@@ -150,7 +144,25 @@ if(err){
 }
 });
 	
-} else */ if(currentTLD == 'dat_site' && fs.existsSync(__dirname + "/../../dats/")) {
+} else */
+
+	request.addListener('data', function(chunk) {
+      console.log("Received body data:");
+      console.log(chunk.toString());
+    });
+
+if(request.method == 'POST') {
+	
+	console.log("posty");
+	
+	request.on('data', function(chunk) {
+      console.log("Received body data:");
+      console.log(chunk.toString());
+    });
+	
+} else if(request.method == 'GET' && currentTLD == 'dat_site' && fs.existsSync(__dirname + "/../../dats/")) {
+	
+	console.log("TLD: " + currentTLD + " Hash: " + currentURLhostNoTLD);
 
 dat( __dirname + '/../../dats/'+currentURLhostNoTLD, {
   // 2. Tell Dat what link I want
