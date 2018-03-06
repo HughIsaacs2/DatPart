@@ -305,9 +305,12 @@ if (lastChar == '/') {         // If the last character is not a slash
 		console.log(datPath);
 		console.log(content);
 		
-		response.writeHead(301,{"Location": "http://"+currentURLhostNoTLD+".dat_site/"+datJSON['fallback_page']});
-		response.end("hello world\n");
-		//response.redirect(301, datJSON["fallback_page"]);
+		var newHeaders = HTTPheaders;
+		newHeaders["Content-Security-Policy"] = "self";
+		newHeaders["Location"] = "http://"+currentURLhostNoTLD+".dat_site"+datJSON['fallback_page'];
+		
+		response.writeHead(307, newHeaders);
+		response.end();
 	}
   });
 
