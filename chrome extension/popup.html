@@ -1,11 +1,12 @@
-<html>
+<html dat-site="false">
 <head>
 <title>DatPart!</title>
-<script src="popup.js"></script>
 <link type="text/css" href="/style.css" rel="stylesheet" lazyload="1" />
 <style>
 body {
 width: 300px;
+background-color: #ffffff;
+color: #000000;
 }
 
 #site-info {
@@ -19,25 +20,43 @@ height: 1em;
 }
 
 #site-title {
-
+width: auto;
+max-width: 100%;
 }
 
 #site-url {
 resize: none;
+width: 100%;
+}
+
+[dat-site="false"] #site-info {
+display: none;
+}
+
+[dat-site="true"] #site-info {
+display: block;
+}
+
+#universe {
+display: block;
+clear: both;
+margin-left: auto;
+margin-right: auto;
+height: 100%;
+border-radius: 4px;
+width: calc(100% - 4px);
+background-color: #424242;
+color: #ffffff;
 }
 </style>
+<script src="popup.js" defer="true" lazyload="1"></script>
 </head>
-<body>
+<body><div id="universe">
     <h3>DatPart!</h3>
-	<main id="site-info"><img id="site-favicon" src="/logo.svg" width="5px" height="5px" /><span id="site-title"></span><button class="button" id="pin" title="Pin"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 width="10px" height="10px" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve" class="icon">
-<path d="M331.8,228C331.8,228,331.8,228,331.8,228c-1.2-0.5-2.4-1-3.5-1.7c-7-4-12.2-10.9-13.9-19.2L295.9,89.4l-0.2-5.8
-	c0-7.1,4.1-10.2,10-13l0,0c0.7-0.3,1.4-0.6,2.1-0.9c7.2-3.4,12.1-7.8,12.1-16.3c0-20.1-6.5-21.4-18.2-21.4h-91.3
-	c-11.7,0-18.2,1.2-18.2,21.4c0,8.5,4.9,12.9,12.1,16.3c0.7,0.3,1.4,0.5,2.1,0.9c0,0,0,0,0,0c5.9,2.9,10,6,10,13l-0.2,5.8
-	l-18.5,117.7c-1.7,8.3-6.9,15.2-13.9,19.2c-1.1,0.7-2.3,1.2-3.5,1.7c0,0,0,0,0,0c-19.7,10.2-36.2,30.8-36.2,54.7
-	c0,15.9,3.5,21.3,15.2,21.3H240l12,176h8l12-176h80.8c11.7,0,15.2-4.7,15.2-21.3C368,258.8,351.5,238.2,331.8,228z"/>
-</svg></button>
-	<textarea id="site-url" name="site-url" rows="1" cols="40" title="Dat URL" placeholder="dat://" readonly="true" spellcheck="false"></textarea></main><br/>
-	<a href="options.html" target="_blank" class="button">Options</a><br/>
-</body>
+	<main id="site-info"><img id="site-favicon" src="/logo.svg" width="5px" height="5px" /><span id="site-title">Title</span><br/>
+	<button class="button" id="pin" title="Pin">Pin</button> <button class="button" id="unpin" title="UnPin">UnPin</button><br/><br/>
+	<textarea id="site-url" name="site-url" rows="1" cols="40" title="Dat URL" placeholder="dat://" readonly="true" spellcheck="false"></textarea><br/><br/></main>
+	
+	<a href="options.html" title="Options" target="_blank" class="button">Options</a>
+</div></body>
 </html>

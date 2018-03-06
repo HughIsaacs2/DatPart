@@ -4,14 +4,37 @@ var appip = "127.0.0.1";
 var port = "9989";
 
 function fakeDisable() {
-	chrome.browserAction.setBadgeBackgroundColor({color: "red"});
-	//chrome.browserAction.setPopup({popup: ""});
+	chrome.browserAction.setBadgeText({text: ""});
+	//chrome.browserAction.setBadgeBackgroundColor({color: "red"});
+	//chrome.browserAction.setPopup({popup: "other_popup.html"});
+	//chrome.browserAction.disable();
 }
 
 function fakeEnable() {
-	chrome.browserAction.setBadgeBackgroundColor({color: "green"});
+	chrome.browserAction.setBadgeText({text: "1"});
+	chrome.browserAction.setBadgeBackgroundColor({color: "[0, 0, 0, 1]"});
 	chrome.browserAction.setPopup({popup: chrome.runtime.getManifest().browser_action.default_popup});
+	//chrome.browserAction.enable();
 }
+
+function decideEnable(currentTLD) {
+					
+				if (currentTLD != 'dat_site') {
+					fakeDisable();
+				} else {
+					fakeEnable();
+				}
+
+}
+
+chrome.runtime.onInstalled.addListener(function(details){
+    if(details.reason == "install"){
+        console.log("First install.");
+		chrome.tabs.create({url: chrome.runtime.getURL("/welcome.html")});
+    }else if(details.reason == "update"){
+        console.log("Updated from " + details.previousVersion + " to " + chrome.runtime.getManifest().version + ".");
+    }
+});
 
 chrome.tabs.onActivated.addListener(function (tab) {
 	console.log(tab);
@@ -28,13 +51,7 @@ chrome.tabs.onActivated.addListener(function (tab) {
 					var currentTLD = currentURLRequest.hostname.split(".").pop();
 					console.log(currentTLD);
 					
-				if (currentTLD != 'dat_site') {
-					//chrome.browserAction.disable();
-					fakeDisable();
-				} else {
-					//chrome.browserAction.enable();
-					fakeEnable();
-				}
+				decideEnable(currentTLD);
 
       });
 });
@@ -48,13 +65,7 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
 					var currentTLD = currentURLRequest.hostname.split(".").pop();
 					console.log(currentTLD);
 					
-				if (currentTLD != 'dat_site') {
-					//chrome.browserAction.disable();
-					fakeDisable();
-				} else {
-					//chrome.browserAction.enable();
-					fakeEnable();
-				}
+				decideEnable(currentTLD);
 
 });
 
@@ -149,16 +160,6 @@ chrome.webRequest.onErrorOccurred.addListener(function(details)
 	}
 },
 {urls: ["*://*.torrent_site/*"], types: ["main_frame"]});
-
-// Check whether new version is installed
-chrome.runtime.onInstalled.addListener(function(details){
-    if(details.reason == "install"){
-        console.log("This is a first install!");
-    }else if(details.reason == "update"){
-        var thisVersion = chrome.runtime.getManifest().version;
-        console.log("Updated from " + details.previousVersion + " to " + thisVersion + "!");
-    }
-});
 
 /*
 

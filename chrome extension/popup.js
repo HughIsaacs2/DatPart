@@ -1,5 +1,6 @@
 var appip = "127.0.0.1";
 var port = "9989";
+var commandPort = "9988";
 
 function checkTab() {	
 	chrome.tabs.query (
@@ -15,8 +16,11 @@ function checkTab() {
 					console.log(currentTLD);
 					
 				if (currentTLD != 'dat_site') {
+					document.documentElement.setAttribute('dat-site', 'false');
+
 					return;
 				} else {
+					document.documentElement.setAttribute('dat-site', 'true');
 
 					var siteURL = document.getElementById("site-url");
 					siteURL.innerText = activeTab.url;
@@ -43,15 +47,8 @@ function checkTab() {
       });
 }
 
-window.onload = function(){
-
-chrome.tabs.onUpdated.addListener(checkTab);
-
-checkTab();
-
-document.getElementById("pin").addEventListener("click",function(){
-	
-		chrome.tabs.query (
+function pinSite() {
+			chrome.tabs.query (
                 { currentWindow: true, active: true }, 
                 function(tabs) {
                     var activeTab = tabs[0];
@@ -70,15 +67,66 @@ document.getElementById("pin").addEventListener("click",function(){
 					var currentURLhostNoTLD = currentURLRequest.hostname.split(".")[0];
 					console.log(currentURLhostNoTLD);
 
-					fetch("http://"+ appip +":" + port + "/pin/", {
+					var myHeaders = new Headers();
+					myHeaders.append("Content-Type", "text/plain");
+					myHeaders.append("Type", "dat");
+					myHeaders.append("Dat", currentURLhostNoTLD);
+					myHeaders.append("Task", "pin");
+					
+					fetch("http://"+ appip +":" + commandPort + "/pin/", {
 						method: "POST",
-						body: "{'dat': "+currentURLhostNoTLD+", 'task':'pin'}"
+						headers: myHeaders
 					});
 				
 				}
 
       });
+}
 
-});
+function unpinSite() {
+			chrome.tabs.query (
+                { currentWindow: true, active: true }, 
+                function(tabs) {
+                    var activeTab = tabs[0];
+                    console.log(JSON.stringify(activeTab));
+					
+					var currentURLRequest = document.createElement('a');
+					currentURLRequest.href = activeTab.url;
+					
+					var currentTLD = currentURLRequest.hostname.split(".").pop();
+					console.log(currentTLD);
+					
+				if (currentTLD != 'dat_site') {
+					return;
+				} else {
+					
+					var currentURLhostNoTLD = currentURLRequest.hostname.split(".")[0];
+					console.log(currentURLhostNoTLD);
+
+					var myHeaders = new Headers();
+					myHeaders.append("Content-Type", "text/plain");
+					myHeaders.append("Type", "dat");
+					myHeaders.append("Dat", currentURLhostNoTLD);
+					myHeaders.append("Task", "unpin");
+					
+					fetch("http://"+ appip +":" + commandPort + "/unpin/", {
+						method: "POST",
+						headers: myHeaders
+					});
+				
+				}
+
+      });
+}
+
+window.onload = function(){
+
+checkTab();
+
+chrome.tabs.onUpdated.addListener(checkTab);
+
+document.getElementById("pin").addEventListener("click",pinSite);
+
+document.getElementById("unpin").addEventListener("click",unpinSite);
 
 };
