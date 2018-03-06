@@ -48,11 +48,11 @@ Basically all this does is use the Chrome Extension WebRequest API and Proxy API
 * Internet Explorer support? (I'm being ridiculous here, but again unsure if this is possible)
 
 ## To-Do [Short term + more specific list]
-~~* Dat URL for current tab in the extension pop up.~~
-~~* Support for 404 pages by reading “fallback_page” in dat.json.~~
-~~* An button in the extension pop up to tell the app to download the entire Dat.~~
-~~* A button in the extension pop up to tell the app to delete the entire Dat.~~
-~~* A landing page for introducing users to the extension/app.~~
+* ~~Dat URL for current tab in the extension pop up.~~
+* ~~Support for 404 pages by reading “fallback_page” in dat.json.~~
+* ~~An button in the extension pop up to tell the app to download the entire Dat.~~
+* ~~A button in the extension pop up to tell the app to delete the entire Dat.~~
+* ~~A landing page for introducing users to the extension/app.~~
 * A page for deleting torrents/dats and other information.
 * The ability to submit dat links or hashes as searches in the extension (needs Dat parse for web).
 * Grey out extension icon when not on a Dat site (sort of done, I instead display a badge for Dat sites).
