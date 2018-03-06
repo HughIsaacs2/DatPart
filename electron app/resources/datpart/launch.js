@@ -15,6 +15,10 @@ var appName = app.getName();
 var appIcon = __dirname+'/logo_128.png';
 var appPath = app.getAppPath();
 
+  global.sharedObject = {
+    appVersionNumber: versionNumber
+  }
+
 if (fs.existsSync(__dirname + '/../../dev.hta')) {
 	dev = true;
 }
