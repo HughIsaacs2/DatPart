@@ -256,32 +256,40 @@ if (lastChar == '/') {         // If the last character is not a slash
   
   dat.archive.readFile(datPath+'/index.html', function (err, content) {
     console.log(content);
-	
-	var newHeaders = HTTPheaders;
-	newHeaders["Content-Type"] = "text/html";
-	newHeaders["Alt-Svc"] = "dat='dat://"+currentURLhostNoTLD+datPath+"'";
-	newHeaders["Dat-Url"] = "dat://"+currentURLhostNoTLD+datPath;
-	
-	response.writeHead(200, newHeaders);
-	//response.setHeader('Alt-Svc', 'dat="'+currentURLhostNoTLD+datPath+'"');
-	response.end(content);
-	if (err) {throw err; console.log(err)}
+
+	if (content != null) {
+		var newHeaders = HTTPheaders;
+		newHeaders["Content-Type"] = "text/html";
+		newHeaders["Alt-Svc"] = "dat='dat://"+currentURLhostNoTLD+datPath+"'";
+		newHeaders["Dat-Url"] = "dat://"+currentURLhostNoTLD+datPath;
+		
+		response.writeHead(200, newHeaders);
+		//response.setHeader('Alt-Svc', 'dat="'+currentURLhostNoTLD+datPath+'"');
+		response.end(content);
+	} else {
+		console.log("File "+datPath+" not found!");
+		console.log(datPath);
+		console.log(content);
+		
+		var newHeaders = HTTPheaders;
+		newHeaders["Content-Security-Policy"] = "self";
+		newHeaders["Location"] = "http://"+currentURLhostNoTLD+".dat_site"+datJSON['fallback_page'];
+		
+		response.writeHead(307, newHeaders);
+		response.end();
+	}
+	if (err) {throw err; console.log(err);}
   });
 
 } else {
 
   dat.archive.readFile(datPath, function (err, content) {
-	  console.log(err);
+	
 	if (err) {
-		throw err;
-
-		console.log("readFile Error!");
-		console.log(err);
-		
-		response.writeHead(301,{"Location": "http://"+currentURLhostNoTLD+".dat_site/"+datJSON['fallback_page']});
-		response.end("hello world\n");
-		//response.redirect(301, datJSON["fallback_page"]);
-	} else if (!err) {
+		throw err; console.log(err);
+	}
+	if (content != null) {
+		console.log(datPath);
 		console.log(content);
 		
 		var newHeaders = HTTPheaders;
@@ -292,6 +300,14 @@ if (lastChar == '/') {         // If the last character is not a slash
 		response.writeHead(200, newHeaders);
 		//response.setHeader('Alt-Svc', 'dat="'+currentURLhostNoTLD+datPath+'"');
 		response.end(content); 
+	} else {
+		console.log("File "+datPath+" not found!");
+		console.log(datPath);
+		console.log(content);
+		
+		response.writeHead(301,{"Location": "http://"+currentURLhostNoTLD+".dat_site/"+datJSON['fallback_page']});
+		response.end("hello world\n");
+		//response.redirect(301, datJSON["fallback_page"]);
 	}
   });
 
