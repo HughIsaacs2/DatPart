@@ -144,7 +144,7 @@ function pinDat(datToPin) {
 function unpinDat(datToUnpin) {
 	
 	localStorage.removeItem(datToUnpin);
-	datMap[datToUnpin] = {temp: true, sparse: true};
+	datMap[datToUnpin] = {'temp': true, 'sparse': true};
 	console.log("Deleting Dat "+datToUnpin);
    
 	if (fs.existsSync(__dirname + '/../../dats/'+datToUnpin+'/')) {
@@ -252,25 +252,53 @@ dat( __dirname + '/../../dats/'+currentURLhostNoTLD, {
   var stats = dat.trackStats();
 
   // 3. Join the network & download (files are automatically downloaded)
-  dat.joinNetwork();
-  
-  var fourOhFourFallback;
+  dat.joinNetwork(function (err) {
+  if (err) { throw err; }
 
-  dat.archive.readFile('/dat.json', function (err, content) {
-	if (content != null) {
-		datMap[currentURLhostNoTLD].datJSON = {};
-		datMap[currentURLhostNoTLD].datJSON = JSON.parse(content);
-		console.log(datMap[currentURLhostNoTLD]);
-		console.log("Got fallback page. " + datMap[currentURLhostNoTLD].datJSON.fallback_page);
-			dat.archive.readFile(datMap[currentURLhostNoTLD].datJSON.fallback_page, function (err, fallbackContent) {
-				if (fallbackContent != null) {
-					console.log("Testing fallbackContent! "+datMap[currentURLhostNoTLD].datJSON.fallback_page);
-					console.log(fallbackContent);
-					fourOhFourFallback = fallbackContent;
-				}
-			});
-	}
-	if (err) {throw err; console.log(err);}
+    // After the first round of network checks, the callback is called
+    // If no one is online, you can exit and let the user know.
+    if (!dat.network.connected || !dat.network.connecting) {
+      console.error('No users currently online for dat://'+currentURLhostNoTLD);
+      process.exit(1);
+    }
+  });
+
+  datMap[currentURLhostNoTLD].datJSON = new Promise(function(resolve, reject) {
+	  
+	  dat.archive.readFile('/dat.json', function (err, content) {
+		if (content != null) {
+			//datMap[currentURLhostNoTLD].datJSON = {};
+			//datMap[currentURLhostNoTLD].datJSON = JSON.parse(content);
+			console.log("Got Dat.json for "+ currentURLhostNoTLD);
+			console.log(datMap[currentURLhostNoTLD]);
+			resolve(JSON.parse(content.toString()));
+		} else {
+			console.log("Dat.json not found for "+ currentURLhostNoTLD);
+			reject("Dat.json not found for "+ currentURLhostNoTLD);
+		}
+		if (err) {throw err; console.log(err);}
+	  });
+	  
+  });
+  
+  var fourOhFourFallback = new Promise(function(resolve, reject) {
+	datMap[currentURLhostNoTLD].datJSON.then(function(result) {
+		
+	  console.log("Grabbing JSON for fallback_page "+JSON.stringify(result));
+	  
+		dat.archive.readFile(result.fallback_page, function (err, fallbackContent) {
+			if (fallbackContent != null) {
+				console.log("Got fallback page for dat://"+ currentURLhostNoTLD +" " + result.fallback_page);
+				resolve(fallbackContent);
+			} else {
+				console.log("fallback_page not found for dat://"+ currentURLhostNoTLD);
+				reject("fallback_page not found for dat://"+ currentURLhostNoTLD);
+			}
+		});
+		
+	}, function(err) {
+	  console.log(err);
+	});
   });
 
 var lastChar = request.url.substr(-1); // Selects the last character
@@ -301,23 +329,17 @@ if (lastChar == '/') {         // If the last character is not a slash
 		delete newHeaders["Location"];
 		newHeaders["Content-Security-Policy"] = "frame-ancestors 'none'";
 		newHeaders["X-Frame-Options"] = "DENY";
-
-		if (datMap[currentURLhostNoTLD].datJSON.fallback_page != "undefined") {
-			console.log("Going for fallbackContent! "+datMap[currentURLhostNoTLD].datJSON.fallback_page);
-			dat.archive.readFile(datMap[currentURLhostNoTLD].datJSON.fallback_page, function (err, fallbackContent) {
-				if (fallbackContent != null) {
-					console.log("Got fallbackContent! "+datMap[currentURLhostNoTLD].datJSON.fallback_page);
-					console.log(fallbackContent);
+		
+		fourOhFourFallback.then(function(result) {
+					console.log(result); // "Stuff worked!"
 					//newHeaders["Location"] = "http://"+currentURLhostNoTLD+".dat_site"+datMap[currentURLhostNoTLD].datJSON.fallback_page;
-					fourOhFourFallback = fallbackContent;
-					response.writeHead(404, newHeaders);
-					response.end(fourOhFourFallback);
-				}
-			});
-		} else {
-			response.writeHead(204, newHeaders);
-			response.end("Nothing");
-		}
+  					response.writeHead(404, newHeaders);
+					response.end(result);
+		}, function(err) {
+					console.log(err); // Error: "It broke"
+					response.writeHead(204, newHeaders);
+					response.end("Nothing");
+		});
 
 	}
 	if (err) {throw err; console.log(err);}
@@ -352,19 +374,17 @@ if (lastChar == '/') {         // If the last character is not a slash
 		newHeaders["Content-Security-Policy"] = "frame-ancestors 'none'";
 		newHeaders["X-Frame-Options"] = "DENY";
 		
-		if (datMap[currentURLhostNoTLD].datJSON.fallback_page != "undefined") {
-			dat.archive.readFile(datMap[currentURLhostNoTLD].datJSON.fallback_page, function (err, fallbackContent) {
-				if (fallbackContent != null) {
-					fourOhFourFallback = fallbackContent;
+		fourOhFourFallback.then(function(result) {
+					console.log(result); // "Stuff worked!"
 					//newHeaders["Location"] = "http://"+currentURLhostNoTLD+".dat_site"+datMap[currentURLhostNoTLD].datJSON.fallback_page;
-					response.writeHead(404, newHeaders);
-					response.end(fourOhFourFallback);
-				}
-			});
-		} else {
-			response.writeHead(204, newHeaders);
-			response.end("Nothing");
-		}
+  					response.writeHead(404, newHeaders);
+					response.end(result);
+		}, function(err) {
+					console.log(err); // Error: "It broke"
+					response.writeHead(204, newHeaders);
+					response.end("Nothing");
+		});
+		
 	}
 	if (err) {throw err; console.log(err);}
   });
