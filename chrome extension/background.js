@@ -5,15 +5,15 @@ var port = "9989";
 
 function fakeDisable() {
 	chrome.browserAction.setBadgeText({text: ""});
-	//chrome.browserAction.setBadgeBackgroundColor({color: "red"});
+	chrome.browserAction.setBadgeBackgroundColor({color: ""});
 	//chrome.browserAction.setPopup({popup: "other_popup.html"});
 	//chrome.browserAction.disable();
 }
 
 function fakeEnable() {
-	chrome.browserAction.setBadgeText({text: "1"});
-	chrome.browserAction.setBadgeBackgroundColor({color: "[0, 0, 0, 1]"});
-	chrome.browserAction.setPopup({popup: chrome.runtime.getManifest().browser_action.default_popup});
+	chrome.browserAction.setBadgeText({text: "Dat"});
+	chrome.browserAction.setBadgeBackgroundColor({color: "#000000"});
+	//chrome.browserAction.setPopup({popup: chrome.runtime.getManifest().browser_action.default_popup});
 	//chrome.browserAction.enable();
 }
 
@@ -83,11 +83,13 @@ chrome.omnibox.onInputEntered.addListener(function(text) {
 });
 
 chrome.webNavigation.onBeforeNavigate.addListener(function(details) {
+console.log("Before Navigate");
+console.log(details);
 	var currentURLRequest = document.createElement('a');
 	currentURLRequest.href = details.url;
 	var currentTLD = currentURLRequest.hostname.split(".").pop();
 	var currentURLhostNoTLD = currentURLRequest.hostname.split(".")[0];
-
+	
 	if (currentTLD != 'dat_site') {
 		//Do nothing
 	  } else {
@@ -95,8 +97,10 @@ chrome.webNavigation.onBeforeNavigate.addListener(function(details) {
 	    console.log('inputEntered: ' + details.url + "|" + currentTLD);
 	  }
 });
-  
+
 chrome.webRequest.onBeforeRequest.addListener(function(details) {
+console.log("Before Request");
+console.log(details);
     var currentURLRequest = document.createElement('a');
 	currentURLRequest.href = details.url;
 	console.log(details.url);
@@ -132,6 +136,8 @@ chrome.webRequest.onBeforeRequest.addListener(function(details) {
 
 chrome.webRequest.onErrorOccurred.addListener(function(details)
 {
+console.log("Error Occurred");
+console.log(details);
     var currentURLRequest = document.createElement('a');
 	currentURLRequest.href = details.url;
 	var currentURLpage = currentURLRequest.pathname;
@@ -143,6 +149,34 @@ chrome.webRequest.onErrorOccurred.addListener(function(details)
 	} else {
 		chrome.tabs.update(details.tabId, {url: "/dat_error.html?datHash="+currentURLhostNoTLD+"&path="+currentURLpage});
 	}
+},
+{urls: ["*://*.dat_site/*"], types: ["main_frame"]});
+
+chrome.webRequest.onResponseStarted.addListener(function(details) {
+console.log("Response Started");
+console.log(details);
+console.log(details.responseHeaders);
+},
+{urls: ["*://*.dat_site/*"], types: ["main_frame"]});
+
+chrome.webRequest.onBeforeRedirect.addListener(function(details) {
+console.log("Before Redirect");
+console.log(details);
+console.log(details.responseHeaders);
+},
+{urls: ["*://*.dat_site/*"], types: ["main_frame"]});
+
+chrome.webRequest.onCompleted.addListener(function(details) {
+console.log("Completed");
+console.log(details);
+console.log(details.responseHeaders);
+},
+{urls: ["*://*.dat_site/*"], types: ["main_frame"]});
+
+chrome.webRequest.onHeadersReceived.addListener(function(details) {
+console.log("Headers Received");
+console.log(details);
+console.log(details.responseHeaders);
 },
 {urls: ["*://*.dat_site/*"], types: ["main_frame"]});
 

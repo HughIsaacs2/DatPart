@@ -52,9 +52,10 @@ color: #ffffff;
 <script src="popup.js" defer="true" lazyload="1"></script>
 </head>
 <body><div id="universe">
-    <h3>DatPart!</h3>
-	<main id="site-info"><img id="site-favicon" src="/logo.svg" width="5px" height="5px" /><span id="site-title">Title</span><br/>
-	<button class="button" id="pin" title="Pin">Pin</button> <button class="button" id="unpin" title="UnPin">UnPin</button><br/><br/>
+    <h3><img src="/logo.svg" width="5px" height="5px" alt="" role="presentation" /> DatPart!</h3>
+	<main id="site-info"><img id="site-favicon" src="/logo.svg" width="5px" height="5px" role="presentation" /><span id="site-title">Title</span><br/>
+	<span id="site-description">Description</span><br/>
+	<button class="button" id="pin" title="Pin this Dat offline and co-host it">Pin</button> <button class="button" id="unpin" title="UnPin this Dat and stop co-hosting">UnPin</button><br/><br/>
 	<textarea id="site-url" name="site-url" rows="1" cols="40" title="Dat URL" placeholder="dat://" readonly="true" spellcheck="false"></textarea><br/><br/></main>
 	
 	<a href="options.html" title="Options" target="_blank" class="button">Options</a>

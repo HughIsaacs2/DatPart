@@ -26,11 +26,14 @@ function checkTab() {
 					siteURL.innerText = activeTab.url;
 					
 					var siteTitle = document.getElementById("site-title");
-					siteTitle.innerText = activeTab.title;
+					siteTitle.innerText = activeTab.title; //In the future, replace with Dat.json title
+					
+					var siteDescription = document.getElementById("site-description");
+					siteDescription.innerText = activeTab.title; //In the future, replace with Dat.json description
 					
 					var faviconIMG = document.getElementById("site-favicon");
 					faviconIMG.src = activeTab.favIconUrl;
-					faviconIMG.title = activeTab.title;
+					faviconIMG.title = activeTab.title; //In the future, replace with Dat.json title
 					
 					var currentURLhostNoTLD = currentURLRequest.hostname.split(".")[0];
 					console.log(currentURLhostNoTLD);
@@ -76,6 +79,10 @@ function pinSite() {
 					fetch("http://"+ appip +":" + commandPort + "/pin/", {
 						method: "POST",
 						headers: myHeaders
+					}).then(function(response) {
+						console.log("Server response: "+response);
+					}).then(function(data) {
+						console.log("Data: "+data);
 					});
 				
 				}
@@ -112,6 +119,10 @@ function unpinSite() {
 					fetch("http://"+ appip +":" + commandPort + "/unpin/", {
 						method: "POST",
 						headers: myHeaders
+					}).then(function(response) {
+						console.log("Server response: "+response);
+					}).then(function(data) {
+						console.log("Data: "+data);
 					});
 				
 				}
