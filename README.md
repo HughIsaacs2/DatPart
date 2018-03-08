@@ -49,11 +49,15 @@ Basically all this does is use the Chrome Extension WebRequest API and Proxy API
 
 ## To-Do [Short term + more specific list]
 * ~~Dat URL for current tab in the extension pop up.~~
-* ~~Support for 404 pages by reading “fallback_page” in dat.json.~~
+* ~~Support for 404 pages by reading “fallback_page” in dat.json (updated this further to work the same way it does in Beaker Browser).~~
 * ~~An button in the extension pop up to tell the app to download the entire Dat.~~
 * ~~A button in the extension pop up to tell the app to delete the entire Dat.~~
 * ~~A landing page for introducing users to the extension/app.~~
-* A page for deleting torrents/dats and other information.
-* The ability to submit dat links or hashes as searches in the extension (needs Dat parse for web).
 * Grey out extension icon when not on a Dat site (sort of done, I instead display a badge for Dat sites).
-
+* Fix how much the server app checks for the dat.json file (it seriously goes nuts, checks the network for dat.json again on every HTTP request).
+* Code something to let the extension know to hide the "Pin" or "Unpin" button (likely going to be more HTTP headers, for now).
+* Build a web page that displays a list of the Dats stored offline for clarity (this is the last thing I need before building a Mac OS X and Linux version).
+* A page for deleting dats and other information.
+* Get Travis CI working with this repo to auto-build Mac OS X and Linux versions.
+* The ability to submit dat links or hashes as searches in the extension (needs [Dat parse](https://github.com/pfrazee/parse-dat-url "parse-dat-url") for web).
+* Get AppVeyor working with this repo to auto-build Windows versions.
