@@ -1,5 +1,75 @@
 browser.proxy.register('pac.js');
 
+var appip = "127.0.0.1";
+var port = "9989";
+
+function fakeDisable() {
+	chrome.browserAction.setBadgeText({text: ""});
+	chrome.browserAction.setBadgeBackgroundColor({color: ""});
+	//chrome.browserAction.setPopup({popup: "other_popup.html"});
+	//chrome.browserAction.disable();
+}
+
+function fakeEnable() {
+	chrome.browserAction.setBadgeText({text: "Dat"});
+	chrome.browserAction.setBadgeBackgroundColor({color: "#000000"});
+	//chrome.browserAction.setPopup({popup: chrome.runtime.getManifest().browser_action.default_popup});
+	//chrome.browserAction.enable();
+}
+
+function decideEnable(currentTLD) {
+					
+				if (currentTLD != 'dat_site') {
+					fakeDisable();
+				} else {
+					fakeEnable();
+				}
+
+}
+
+
+chrome.runtime.onInstalled.addListener(function(details){
+    if(details.reason == "install"){
+        console.log("First install.");
+		chrome.tabs.create({url: chrome.runtime.getURL("/welcome.html")});
+    }else if(details.reason == "update"){
+        console.log("Updated from " + details.previousVersion + " to " + chrome.runtime.getManifest().version + ".");
+    }
+});
+
+chrome.tabs.onActivated.addListener(function (tab) {
+	console.log(tab);
+	
+		  chrome.tabs.query (
+                { currentWindow: true, active: true }, 
+                function(tabs) {
+                    var activeTab = tabs[0];
+                    console.log(JSON.stringify(activeTab));
+					
+					var currentURLRequest = document.createElement('a');
+					currentURLRequest.href = activeTab.url;
+					
+					var currentTLD = currentURLRequest.hostname.split(".").pop();
+					console.log(currentTLD);
+					
+				decideEnable(currentTLD);
+
+      });
+});
+
+chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
+	console.log(changeInfo); console.log(changeInfo.url);
+	
+					var currentURLRequest = document.createElement('a');
+					currentURLRequest.href = changeInfo.url;
+					
+					var currentTLD = currentURLRequest.hostname.split(".").pop();
+					console.log(currentTLD);
+					
+				decideEnable(currentTLD);
+
+});
+
 browser.proxy.onProxyError.addListener(function (error) {
   console.error('BDNS: PAC error: ' + error.message);
 });
@@ -44,11 +114,7 @@ chrome.webRequest.onBeforeRequest.addListener(function(details) {
 	};
 	
 	var dathost = currentURLRequest.hostname;
-	var port = "9989";
 	var access = "PROXY";
-	var appip = "127.0.0.1";
-
-	
 	
 }, {urls: ["*://*.dat_site/*"]}, ["blocking"]);
 
@@ -65,6 +131,34 @@ chrome.webRequest.onErrorOccurred.addListener(function(details)
 	} else {
 		chrome.tabs.update(details.tabId, {url: "/dat_error.html?datHash="+currentURLhostNoTLD+"&path="+currentURLpage});
 	}
+},
+{urls: ["*://*.dat_site/*"], types: ["main_frame"]});
+
+chrome.webRequest.onResponseStarted.addListener(function(details) {
+console.log("Response Started");
+console.log(details);
+console.log(details.responseHeaders);
+},
+{urls: ["*://*.dat_site/*"], types: ["main_frame"]});
+
+chrome.webRequest.onBeforeRedirect.addListener(function(details) {
+console.log("Before Redirect");
+console.log(details);
+console.log(details.responseHeaders);
+},
+{urls: ["*://*.dat_site/*"], types: ["main_frame"]});
+
+chrome.webRequest.onCompleted.addListener(function(details) {
+console.log("Completed");
+console.log(details);
+console.log(details.responseHeaders);
+},
+{urls: ["*://*.dat_site/*"], types: ["main_frame"]});
+
+chrome.webRequest.onHeadersReceived.addListener(function(details) {
+console.log("Headers Received");
+console.log(details);
+console.log(details.responseHeaders);
 },
 {urls: ["*://*.dat_site/*"], types: ["main_frame"]});
 

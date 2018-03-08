@@ -1,50 +1,57 @@
 {
-        "name": "Stellar [Extension]",
-          "short_name": "Stellar",
-  "description": "Stellar extension.",
-         "manifest_version": 2,
-  "version": "0.0.2",
-    "applications": {
-    "gecko": {
-      "strict_min_version": "57"
-    }
-  },
-  "homepage_url": "https://github.com/hughisaacs2/DatPart",
-    "developer": {
-    "name": "Hugh Isaacs II",
-    "url": "https://github.com/hughisaacs2/DatPart"
-  },
-        "permissions": ["tabs", "webRequestBlocking", "webRequest", "webNavigation", "proxy", "alarms", "notifications", "*://*.dat_site/*", "*://*.dat/*", "*://*.torrent_site/*", "storage", "unlimitedStorage"],
-		"optional_permissions": [ "tabs", "notifications", "*://*/", "<all_urls>" ],
-		"omnibox": { "keyword" : "other_web" },
-		  "web_accessible_resources": [
-    "redirector.html",
-    "redirector_script.js"
-  ],
-		"background": {
-          "scripts": ["background.js"]
-        },
-		"content_scripts": [
-			{
-			  "matches": ["*://*.dat_site/*"],
-			  "run_at": "document_start",
-			  "js": ["datparse.js"]
-			}
-		  ],
-          "icons": {
-            "16": "logo_16.png",
-            "24": "logo.png",
-            "32": "logo.png",
-			"128": "logo_128.png"
-          },
-        "browser_action": {
-          "default_icon": {
-            "16": "logo_16.png",
-            "24": "logo.png",
-            "32": "logo.png",
-			"128": "logo_128.png"
-          },
-          "default_title": "Stellar",
-          "default_popup": "popup.html"
-        }
+	"name": "DatPart [Extension]",
+	"short_name": "DatPart",
+	"description": "DatPart extension.",
+	"manifest_version": 2,
+	"version": "0.0.7",
+	"applications": {
+		"gecko": {
+			"strict_min_version": "57"
+		}
+	},
+	"homepage_url": "https://github.com/hughisaacs2/DatPart",
+		"developer": {
+		"name": "Hugh Isaacs II",
+		"url": "https://github.com/hughisaacs2/DatPart"
+	},
+	"permissions": ["activeTab", "webRequestBlocking", "webRequest", "webNavigation", "proxy", "http://127.0.0.1:9989/*", "http://127.0.0.1:9988/*", "http://localhost:9989/", "http://localhost:9988/", "*://*.dat_site/*", "*://*.torrent_site/*", "storage", "nativeMessaging"],
+	"optional_permissions": [ "tabs", "notifications", "*://*/", "<all_urls>" ],
+	"omnibox": { "keyword" : "DatPart" },
+	"web_accessible_resources": [
+		"redirector.html",
+		"redirector_script.js"
+	],
+	"protocol_handlers": [
+		{
+		"protocol": "web+dat",
+		"name": "DatPart Extension",
+		"uriTemplate": "/redirector.html?dat=%s"
+		}
+	],
+	"background": {
+	  "scripts": ["background.js"]
+	},
+	"content_scripts": [
+		{
+		  "matches": ["*://*.dat_site/*"],
+		  "run_at": "document_start",
+		  "js": ["datparse.js"]
+		}
+	],
+	"icons": {
+		"16": "logo_16.png",
+		"24": "logo.png",
+		"32": "logo.png",
+		"128": "logo_128.png"
+	},
+	"browser_action": {
+	  "default_icon": {
+		"16": "logo_16.png",
+		"24": "logo.png",
+		"32": "logo.png",
+		"128": "logo_128.png"
+	  },
+	  "default_title": "DatPart",
+	  "default_popup": "popup.html"
+	}
 }
