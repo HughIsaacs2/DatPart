@@ -119,9 +119,12 @@
 	}
 	
 function pinDat(datToPin) {
-	localStorage.setItem(datToPin, JSON.stringify("{'temp': false, 'sparse': false}"));
-	console.log("Storing Dat "+datToPin+" offline "+localStorage.getItem(datToPin));
-	datMap[datToPin] = JSON.parse(localStorage.getItem(datToPin));
+		if (!fs.existsSync(__dirname + '/../../dats/'+datToPin+'/')) {
+			fs.mkdirSync(__dirname + '/../../dats/'+datToPin+'/');
+		}
+		
+   	console.log("Storing Dat "+datToPin+" offline");
+	datMap[datToPin] = {'temp': false, 'sparse': false};
    
 	dat( __dirname + '/../../dats/'+datToPin, {
 	  key: request.headers.dat, temp: datMap[datToPin].temp, sparse: datMap[datToPin].sparse // (a 64 character hash from above)
@@ -135,15 +138,11 @@ function pinDat(datToPin) {
    console.log("Pinning dat "+datToPin);
    console.log(fs.readdirSync(__dirname + '/../../dats/'));
    
-   response.set('Content-Type', 'text/plain');
-   response.send('Pinning '+datToPin);
-   
 	});
 }
 
 function unpinDat(datToUnpin) {
 	
-	localStorage.removeItem(datToUnpin);
 	datMap[datToUnpin] = {'temp': true, 'sparse': true};
 	console.log("Deleting Dat "+datToUnpin);
    
@@ -167,9 +166,6 @@ function unpinDat(datToUnpin) {
 	
 	}
 	
-	   response.set('Content-Type', 'text/plain');
-	   response.send('Unpinning '+datToUnpin);
-	
 }
 	
 app.use(bodyParser.urlencoded({extended : true}));
@@ -190,6 +186,8 @@ app.use(bodyParser.urlencoded({extended : true}));
 	   if (request.headers.task == "pin" && request.headers.type == "dat" ) {
 
 pinDat(request.headers.dat);
+response.set('Content-Type', 'text/plain');
+response.send('Pinning '+request.headers.dat);
 			
 	   }
 	   
@@ -204,10 +202,32 @@ pinDat(request.headers.dat);
    
    if (request.headers.task == "unpin" && request.headers.type == "dat" ) {
 	   
-	   unpinDat(request.headers.dat)
+	   unpinDat(request.headers.dat);
+	   response.set('Content-Type', 'text/plain');
+	   response.send('Unpinning '+request.headers.dat);
 
    }
   });
+  
+   app.post("/checkpin/", function(request, response) {
+	   console.log("checkpin");
+	   console.log(request);
+	   console.log(request.headers.task);
+	   console.log(request.headers.type);
+	   console.log(request.headers.dat);
+	   
+	   if (request.headers.task == "pin") {
+			if (!fs.existsSync(__dirname + '/../../dats/')) {
+				fs.mkdirSync(__dirname + '/../../dats/');
+			}
+	   }
+	   
+	   if (request.headers.task == "checkpin" && request.headers.type == "dat" ) {
+
+			
+	   }
+	   
+   });
 
 app.listen(commandPort);
 
@@ -234,14 +254,13 @@ const requestHandler = (request, response) => {
 
 if(request.method == 'GET' && currentTLD == 'dat_site' && fs.existsSync(__dirname + "/../../dats/")) {
 
-	if(	localStorage.getItem(currentURLhostNoTLD) != null ){
-		console.log(" dat://"+currentURLhostNoTLD+" Settings: "+localStorage.getItem(currentURLhostNoTLD).toString());
-		console.log(JSON.parse(localStorage.getItem(currentURLhostNoTLD)));
-		datMap[currentURLhostNoTLD] = JSON.parse(localStorage.getItem(currentURLhostNoTLD).toString());
-	} else {
-		console.log(" dat://"+currentURLhostNoTLD+" No settings.");
-		datMap[currentURLhostNoTLD] = {'temp': true, 'sparse': true};
-	}
+		if (fs.existsSync(__dirname + '/../../dats/'+currentURLhostNoTLD+'/')) {
+			console.log(" dat://"+currentURLhostNoTLD+" folder exists.");
+			datMap[currentURLhostNoTLD] = {'temp': false, 'sparse': false};
+		} else {
+			console.log(" dat://"+currentURLhostNoTLD+" folder doesn't exist.");
+			datMap[currentURLhostNoTLD] = {'temp': true, 'sparse': true};
+		}
 
 dat( __dirname + '/../../dats/'+currentURLhostNoTLD, {
   // 2. Tell Dat what link I want

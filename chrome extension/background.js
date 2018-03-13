@@ -5,7 +5,7 @@ var port = "9989";
 
 function fakeDisable() {
 	chrome.browserAction.setBadgeText({text: ""});
-	chrome.browserAction.setBadgeBackgroundColor({color: ""});
+	//chrome.browserAction.setBadgeBackgroundColor({color: "transparent"});
 	//chrome.browserAction.setPopup({popup: "other_popup.html"});
 	//chrome.browserAction.disable();
 }
@@ -17,13 +17,57 @@ function fakeEnable() {
 	//chrome.browserAction.enable();
 }
 
+function datAvailable() {
+	chrome.browserAction.setBadgeText({text: "1"});
+	chrome.browserAction.setBadgeBackgroundColor({color: "#269224"});
+}
+
 function decideEnable(currentTLD) {
 					
-				if (currentTLD != 'dat_site') {
-					fakeDisable();
-				} else {
-					fakeEnable();
-				}
+	if (currentTLD != 'dat_site') {
+		fakeDisable();
+		
+    chrome.permissions.contains({
+        origins: ['https://*/']
+      }, function(result) {
+        if (result) {
+          
+		chrome.tabs.query (
+			{ currentWindow: true, active: true }, 
+			function(tabs) {
+				var activeTab = tabs[0];
+				
+				var currentURLRequest = document.createElement('a');
+				currentURLRequest.href = activeTab.url;
+				
+				var currentURLpage = currentURLRequest.pathname;
+				var currentTLD = currentURLRequest.hostname.split(".").pop();
+				var currentURLhostNoTLD = currentURLRequest.hostname.split(".")[0];
+				
+			fetch("https://"+ currentURLhostNoTLD + "." + currentTLD + "/.well-known/dat").then(function(response) {
+			console.log("Server response: "+response);
+			console.log(response);
+			console.log(response.body);
+			
+			if (response.status !== 200) {
+				console.log('Looks like there was a problem. Status Code: ' + response.status);
+				fakeDisable();
+				return;
+			} else {
+				datAvailable();
+			}
+				  
+			});
+		});
+		  
+        } else {
+          fakeDisable();
+        }
+      });
+		
+	} else {
+		fakeEnable();
+	}
 
 }
 
@@ -134,8 +178,7 @@ console.log(details);
     //return {cancel: true, redirectUrl: "redirect.html"};
 }, {urls: ["*://*.dat_site/*"]}, ["blocking"]);
 
-chrome.webRequest.onErrorOccurred.addListener(function(details)
-{
+chrome.webRequest.onErrorOccurred.addListener(function(details){
 console.log("Error Occurred");
 console.log(details);
     var currentURLRequest = document.createElement('a');
@@ -180,8 +223,7 @@ console.log(details.responseHeaders);
 },
 {urls: ["*://*.dat_site/*"], types: ["main_frame"]});
 
-chrome.webRequest.onErrorOccurred.addListener(function(details)
-{
+chrome.webRequest.onErrorOccurred.addListener(function(details){
     var currentURLRequest = document.createElement('a');
 	currentURLRequest.href = details.url;
 	var currentTLD = currentURLRequest.hostname.split(".").pop();
