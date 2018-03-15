@@ -28,7 +28,7 @@ function decideEnable(currentTLD) {
 		fakeDisable();
 		
     chrome.permissions.contains({
-        origins: ['https://*/']
+        origins: ['https://*/.well-known/dat']
       }, function(result) {
         if (result) {
           
@@ -39,11 +39,16 @@ function decideEnable(currentTLD) {
 				
 				var currentURLRequest = document.createElement('a');
 				currentURLRequest.href = activeTab.url;
-				
+				var currentURLhost = currentURLRequest.hostname;
 				var currentURLpage = currentURLRequest.pathname;
 				var currentTLD = currentURLRequest.hostname.split(".").pop();
 				var currentURLhostNoTLD = currentURLRequest.hostname.split(".")[0];
 				
+		chrome.storage.local.get([currentURLhost], function(result) {
+          console.log('Value currently is ' + result.key);
+		  if(result.key != undefined){
+				datAvailable();
+		  } else {
 			fetch("https://"+ currentURLhostNoTLD + "." + currentTLD + "/.well-known/dat").then(function(response) {
 			console.log("Server response: "+response);
 			console.log(response);
@@ -51,13 +56,31 @@ function decideEnable(currentTLD) {
 			
 			if (response.status !== 200) {
 				console.log('Looks like there was a problem. Status Code: ' + response.status);
+				chrome.storage.sync.set({currentURLhost: "{'dat':'none','ttl':''}"}, function() {
+				  console.log('Value is set to ' + value);
+				});
 				fakeDisable();
 				return;
 			} else {
 				datAvailable();
+				response.text().then(function (text) {
+				  // do something with the text response 
+				  console.log(text);
+				  console.log(text.split('\n').shift());
+				  //if (url.substring(0, 5) == "http:" && host.lastIndexOf('.dat_site', host.length)) { return "PROXY 127.0.0.1:9989;"; } else { return "DIRECT"; }
+				  console.log(text.split('\n').shift().substring(6, text.length));
+				  console.log(text.split('\n').shift().substring(6, text.length - 1));
+					chrome.storage.sync.set({currentURLhost: ""}, function() {
+					  console.log(currentURLhost+' value is set to ' + value);
+					});
+				});
 			}
 				  
 			});
+		  }
+		  
+        });
+
 		});
 		  
         } else {
