@@ -4,261 +4,353 @@ var appip = "127.0.0.1";
 var port = "9989";
 
 function fakeDisable() {
-	chrome.browserAction.setBadgeText({text: ""});
-	//chrome.browserAction.setBadgeBackgroundColor({color: "transparent"});
-	//chrome.browserAction.setPopup({popup: "other_popup.html"});
-	//chrome.browserAction.disable();
+    chrome.browserAction.setBadgeText({
+        text: ""
+    });
+    //chrome.browserAction.setBadgeBackgroundColor({color: "transparent"});
+    //chrome.browserAction.setPopup({popup: "other_popup.html"});
+    //chrome.browserAction.disable();
 }
 
 function fakeEnable() {
-	chrome.browserAction.setBadgeText({text: "Dat"});
-	chrome.browserAction.setBadgeBackgroundColor({color: "#000000"});
-	//chrome.browserAction.setPopup({popup: chrome.runtime.getManifest().browser_action.default_popup});
-	//chrome.browserAction.enable();
+    chrome.browserAction.setBadgeText({
+        text: "Dat"
+    });
+    chrome.browserAction.setBadgeBackgroundColor({
+        color: "#2aca4b"
+    }); //Dat logo color
+    //chrome.browserAction.setPopup({popup: chrome.runtime.getManifest().browser_action.default_popup});
+    //chrome.browserAction.enable();
 }
 
 function datAvailable() {
-	chrome.browserAction.setBadgeText({text: "1"});
-	chrome.browserAction.setBadgeBackgroundColor({color: "#269224"});
+    chrome.browserAction.setBadgeText({
+        text: "1"
+    });
+    chrome.browserAction.setBadgeBackgroundColor({
+        color: "#006fdf"
+    }); //Beaker logo color
 }
 
 function decideEnable(currentTLD) {
-					
-	if (currentTLD != 'dat_site') {
-		fakeDisable();
-		
-    chrome.permissions.contains({
-        origins: ['https://*/.well-known/dat']
-      }, function(result) {
-        if (result) {
-          
-		chrome.tabs.query (
-			{ currentWindow: true, active: true }, 
-			function(tabs) {
-				var activeTab = tabs[0];
-				
-				var currentURLRequest = document.createElement('a');
-				currentURLRequest.href = activeTab.url;
-				var currentURLhost = currentURLRequest.hostname;
-				var currentURLpage = currentURLRequest.pathname;
-				var currentTLD = currentURLRequest.hostname.split(".").pop();
-				var currentURLhostNoTLD = currentURLRequest.hostname.split(".")[0];
-				
-		chrome.storage.local.get([currentURLhost], function(result) {
-          console.log('Value currently is ' + result.key);
-		  if(result.key != undefined){
-				datAvailable();
-		  } else {
-			fetch("https://"+ currentURLhostNoTLD + "." + currentTLD + "/.well-known/dat").then(function(response) {
-			console.log("Server response: "+response);
-			console.log(response);
-			console.log(response.body);
-			
-			if (response.status !== 200) {
-				console.log('Looks like there was a problem. Status Code: ' + response.status);
-				chrome.storage.sync.set({currentURLhost: "{'dat':'none','ttl':''}"}, function() {
-				  console.log('Value is set to ' + value);
-				});
-				fakeDisable();
-				return;
-			} else {
-				datAvailable();
-				response.text().then(function (text) {
-				  // do something with the text response 
-				  console.log(text);
-				  console.log(text.split('\n').shift());
-				  //if (url.substring(0, 5) == "http:" && host.lastIndexOf('.dat_site', host.length)) { return "PROXY 127.0.0.1:9989;"; } else { return "DIRECT"; }
-				  console.log(text.split('\n').shift().substring(6, text.length));
-				  console.log(text.split('\n').shift().substring(6, text.length - 1));
-					chrome.storage.sync.set({currentURLhost: ""}, function() {
-					  console.log(currentURLhost+' value is set to ' + value);
-					});
-				});
-			}
-				  
-			});
-		  }
-		  
+
+    if (currentTLD != 'dat_site') {
+        fakeDisable();
+
+        chrome.permissions.contains({
+            origins: ['https://*/.well-known/dat']
+        }, function(result) {
+            if (result) {
+
+                chrome.tabs.query({
+                        currentWindow: true,
+                        active: true
+                    },
+                    function(tabs) {
+                        var activeTab = tabs[0];
+
+                        var currentURLRequest = document.createElement('a');
+                        currentURLRequest.href = activeTab.url;
+                        if (currentURLRequest.protocol == "https:") {
+                            var currentURLhost = currentURLRequest.hostname;
+
+                            chrome.storage.local.get([currentURLhost], function(result) {
+                                console.log(currentURLhost);
+                                console.log('Value for '+currentURLhost+' currently is ' + result);
+                                console.log(result);
+                                console.log(result.constructor === Object);
+                                console.log(Object.keys(result).length);
+                                if (Object.keys(result).length != 0 && result.constructor == Object) {
+                                    datAvailable();
+
+                                    var theHereAndNow = Date.now();
+                                    var TTLtext = result.ttl;
+                                    console.log(TTLtext);
+                                    var TTLDate = theHereAndNow + TTLtext;
+                                    //console.log(TTLDate > theHereAndNow);
+                                    if (TTLDate > theHereAndNow) {
+                                        console.log(currentURLhost+" Not Expired");
+                                    }
+                                    else {
+                                        console.log(currentURLhost+" Expired")
+                                    }
+                                }
+                                else {
+                                    fetch("https://" + currentURLhost + "/.well-known/dat").then(function(response) {
+                                        console.log(currentURLhost+" server response: " + response);
+                                        console.log(response);
+                                        console.log(response.body);
+
+                                        if (response.status !== 200) {
+                                            console.log('Looks like there was a problem. Status Code: ' + response.status);
+                                            var theTwoHundred = {
+                                                'dat': '',
+                                                'ttl': 3600
+                                            };
+                                            chrome.storage.local.set({
+                                                currentURLhost: theTwoHundred
+                                            }, function() {
+                                                console.log('Value ' + currentURLhost + ' is set to ' + theTwoHundred);
+                                                console.log(theTwoHundred);
+                                            });
+                                            fakeDisable();
+                                            return;
+                                        }
+                                        else {
+                                            datAvailable();
+                                            response.text().then(function(text) {
+                                                // do something with the text response
+                                                console.log(text);
+
+                                                console.log(text.split('\n')[0]);
+                                                console.log(text.split('\n')[1]);
+                                                console.log("Dat hash: " + text.split('\n').shift().substring(6, 70));
+                                                console.log("TTL: " + text.split('\n')[1].substring(4, text.length));
+                                                console.log("Date Now: " + Date.now());
+
+                                                var theHereAndNow = Date.now();
+                                                var TTLtext = parseInt(text.split('\n')[1].substring(4, text.length));
+                                                var TTLDate = theHereAndNow + TTLtext;
+                                                console.log("TTL Date: " + TTLDate);
+                                                var itExists = 0;
+                                                if (TTLtext != null && TTLtext != undefined && TTLtext != 0) {
+                                                    itExists = {
+                                                        'dat': text.split('\n')[0].substring(6, 70),
+                                                        'ttl': TTLDate
+                                                    };
+                                                }
+                                                else {
+                                                    itExists = {
+                                                        'dat': text.split('\n')[0].substring(6, 70),
+                                                        'ttl': 3600
+                                                    };
+                                                }
+                                                chrome.storage.local.set({
+                                                    currentURLhost: itExists
+                                                }, function() {
+                                                    console.log(currentURLhost + ' value was set to ' + itExists);
+                                                    console.log(itExists);
+                                                });
+                                            });
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    });
+            }
+            else {
+                fakeDisable();
+            }
         });
 
-		});
-		  
-        } else {
-          fakeDisable();
-        }
-      });
-		
-	} else {
-		fakeEnable();
-	}
+    }
+    else {
+        fakeEnable();
+    }
 
 }
 
-chrome.runtime.onInstalled.addListener(function(details){
-    if(details.reason == "install"){
+chrome.runtime.onInstalled.addListener(function(details) {
+    if (details.reason == "install") {
         console.log("First install.");
-		chrome.tabs.create({url: chrome.runtime.getURL("/welcome.html")});
-    }else if(details.reason == "update"){
+        chrome.tabs.create({
+            url: chrome.runtime.getURL("/welcome.html")
+        });
+    }
+    else if (details.reason == "update") {
         console.log("Updated from " + details.previousVersion + " to " + chrome.runtime.getManifest().version + ".");
     }
 });
 
-chrome.tabs.onActivated.addListener(function (tab) {
-	console.log(tab);
-	
-		  chrome.tabs.query (
-                { currentWindow: true, active: true }, 
-                function(tabs) {
-                    var activeTab = tabs[0];
-                    console.log(JSON.stringify(activeTab));
-					
-					var currentURLRequest = document.createElement('a');
-					currentURLRequest.href = activeTab.url;
-					
-					var currentTLD = currentURLRequest.hostname.split(".").pop();
-					console.log(currentTLD);
-					
-				decideEnable(currentTLD);
+chrome.tabs.onActivated.addListener(function(tab) {
+    console.log(tab);
 
-      });
+    chrome.tabs.query({
+            currentWindow: true,
+            active: true
+        },
+        function(tabs) {
+            var activeTab = tabs[0];
+            console.log(JSON.stringify(activeTab));
+
+            var currentURLRequest = document.createElement('a');
+            currentURLRequest.href = activeTab.url;
+
+            var currentTLD = currentURLRequest.hostname.split(".").pop();
+            console.log(currentTLD);
+
+            decideEnable(currentTLD);
+        });
 });
 
-chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
-	console.log(changeInfo); console.log(changeInfo.url);
-	
-					var currentURLRequest = document.createElement('a');
-					currentURLRequest.href = changeInfo.url;
-					
-					var currentTLD = currentURLRequest.hostname.split(".").pop();
-					console.log(currentTLD);
-					
-				decideEnable(currentTLD);
+chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+    console.log(changeInfo);
+    console.log(changeInfo.url);
 
+    var currentURLRequest = document.createElement('a');
+    currentURLRequest.href = changeInfo.url;
+
+    var currentTLD = currentURLRequest.hostname.split(".").pop();
+    console.log(currentTLD);
+
+    decideEnable(currentTLD);
 });
 
 chrome.omnibox.onInputChanged.addListener(function(text, suggest) {
     console.log('inputChanged: ' + text);
-    suggest([
-      {content: text + " one", description: "the first one"},
-      {content: text + " number two", description: "the second entry"}
+    suggest([{
+            content: text + " one",
+            description: "the first one"
+        },
+        {
+            content: text + " number two",
+            description: "the second entry"
+        }
     ]);
 });
 
 chrome.omnibox.onInputEntered.addListener(function(text) {
     console.log('inputEntered: ' + text);
-	
+
 });
 
 chrome.webNavigation.onBeforeNavigate.addListener(function(details) {
-console.log("Before Navigate");
-console.log(details);
-	var currentURLRequest = document.createElement('a');
-	currentURLRequest.href = details.url;
-	var currentTLD = currentURLRequest.hostname.split(".").pop();
-	var currentURLhostNoTLD = currentURLRequest.hostname.split(".")[0];
-	
-	if (currentTLD != 'dat_site') {
-		//Do nothing
-	  } else {
-	    chrome.runtime.sendMessage(chromeos_server_app_id, { launch: true });
-	    console.log('inputEntered: ' + details.url + "|" + currentTLD);
-	  }
+    var currentURLRequest = document.createElement('a');
+    currentURLRequest.href = details.url;
+    var currentTLD = currentURLRequest.hostname.split(".").pop();
+    var currentURLhostNoTLD = currentURLRequest.hostname.split(".")[0];
+console.log("Before Navigate "+currentURLRequest.hostname);
+    console.log(details);
+    if (currentTLD != 'dat_site') {
+        //Do nothing
+    }
+    else {
+        chrome.runtime.sendMessage(chromeos_server_app_id, {
+            launch: true
+        });
+        console.log('inputEntered: ' + details.url + "|" + currentTLD);
+    }
 });
 
 chrome.webRequest.onBeforeRequest.addListener(function(details) {
-console.log("Before Request");
-console.log(details);
     var currentURLRequest = document.createElement('a');
-	currentURLRequest.href = details.url;
-	console.log(details.url);
-	var currentTLD = currentURLRequest.hostname.split(".").pop();
-	var currentURLhostNoTLD = currentURLRequest.hostname.split(".")[0];
-	
-	if (currentTLD != 'dat_site') {
-		return;
-	} else {
-	//chrome.runtime.sendMessage(chromeos_server_app_id, { launch: true });
-	};
-	
-	var dathost = currentURLRequest.hostname;
-	var access = "PROXY";
-	
-	var config = {
-		mode: "pac_script",
-		pacScript: {
-			data: "function FindProxyForURL(url, host) {\n" +
-			"  if (dnsDomainIs(host, '"+dathost+"'))\n" +
-			"    return '"+access+" "+appip+":"+port+"';\n" +
-			"  return 'DIRECT';\n" +
-			"}"
-		}
-	};
-	
-	chrome.proxy.settings.set({value: config, scope: 'regular'},function() {});
-	console.log('IP '+appip+' for '+dathost+' found, config is changed: '+JSON.stringify(config));
-	
-	//var redirectBackup = "redirect.html#"+currentURLhostNoTLD;
-    //return {cancel: true, redirectUrl: "redirect.html"};
-}, {urls: ["*://*.dat_site/*"]}, ["blocking"]);
+    currentURLRequest.href = details.url;
+    console.log(details.url);
+    var currentTLD = currentURLRequest.hostname.split(".").pop();
+    var currentURLhostNoTLD = currentURLRequest.hostname.split(".")[0];
+console.log("Before Request "+currentURLRequest.hostname);
+    console.log(details);
 
-chrome.webRequest.onErrorOccurred.addListener(function(details){
-console.log("Error Occurred");
-console.log(details);
+    if (currentTLD != 'dat_site') {
+        return;
+    }
+    else {
+        //chrome.runtime.sendMessage(chromeos_server_app_id, { launch: true });
+    };
+
+    var dathost = currentURLRequest.hostname;
+    var access = "PROXY";
+
+    var config = {
+        mode: "pac_script",
+        pacScript: {
+            data: "function FindProxyForURL(url, host) {\n" +
+                "  if (dnsDomainIs(host, '" + dathost + "'))\n" +
+                "    return '" + access + " " + appip + ":" + port + "';\n" +
+                "  return 'DIRECT';\n" +
+                "}"
+        }
+    };
+
+    chrome.proxy.settings.set({
+        value: config,
+        scope: 'regular'
+    }, function() {});
+    console.log('IP ' + appip + ' for ' + dathost + ' found, config is changed: ' + JSON.stringify(config));
+
+    //var redirectBackup = "redirect.html#"+currentURLhostNoTLD;
+    //return {cancel: true, redirectUrl: "redirect.html"};
+}, {
+    urls: ["http://*.dat_site/*"]
+}, ["blocking"]);
+
+chrome.webRequest.onErrorOccurred.addListener(function(details) {
     var currentURLRequest = document.createElement('a');
-	currentURLRequest.href = details.url;
-	var currentURLpage = currentURLRequest.pathname;
-	var currentTLD = currentURLRequest.hostname.split(".").pop();
-	var currentURLhostNoTLD = currentURLRequest.hostname.split(".")[0];
-	
-	if (currentTLD != 'dat_site') {
-		return;
-	} else {
-		chrome.tabs.update(details.tabId, {url: "/dat_error.html?datHash="+currentURLhostNoTLD+"&path="+currentURLpage});
-	}
-},
-{urls: ["*://*.dat_site/*"], types: ["main_frame"]});
+    currentURLRequest.href = details.url;
+    var currentURLpage = currentURLRequest.pathname;
+    var currentTLD = currentURLRequest.hostname.split(".").pop();
+    var currentURLhostNoTLD = currentURLRequest.hostname.split(".")[0];
+    console.log("Error Occurred "+currentURLRequest.hostname);
+    console.log(details);
+    
+    if (currentTLD != 'dat_site') {
+        return;
+    }
+    else {
+        chrome.tabs.update(details.tabId, {
+            url: "/dat_error.html?datHash=" + currentURLhostNoTLD + "&path=" + currentURLpage
+        });
+    }
+}, {
+    urls: ["http://*.dat_site/*"],
+    types: ["main_frame"]
+});
 
 chrome.webRequest.onResponseStarted.addListener(function(details) {
-console.log("Response Started");
-console.log(details);
-console.log(details.responseHeaders);
-},
-{urls: ["*://*.dat_site/*"], types: ["main_frame"]});
+    console.log("Response Started");
+    console.log(details);
+    console.log(details.responseHeaders);
+}, {
+    urls: ["http://*.dat_site/*"],
+    types: ["main_frame"]
+});
 
 chrome.webRequest.onBeforeRedirect.addListener(function(details) {
-console.log("Before Redirect");
-console.log(details);
-console.log(details.responseHeaders);
-},
-{urls: ["*://*.dat_site/*"], types: ["main_frame"]});
+    console.log("Before Redirect");
+    console.log(details);
+    console.log(details.responseHeaders);
+}, {
+    urls: ["http://*.dat_site/*"],
+    types: ["main_frame"]
+});
 
 chrome.webRequest.onCompleted.addListener(function(details) {
-console.log("Completed");
-console.log(details);
-console.log(details.responseHeaders);
-},
-{urls: ["*://*.dat_site/*"], types: ["main_frame"]});
+    console.log("Completed");
+    console.log(details);
+    console.log(details.responseHeaders);
+}, {
+    urls: ["http://*.dat_site/*"],
+    types: ["main_frame"]
+});
 
 chrome.webRequest.onHeadersReceived.addListener(function(details) {
-console.log("Headers Received");
-console.log(details);
-console.log(details.responseHeaders);
-},
-{urls: ["*://*.dat_site/*"], types: ["main_frame"]});
+    console.log("Headers Received");
+    console.log(details);
+    console.log(details.responseHeaders);
+}, {
+    urls: ["http://*.dat_site/*"],
+    types: ["main_frame"]
+});
 
-chrome.webRequest.onErrorOccurred.addListener(function(details){
+chrome.webRequest.onErrorOccurred.addListener(function(details) {
     var currentURLRequest = document.createElement('a');
-	currentURLRequest.href = details.url;
-	var currentTLD = currentURLRequest.hostname.split(".").pop();
-	var currentURLhostNoTLD = currentURLRequest.hostname.split(".")[0];
-	
-	if (currentTLD != 'torrent_site') {
-		return;
-	} else {
-		chrome.tabs.update(details.tabId, {url: "/torrent_error.html?torrentHash="+currentURLhostNoTLD});
-	}
-},
-{urls: ["*://*.torrent_site/*"], types: ["main_frame"]});
+    currentURLRequest.href = details.url;
+    var currentTLD = currentURLRequest.hostname.split(".").pop();
+    var currentURLhostNoTLD = currentURLRequest.hostname.split(".")[0];
+
+    if (currentTLD != 'torrent_site') {
+        return;
+    }
+    else {
+        chrome.tabs.update(details.tabId, {
+            url: "/torrent_error.html?torrentHash=" + currentURLhostNoTLD
+        });
+    }
+}, {
+    urls: ["http://*.torrent_site/*"],
+    types: ["main_frame"]
+});
 
 /*
 
