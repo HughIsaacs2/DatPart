@@ -53,7 +53,7 @@ Basically all this does is use the Chrome Extension WebRequest API and Proxy API
 * ~~An button in the extension pop up to tell the app to download the entire Dat.~~
 * ~~A button in the extension pop up to tell the app to delete the entire Dat.~~
 * ~~A landing page for introducing users to the extension/app.~~
-* Grey out extension icon when not on a Dat site (sort of done, I instead display a badge for Dat sites).
+* ~~Display a badge for Dat sites.~~
 * Fix how much the server app checks for the dat.json file (it seriously goes nuts, checks the network for dat.json again on every HTTP request).
 * Code something to let the extension know to hide the "Pin" or "Unpin" button (likely going to be more HTTP headers, for now).
 * Build a web page that displays a list of the Dats stored offline for clarity (this is the last thing I need before building a Mac OS X and Linux version).
@@ -61,3 +61,5 @@ Basically all this does is use the Chrome Extension WebRequest API and Proxy API
 * Get Travis CI working with this repo to auto-build Mac OS X and Linux versions.
 * The ability to submit dat links or hashes as searches in the extension (needs [Dat parse](https://github.com/pfrazee/parse-dat-url "parse-dat-url") for web).
 * Get AppVeyor working with this repo to auto-build Windows versions.
+* Provide an optional feature to convert dat:// URLs that aren't anchor links to anchor links (Useful for sites like Twitter).
+** Provide an option to have said links either stay in the dat:// URL format for Beaker Browser or other Dat apps, or to have them switch to the .dat_site domain name format for DatPart to open them (consider providing a context menu item for letting users on the fly decide what should be done).
