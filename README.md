@@ -62,4 +62,4 @@ Basically all this does is use the Chrome Extension WebRequest API and Proxy API
 * The ability to submit dat links or hashes as searches in the extension (needs [Dat parse](https://github.com/pfrazee/parse-dat-url "parse-dat-url") for web).
 * Get AppVeyor working with this repo to auto-build Windows versions.
 * Provide an optional feature to convert dat:// URLs that aren't anchor links to anchor links (Useful for sites like Twitter).
-* * Provide an option to have said links either stay in the dat:// URL format for Beaker Browser or other Dat apps, or to have them switch to the .dat_site domain name format for DatPart to open them (consider providing a context menu item for letting users on the fly decide what should be done).
+ * Provide an option to have said links either stay in the dat:// URL format for Beaker Browser or other Dat apps, or to have them switch to the .dat_site domain name format for DatPart to open them (consider providing a context menu item for letting users on the fly decide what should be done).
