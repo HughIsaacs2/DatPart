@@ -52,7 +52,7 @@ function decideEnable(currentTLD) {
                         var currentURLRequest = document.createElement('a');
                         currentURLRequest.href = activeTab.url;
                         if (currentURLRequest.protocol == "https:") {
-                            var currentURLhost = currentURLRequest.hostname;
+							var currentURLhost = currentURLRequest.hostname;
 
                             chrome.storage.local.get([currentURLhost], function(result) {
                                 console.log(currentURLhost);
@@ -62,7 +62,7 @@ function decideEnable(currentTLD) {
                                 console.log(Object.keys(result).length);
                                 if (Object.keys(result).length != 0 && result.constructor == Object) {
                                     datAvailable();
-
+									//console.log('');
                                     var theHereAndNow = Date.now();
                                     var TTLtext = result.ttl;
                                     console.log(TTLtext);
@@ -82,7 +82,7 @@ function decideEnable(currentTLD) {
                                         console.log(response.body);
 
                                         if (response.status !== 200) {
-                                            console.log('Looks like there was a problem. Status Code: ' + response.status);
+                                            console.log(currentURLhost +'Looks like there was a problem. Status Code: ' + response.status);
                                             var theTwoHundred = {
                                                 'dat': '',
                                                 'ttl': 3600
@@ -111,8 +111,9 @@ function decideEnable(currentTLD) {
                                                 var theHereAndNow = Date.now();
                                                 var TTLtext = parseInt(text.split('\n')[1].substring(4, text.length));
                                                 var TTLDate = theHereAndNow + TTLtext;
+                                                var backupDate = theHereAndNow + 3600;
                                                 console.log("TTL Date: " + TTLDate);
-                                                var itExists = 0;
+                                                var itExists = {};
                                                 if (TTLtext != null && TTLtext != undefined && TTLtext != 0) {
                                                     itExists = {
                                                         'dat': text.split('\n')[0].substring(6, 70),
@@ -122,12 +123,13 @@ function decideEnable(currentTLD) {
                                                 else {
                                                     itExists = {
                                                         'dat': text.split('\n')[0].substring(6, 70),
-                                                        'ttl': 3600
+                                                        'ttl': backupDate
                                                     };
                                                 }
-                                                chrome.storage.local.set({
-                                                    currentURLhost: itExists
-                                                }, function() {
+												var thatNewOne = {};
+												thatNewOne[currentURLhost] = itExists;
+												/* See: https://stackoverflow.com/questions/17664312/using-a-url-as-a-key-in-chromes-local-storage-dictionary and https://stackoverflow.com/questions/12925770/how-to-use-chrome-storage-in-a-chrome-extension-using-a-variables-value-as-the for the above */
+                                                chrome.storage.local.set(thatNewOne, function() {
                                                     console.log(currentURLhost + ' value was set to ' + itExists);
                                                     console.log(itExists);
                                                 });
