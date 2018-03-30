@@ -7,9 +7,8 @@ function fakeDisable() {
     chrome.browserAction.setBadgeText({
         text: ""
     });
-    //chrome.browserAction.setBadgeBackgroundColor({color: "transparent"});
+    chrome.browserAction.setBadgeBackgroundColor({color: "#000000"});
     //chrome.browserAction.setPopup({popup: "other_popup.html"});
-    //chrome.browserAction.disable();
 }
 
 function fakeEnable() {
@@ -20,7 +19,6 @@ function fakeEnable() {
         color: "#2aca4b"
     }); //Dat logo color
     //chrome.browserAction.setPopup({popup: chrome.runtime.getManifest().browser_action.default_popup});
-    //chrome.browserAction.enable();
 }
 
 function datAvailable() {
@@ -30,6 +28,70 @@ function datAvailable() {
     chrome.browserAction.setBadgeBackgroundColor({
         color: "#006fdf"
     }); //Beaker logo color
+}
+
+function getDatSite(currentURLhost) {
+
+                                   fetch("https://" + currentURLhost + "/.well-known/dat").then(function(response) {
+                                        console.log(currentURLhost+" server response: " + response);
+                                        console.log(response);
+                                        console.log(response.body);
+
+                                        if (response.status !== 200) {
+                                            console.log(currentURLhost +'Looks like there was a problem. Status Code: ' + response.status);
+                                            var theTwoHundred = {
+                                                'dat': '',
+                                                'ttl': 3600
+                                            };
+                                            chrome.storage.local.set({
+                                                currentURLhost: theTwoHundred
+                                            }, function() {
+                                                console.log('Value ' + currentURLhost + ' is set to ' + theTwoHundred);
+                                                console.log(theTwoHundred);
+                                            });
+                                            fakeDisable();
+                                            return;
+                                        }
+                                        else {
+                                            datAvailable();
+                                            response.text().then(function(text) {
+                                                // do something with the text response
+                                                console.log(text);
+
+                                                console.log(text.split('\n')[0]);
+                                                console.log(text.split('\n')[1]);
+                                                console.log("Dat hash: " + text.split('\n').shift().substring(6, 70));
+                                                console.log("TTL: " + text.split('\n')[1].substring(4, text.length));
+
+                                                var theHereAndNow = new Date().getTime() / 1000;
+                                                console.log("Date Now: " + theHereAndNow);
+                                                var TTLtext = parseInt(text.split('\n')[1].substring(4, text.length));
+                                                var TTLDate = theHereAndNow + TTLtext;
+                                                var backupDate = theHereAndNow + 3600;
+                                                console.log("TTL Date: " + TTLDate);
+                                                var itExists = {};
+                                                if (TTLtext != null && TTLtext != undefined && TTLtext != 0) {
+                                                    itExists = {
+                                                        'dat': text.split('\n')[0].substring(6, 70),
+                                                        'ttl': TTLDate
+                                                    };
+                                                } else {
+                                                    itExists = {
+                                                        'dat': "",
+                                                        'ttl': backupDate
+                                                    };
+                                                }
+												var thatNewOne = {};
+												thatNewOne[currentURLhost] = itExists;
+												/* See: https://stackoverflow.com/questions/17664312/using-a-url-as-a-key-in-chromes-local-storage-dictionary and https://stackoverflow.com/questions/12925770/how-to-use-chrome-storage-in-a-chrome-extension-using-a-variables-value-as-the for the above */
+                                                chrome.storage.local.set(thatNewOne, function() {
+                                                    console.log(currentURLhost + ' value was set to ' + itExists);
+                                                    console.log(itExists);
+                                                });
+                                            });
+                                        }
+                                    });
+
 }
 
 function decideEnable(currentTLD) {
@@ -60,82 +122,23 @@ function decideEnable(currentTLD) {
                                 console.log(result);
                                 console.log(result.constructor === Object);
                                 console.log(Object.keys(result).length);
+                                
                                 if (Object.keys(result).length != 0 && result.constructor == Object) {
                                     datAvailable();
 									//console.log('');
-                                    var theHereAndNow = Date.now();
-                                    var TTLtext = result.ttl;
-                                    console.log(TTLtext);
-                                    var TTLDate = theHereAndNow + TTLtext;
-                                    //console.log(TTLDate > theHereAndNow);
-                                    if (TTLDate > theHereAndNow) {
+                                    var theHereAndNow = new Date().getTime() / 1000;
+                                    var TTLtext = result[currentURLhost].ttl;
+                                    console.log("Now: "+theHereAndNow);
+                                    console.log("TTL: "+TTLtext);
+                                    console.log(TTLtext > theHereAndNow);
+                                    if (TTLtext > theHereAndNow) {
                                         console.log(currentURLhost+" Not Expired");
+                                    } else {
+                                        console.log(currentURLhost+" Expired");
+										getDatSite(currentURLhost);
                                     }
-                                    else {
-                                        console.log(currentURLhost+" Expired")
-                                    }
-                                }
-                                else {
-                                    fetch("https://" + currentURLhost + "/.well-known/dat").then(function(response) {
-                                        console.log(currentURLhost+" server response: " + response);
-                                        console.log(response);
-                                        console.log(response.body);
-
-                                        if (response.status !== 200) {
-                                            console.log(currentURLhost +'Looks like there was a problem. Status Code: ' + response.status);
-                                            var theTwoHundred = {
-                                                'dat': '',
-                                                'ttl': 3600
-                                            };
-                                            chrome.storage.local.set({
-                                                currentURLhost: theTwoHundred
-                                            }, function() {
-                                                console.log('Value ' + currentURLhost + ' is set to ' + theTwoHundred);
-                                                console.log(theTwoHundred);
-                                            });
-                                            fakeDisable();
-                                            return;
-                                        }
-                                        else {
-                                            datAvailable();
-                                            response.text().then(function(text) {
-                                                // do something with the text response
-                                                console.log(text);
-
-                                                console.log(text.split('\n')[0]);
-                                                console.log(text.split('\n')[1]);
-                                                console.log("Dat hash: " + text.split('\n').shift().substring(6, 70));
-                                                console.log("TTL: " + text.split('\n')[1].substring(4, text.length));
-                                                console.log("Date Now: " + Date.now());
-
-                                                var theHereAndNow = Date.now();
-                                                var TTLtext = parseInt(text.split('\n')[1].substring(4, text.length));
-                                                var TTLDate = theHereAndNow + TTLtext;
-                                                var backupDate = theHereAndNow + 3600;
-                                                console.log("TTL Date: " + TTLDate);
-                                                var itExists = {};
-                                                if (TTLtext != null && TTLtext != undefined && TTLtext != 0) {
-                                                    itExists = {
-                                                        'dat': text.split('\n')[0].substring(6, 70),
-                                                        'ttl': TTLDate
-                                                    };
-                                                }
-                                                else {
-                                                    itExists = {
-                                                        'dat': text.split('\n')[0].substring(6, 70),
-                                                        'ttl': backupDate
-                                                    };
-                                                }
-												var thatNewOne = {};
-												thatNewOne[currentURLhost] = itExists;
-												/* See: https://stackoverflow.com/questions/17664312/using-a-url-as-a-key-in-chromes-local-storage-dictionary and https://stackoverflow.com/questions/12925770/how-to-use-chrome-storage-in-a-chrome-extension-using-a-variables-value-as-the for the above */
-                                                chrome.storage.local.set(thatNewOne, function() {
-                                                    console.log(currentURLhost + ' value was set to ' + itExists);
-                                                    console.log(itExists);
-                                                });
-                                            });
-                                        }
-                                    });
+                                } else {
+										getDatSite(currentURLhost);
                                 }
                             });
                         }
