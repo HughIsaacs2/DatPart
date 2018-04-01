@@ -9,6 +9,13 @@ function fakeDisable() {
     });
     chrome.browserAction.setBadgeBackgroundColor({color: "#000000"});
     //chrome.browserAction.setPopup({popup: "other_popup.html"});
+	var views = chrome.extension.getViews({
+		type: "popup"
+	});
+	for (var i = 0; i < views.length; i++) {
+		views[i].document.documentElement.setAttribute('dat-site', 'false');
+		views[i].document.documentElement.setAttribute('dat-available', 'false');
+	}
 }
 
 function fakeEnable() {
@@ -19,6 +26,12 @@ function fakeEnable() {
         color: "#2aca4b"
     }); //Dat logo color
     //chrome.browserAction.setPopup({popup: chrome.runtime.getManifest().browser_action.default_popup});
+	var views = chrome.extension.getViews({
+		type: "popup"
+	});
+	for (var i = 0; i < views.length; i++) {
+		views[i].document.documentElement.setAttribute('dat-site', 'true');
+	}
 }
 
 function datAvailable() {
@@ -28,6 +41,12 @@ function datAvailable() {
     chrome.browserAction.setBadgeBackgroundColor({
         color: "#006fdf"
     }); //Beaker logo color
+	var views = chrome.extension.getViews({
+		type: "popup"
+	});
+	for (var i = 0; i < views.length; i++) {
+		views[i].document.documentElement.setAttribute('dat-available', 'true');
+	}
 }
 
 function getDatSite(currentURLhost) {
@@ -39,18 +58,24 @@ function getDatSite(currentURLhost) {
 
                                         if (response.status !== 200 || response.status == 404) {
                                             console.log(currentURLhost +'Looks like there was a problem. Status Code: ' + response.status);
-                                            var theTwoHundred = {
-                                                'dat': '',
-                                                'ttl': 3600
-                                            };
-                                            chrome.storage.local.set({
-                                                currentURLhost: theTwoHundred
-                                            }, function() {
-                                                console.log('Value ' + currentURLhost + ' is set to ' + theTwoHundred);
-                                                console.log(theTwoHundred);
-                                            });
-                                            fakeDisable(); 
+											
 											console.log("No dat:// at this URL "+currentURLhost);
+                                            fakeDisable();
+											var theHereAndNow = new Date().getTime() / 1000;
+											var backupDate = theHereAndNow + 3600;
+											var itExists = {};
+											itExists = {
+												'dat': "",
+												'ttl': backupDate
+											};
+											var thatNewOne = {};
+											thatNewOne[currentURLhost] = itExists;
+											/* See: https://stackoverflow.com/questions/17664312/using-a-url-as-a-key-in-chromes-local-storage-dictionary and https://stackoverflow.com/questions/12925770/how-to-use-chrome-storage-in-a-chrome-extension-using-a-variables-value-as-the for the above */
+											chrome.storage.local.set(thatNewOne, function() {
+												console.log(currentURLhost + ' value was set to ' + itExists);
+												console.log(itExists);
+											});
+											
                                             return;
                                         } else {
                                             response.text().then(function(text) {
@@ -145,7 +170,7 @@ function decideEnable(currentTLD) {
                                 console.log(Object.keys(result).length);
                                 
                                 if (Object.keys(result).length != 0 && result.constructor == Object) {
-                                    datAvailable();
+									if (result[currentURLhost].dat != "") { datAvailable(); }
 									//console.log('');
                                     var theHereAndNow = new Date().getTime() / 1000;
                                     var TTLtext = result[currentURLhost].ttl;
@@ -324,7 +349,7 @@ chrome.webRequest.onErrorOccurred.addListener(function(details) {
 });
 
 chrome.webRequest.onResponseStarted.addListener(function(details) {
-    console.log("Response Started");
+    console.log(details.url+" Response Started");
     console.log(details);
     console.log(details.responseHeaders);
 }, {
@@ -333,7 +358,7 @@ chrome.webRequest.onResponseStarted.addListener(function(details) {
 });
 
 chrome.webRequest.onBeforeRedirect.addListener(function(details) {
-    console.log("Before Redirect");
+    console.log(details.url+" Before Redirect");
     console.log(details);
     console.log(details.responseHeaders);
 }, {
@@ -342,16 +367,24 @@ chrome.webRequest.onBeforeRedirect.addListener(function(details) {
 });
 
 chrome.webRequest.onCompleted.addListener(function(details) {
-    console.log("Completed");
+    console.log(details.url+" Completed");
     console.log(details);
     console.log(details.responseHeaders);
+	
+	var currentURLRequest = document.createElement('a');
+    currentURLRequest.href = details.url;
+
+    var currentTLD = currentURLRequest.hostname.split(".").pop();
+    console.log(currentTLD);
+
+    decideEnable(currentTLD);
 }, {
     urls: ["http://*.dat_site/*"],
     types: ["main_frame"]
 });
 
 chrome.webRequest.onHeadersReceived.addListener(function(details) {
-    console.log("Headers Received");
+    console.log(details.url+" Headers Received");
     console.log(details);
     console.log(details.responseHeaders);
 }, {

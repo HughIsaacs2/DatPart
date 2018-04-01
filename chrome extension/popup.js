@@ -276,7 +276,7 @@ function checkDatAvailable() {
 					});
 			});
         } else {
-          
+          //document.documentElement.setAttribute('dat-available', 'false');
         }
       });
 }

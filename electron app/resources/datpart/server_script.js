@@ -335,6 +335,14 @@ if (lastChar == '/') {         // If the last character is not a slash
 		newHeaders["Dat-Url"] = "dat://"+currentURLhostNoTLD+datPath;
 		newHeaders["Dat-JSON"] = JSON.stringify(datMap[currentURLhostNoTLD].datJSON);
 		newHeaders["Content-Security-Policy"] = "frame-ancestors 'self' https://* http://*.dat_site";
+		fs.access(__dirname + '/../../dats/' + currentURLhostNoTLD+'/', (err) => {
+		  if (!err) {
+		    newHeaders["Site-Pinned"] = "true";
+			return;
+		  } else {
+		    newHeaders["Site-Pinned"] = "false";
+	      }
+		});
 
 		//response.setHeader('Alt-Svc', 'dat="'+currentURLhostNoTLD+datPath+'"');
 		
@@ -348,6 +356,14 @@ if (lastChar == '/') {         // If the last character is not a slash
 		delete newHeaders["Location"];
 		newHeaders["Content-Security-Policy"] = "frame-ancestors 'none'";
 		newHeaders["X-Frame-Options"] = "DENY";
+		fs.access(__dirname + '/../../dats/' + currentURLhostNoTLD+'/', (err) => {
+		  if (!err) {
+		    newHeaders["Site-Pinned"] = "true";
+			return;
+		  } else {
+		    newHeaders["Site-Pinned"] = "false";
+	      }
+		});
 		
 		fourOhFourFallback.then(function(result) {
 					console.log(result); // "Stuff worked!"
@@ -378,6 +394,14 @@ if (lastChar == '/') {         // If the last character is not a slash
 		newHeaders["Alt-Svc"] = "dat='dat://"+currentURLhostNoTLD+datPath+"'";
 		newHeaders["Dat-Url"] = "dat://"+currentURLhostNoTLD+datPath;
 		newHeaders["Content-Security-Policy"] = "frame-ancestors 'self' https://* http://*.dat_site";
+		fs.access(__dirname + '/../../dats/' + currentURLhostNoTLD+'/', (err) => {
+		  if (!err) {
+		    newHeaders["Site-Pinned"] = "true";
+			return;
+		  } else {
+		    newHeaders["Site-Pinned"] = "false";
+	      }
+		});
 		delete newHeaders["X-Frame-Options"];
 		delete newHeaders["Location"];
 		//response.setHeader('Alt-Svc', 'dat="'+currentURLhostNoTLD+datPath+'"');
@@ -392,6 +416,14 @@ if (lastChar == '/') {         // If the last character is not a slash
 		delete newHeaders["Location"];
 		newHeaders["Content-Security-Policy"] = "frame-ancestors 'none'";
 		newHeaders["X-Frame-Options"] = "DENY";
+		fs.access(__dirname + '/../../dats/' + currentURLhostNoTLD+'/', (err) => {
+		  if (!err) {
+		    newHeaders["Site-Pinned"] = "true";
+			return;
+		  } else {
+		    newHeaders["Site-Pinned"] = "false";
+	      }
+		});
 		
 		fourOhFourFallback.then(function(result) {
 					console.log(result); // "Stuff worked!"
