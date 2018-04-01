@@ -250,27 +250,30 @@ function checkDatAvailable() {
 					var currentURLpage = currentURLRequest.pathname;
 					var currentTLD = currentURLRequest.hostname.split(".").pop();
 					var currentURLhostNoTLD = currentURLRequest.hostname.split(".")[0];
+					var currentURLhost = currentURLRequest.hostname;
 					
-				fetch("https://"+ currentURLhostNoTLD + "." + currentTLD + "/.well-known/dat").then(function(response) {
-				console.log("Server response: "+response);
-				console.log(response);
-				console.log(response.body);
-				
-				if (response.status !== 200) {
-					console.log('Looks like there was a problem. Status Code: ' + response.status);
-					
-					return;
-				} else {
-					document.getElementById("dat-version").href="dat://";
-					response.text().then(function (text) {
+					chrome.storage.local.get([currentURLhost], function(result) {
+						if (Object.keys(result).length != 0 && result.constructor == Object && result.dat != "") {
+							console.log(currentURLhost);
+							console.log('Value for '+currentURLhost+' currently is ' + result);
+							console.log(result);
+							console.log(result.constructor === Object);
+							console.log(Object.keys(result).length);
+							console.log(result[currentURLhost].dat);
+							
+							document.documentElement.setAttribute('dat-available', 'true');
+							
+							document.getElementById("dat-version").href="dat://";
+							document.getElementById("dat-version").href="dat://"+result[currentURLhost].dat;
+							document.getElementById("dat-version").href="http://"+result[currentURLhost].dat+".dat_site/";
+							
+						} else {
 						
-				console.log(response.text);
-					  // do something with the text response 
+							document.getElementById("dat-version").href="about:blank";
+							document.documentElement.setAttribute('dat-available', 'false');
+						
+						}
 					});
-					
-				}
-					  
-				});
 			});
         } else {
           
@@ -294,6 +297,8 @@ window.onload = function(){
 checkDatJSON();
 
 checkTab();
+
+checkDatAvailable();
 
 document.getElementById("pin").addEventListener("click",pinSite);
 

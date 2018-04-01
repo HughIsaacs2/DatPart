@@ -1,4 +1,4 @@
-<html dat-site="false" check-dat="false" dat-version="false">
+<html dat-site="false" check-dat="false" dat-available="false">
 <head>
 <title>DatPart!</title>
 <link type="text/css" href="/style.css" rel="stylesheet" lazyload="1" />
@@ -50,11 +50,11 @@ display: block;
 display: none;
 }
 
-[dat-version="false"] #dat-version {
+[dat-available="false"] #dat-version {
 display: none;
 }
 
-[dat-version="true"] #dat-version {
+[dat-available="true"] #dat-version {
 display: block;
 }
 
@@ -74,11 +74,14 @@ color: #ffffff;
 </head>
 <body><div id="universe">
     <header><h3><img id="" src="/logo.svg" width="5px" height="5px" alt="" role="presentation" /> DatPart!</h3></header>
+	
 	<main id="site-info"><img id="site-favicon" src="/logo.svg" width="5px" height="5px" role="presentation" /><span id="site-title">Title</span><br/>
 	<span id="site-description">Description</span><br/><br/>
 	<button class="button" id="pin" title="Pin this Dat offline and co-host it">Pin</button> <button class="button" id="unpin" title="UnPin this Dat and stop co-hosting">UnPin</button><br/><br/>
 	<textarea id="site-url" name="site-url" rows="1" cols="40" title="Dat URL" placeholder="dat://" readonly="true" spellcheck="false"></textarea><br/><br/></main>
-	<a id="dat-version" href="about:blank" title="Go to Dat version" class="button">Go to Dat version</a><br/>
+	
+	<a id="dat-version" href="about:blank" title="Go to Dat version" class="button" target="_blank">Go to Dat version</a><br/>
+	
 	<a href="options.html" title="Options" target="_blank" class="button">Options</a> <button id="check-dat" title="" class="button">Check Dat available</button>
 </div></body>
 </html>

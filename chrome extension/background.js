@@ -37,7 +37,7 @@ function getDatSite(currentURLhost) {
                                         console.log(response);
                                         console.log(response.body);
 
-                                        if (response.status !== 200) {
+                                        if (response.status !== 200 || response.status == 404) {
                                             console.log(currentURLhost +'Looks like there was a problem. Status Code: ' + response.status);
                                             var theTwoHundred = {
                                                 'dat': '',
@@ -49,49 +49,70 @@ function getDatSite(currentURLhost) {
                                                 console.log('Value ' + currentURLhost + ' is set to ' + theTwoHundred);
                                                 console.log(theTwoHundred);
                                             });
-                                            fakeDisable();
+                                            fakeDisable(); 
+											console.log("No dat:// at this URL "+currentURLhost);
                                             return;
-                                        }
-                                        else {
-                                            datAvailable();
+                                        } else {
                                             response.text().then(function(text) {
                                                 // do something with the text response
                                                 console.log(text);
 
                                                 console.log(text.split('\n')[0]);
                                                 console.log(text.split('\n')[1]);
+                                                console.log(text.split('\n').shift().substring(0, 6));
                                                 console.log("Dat hash: " + text.split('\n').shift().substring(6, 70));
                                                 console.log("TTL: " + text.split('\n')[1].substring(4, text.length));
+                                                console.log(text.split('\n').shift().substring(0, 6));
+                                                console.log(text.split('\n').shift().substring(0, 6) == "dat://");
+												if (text.split('\n').shift().substring(0, 6) == "dat://") {
 
-                                                var theHereAndNow = new Date().getTime() / 1000;
-                                                console.log("Date Now: " + theHereAndNow);
-                                                var TTLtext = parseInt(text.split('\n')[1].substring(4, text.length));
-                                                var TTLDate = theHereAndNow + TTLtext;
-                                                var backupDate = theHereAndNow + 3600;
-                                                console.log("TTL Date: " + TTLDate);
-                                                var itExists = {};
-                                                if (TTLtext != null && TTLtext != undefined && TTLtext != 0) {
-                                                    itExists = {
-                                                        'dat': text.split('\n')[0].substring(6, 70),
-                                                        'ttl': TTLDate
-                                                    };
-                                                } else {
-                                                    itExists = {
-                                                        'dat': "",
-                                                        'ttl': backupDate
-                                                    };
-                                                }
-												var thatNewOne = {};
-												thatNewOne[currentURLhost] = itExists;
-												/* See: https://stackoverflow.com/questions/17664312/using-a-url-as-a-key-in-chromes-local-storage-dictionary and https://stackoverflow.com/questions/12925770/how-to-use-chrome-storage-in-a-chrome-extension-using-a-variables-value-as-the for the above */
-                                                chrome.storage.local.set(thatNewOne, function() {
-                                                    console.log(currentURLhost + ' value was set to ' + itExists);
-                                                    console.log(itExists);
-                                                });
+													datAvailable();
+													
+													var theHereAndNow = new Date().getTime() / 1000;
+													console.log("Date Now: " + theHereAndNow);
+													var TTLtext = parseInt(text.split('\n')[1].substring(4, text.length));
+													var TTLDate = theHereAndNow + TTLtext;
+													var backupDate = theHereAndNow + 3600;
+													console.log("TTL Date: " + TTLDate);
+													var itExists = {};
+													if (TTLtext != null && TTLtext != undefined && TTLtext != 0) {
+														itExists = {
+															'dat': text.split('\n')[0].substring(6, 70),
+															'ttl': TTLDate
+														};
+													} else {
+														itExists = {
+															'dat': "",
+															'ttl': backupDate
+														};
+													}
+													var thatNewOne = {};
+													thatNewOne[currentURLhost] = itExists;
+													/* See: https://stackoverflow.com/questions/17664312/using-a-url-as-a-key-in-chromes-local-storage-dictionary and https://stackoverflow.com/questions/12925770/how-to-use-chrome-storage-in-a-chrome-extension-using-a-variables-value-as-the for the above */
+													chrome.storage.local.set(thatNewOne, function() {
+														console.log(currentURLhost + ' value was set to ' + itExists);
+														console.log(itExists);
+													});
+												} else {
+													console.log("No dat:// at this URL "+currentURLhost);
+													var theHereAndNow = new Date().getTime() / 1000;
+													var backupDate = theHereAndNow + 3600;
+													var itExists = {};
+													itExists = {
+														'dat': "",
+														'ttl': backupDate
+													};
+													var thatNewOne = {};
+													thatNewOne[currentURLhost] = itExists;
+													/* See: https://stackoverflow.com/questions/17664312/using-a-url-as-a-key-in-chromes-local-storage-dictionary and https://stackoverflow.com/questions/12925770/how-to-use-chrome-storage-in-a-chrome-extension-using-a-variables-value-as-the for the above */
+													chrome.storage.local.set(thatNewOne, function() {
+														console.log(currentURLhost + ' value was set to ' + itExists);
+														console.log(itExists);
+													});
+												}
                                             });
                                         }
                                     });
-
 }
 
 function decideEnable(currentTLD) {
