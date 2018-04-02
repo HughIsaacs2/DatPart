@@ -267,10 +267,12 @@ function checkDatAvailable() {
 							document.getElementById("dat-version").href="dat://";
 							document.getElementById("dat-version").href="dat://"+result[currentURLhost].dat;
 							document.getElementById("dat-version").href="http://"+result[currentURLhost].dat+".dat_site/";
+							document.getElementById("dat-version-url").href="dat://"+result[currentURLhost].dat;
 							
 						} else {
 						
 							document.getElementById("dat-version").href="about:blank";
+							document.getElementById("dat-version-url").href="about:blank";
 							document.documentElement.setAttribute('dat-available', 'false');
 						
 						}
