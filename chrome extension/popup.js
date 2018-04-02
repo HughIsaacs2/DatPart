@@ -168,6 +168,7 @@ function checkDatJSON() {
 					var datUrlHash = currentURLRequest.hash;
 					*/
 					siteURL.innerText = "dat://" + currentURLhostNoTLD + currentURLRequest.pathname + currentURLRequest.search + currentURLRequest.hash;
+					document.getElementById("copy-link").href = "dat://" + currentURLhostNoTLD + currentURLRequest.pathname + currentURLRequest.search + currentURLRequest.hash;
 					
 					fetch("http://"+ currentURLhostNoTLD + "." + currentTLD + "/dat.json").then(function(response) {
 						console.log("Server response: "+response);

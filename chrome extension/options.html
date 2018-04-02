@@ -1,4 +1,4 @@
-<html>
+<html check-dat="false">
 <head>
 <meta content='IE=edge;Chrome=1' http-equiv='X-UA-Compatible'/>
 <meta charset='utf-8' />
@@ -26,6 +26,14 @@
 	float: left;
 	opacity: 0.5;
 }
+
+[check-dat="false"] #check-dat {
+display: inline-block;
+}
+
+[check-dat="true"] #check-dat {
+display: none;
+}
 </style>
 <script type="text/javascript" src="/protocol_script.js"></script>
 <script type="text/javascript" src="/options_script.js"></script>
@@ -36,19 +44,21 @@
 
 <ul>
 	<li><a href="welcome.html" target="_blank">Welcome page</a></li>
+	<li><a href="http://1c7639eedaf8f7533f92e7c34f5a6d2b43645347836ab5e9f2489e89d3b08306.dat_site/" target="_blank">Test dat_site link</a></li>
 	<li><a href="web+dat://1c7639eedaf8f7533f92e7c34f5a6d2b43645347836ab5e9f2489e89d3b08306/" target="_blank">Test web+dat link</a></li>
 	<li><a href="dat://1c7639eedaf8f7533f92e7c34f5a6d2b43645347836ab5e9f2489e89d3b08306/" target="_blank">Test dat link</a></li>
 	<li><a href="redirector.html#1c7639eedaf8f7533f92e7c34f5a6d2b43645347836ab5e9f2489e89d3b08306" target="_blank">Test Chrome_extension link</a></li>
-	<li><a href="http://1c7639eedaf8f7533f92e7c34f5a6d2b43645347836ab5e9f2489e89d3b08306.dat_site/" target="_blank">Test dat_site link</a></li>
 	<li><a href="datPart://open" target="_blank">datPart://open</a></li>
 	<li><a href="datPart://open-minimized" target="_blank">datPart://open-minimized</a></li>
 </ul>
+
+<button id="check-dat" title="" class="button">Check Dat available</button>
 	
 	<br/><br/><br/><br/><br/><br/><br/>
 	
 </main>
 <footer>
-<h5>This project relies on the open sourced work of the teams behind <a href="https://datproject.org/" target="_blank">Dat Project</a> and <a href="https://beakerbrowser.com/">Beaker Browser</a>.<br/><br/>We're not affiliated but without them DatPart wouldn't exist.<br/><br/>
+<h5>This project relies on the open sourced work of the teams behind <a href="https://datproject.org/" target="_blank">Dat Project</a> and <a href="https://beakerbrowser.com/">Beaker Browser</a>.<br/><br/>We're not affiliated but without them <a href="https://github.com/HughIsaacs2/DatPart/">DatPart</a> wouldn't exist.<br/><br/>
 Support them by donating today!</h5>
 
 💳 Donate to <a href="https://donate.datproject.org/" target="_blank">the Dat Project team</a>.<br/><br/>

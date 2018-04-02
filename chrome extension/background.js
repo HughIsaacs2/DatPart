@@ -352,6 +352,14 @@ chrome.webRequest.onResponseStarted.addListener(function(details) {
     console.log(details.url+" Response Started");
     console.log(details);
     console.log(details.responseHeaders);
+	
+	var currentURLRequest = document.createElement('a');
+    currentURLRequest.href = details.url;
+
+    var currentTLD = currentURLRequest.hostname.split(".").pop();
+    console.log(currentTLD);
+
+    decideEnable(currentTLD);
 }, {
     urls: ["http://*.dat_site/*"],
     types: ["main_frame"]
@@ -370,6 +378,7 @@ chrome.webRequest.onCompleted.addListener(function(details) {
     console.log(details.url+" Completed");
     console.log(details);
     console.log(details.responseHeaders);
+    console.log("HTTP Headers: " + details.responseHeaders);
 	
 	var currentURLRequest = document.createElement('a');
     currentURLRequest.href = details.url;
@@ -387,6 +396,31 @@ chrome.webRequest.onHeadersReceived.addListener(function(details) {
     console.log(details.url+" Headers Received");
     console.log(details);
     console.log(details.responseHeaders);
+    console.log("HTTP Headers: " + details.responseHeaders);
+	
+	if (details.responseHeaders['Site-Pinned'] == "true") {
+		var views = chrome.extension.getViews({
+			type: "popup"
+		});
+		for (var i = 0; i < views.length; i++) {
+			views[i].document.documentElement.setAttribute('dat-site-pinned', 'true');
+		}
+	} else {
+		var views = chrome.extension.getViews({
+			type: "popup"
+		});
+		for (var i = 0; i < views.length; i++) {
+			views[i].document.documentElement.setAttribute('dat-site-pinned', 'false');
+		}
+	}
+	
+	var currentURLRequest = document.createElement('a');
+    currentURLRequest.href = details.url;
+
+    var currentTLD = currentURLRequest.hostname.split(".").pop();
+    console.log(currentTLD);
+
+    decideEnable(currentTLD);
 }, {
     urls: ["http://*.dat_site/*"],
     types: ["main_frame"]
