@@ -2,11 +2,6 @@
 document.documentElement.className=document.documentElement.className.replace("no-js","js");
 window.scrollTo(0, 1);
 
-//navigator.registerProtocolHandler("web+magnet", "/redirector.html?torrent=%s", "Web Magnet");
-//navigator.registerProtocolHandler("magnet", "/redirector.html?torrent=%s", "Magnet");
-navigator.registerProtocolHandler("web+dat", "/redirector.html?dat=%s", "Web Dat");
-navigator.registerProtocolHandler("dat", "/redirector.html?dat=%s", "Dat");
-
 function queryObj() {
 
     var result = {}, keyValuePairs = location.search.slice(1).split('&');
@@ -21,6 +16,29 @@ function queryObj() {
 
 var datLink = queryObj()["dat"];
 
-var datInURL = window.location.hash.split('#')[1];
+var datUrl = unescape(datLink);
+document.title = "Redirecting to "+datUrl;
+document.body.textContent = "Redirecting to "+datUrl;
 
-document.title = "";
+if (datUrl.substring(0, 4) == "web+") {
+	datUrl = datUrl.substring(4, datUrl.length);
+	document.title = "Redirecting to "+datUrl;
+	document.body.textContent = "Redirecting to "+datUrl;
+}
+
+	document.body.appendChild(document.createElement('br'));
+	
+    var redirectLink = document.createElement('a');
+	redirectLink.className = "button";
+	redirectLink.textContent = "Redirect";
+	redirectLink.title = "Click here to redirect to the site if it's not working.";
+    redirectLink.href = "http://"+datUrl.substring(6, 70)+".dat_site"+datUrl.substring(70, datUrl.length);
+	document.body.appendChild(redirectLink);
+	
+    var redirectMeta = document.createElement('meta');
+	redirectMeta.setAttribute("http-equiv", "refresh");
+	redirectMeta.setAttribute("content", "0; url="+"http://"+datUrl.substring(6, 70)+".dat_site"+datUrl.substring(70, datUrl.length));
+	document.head.appendChild(redirectMeta);
+	
+	document.location.replace("http://"+datUrl.substring(6, 70)+".dat_site"+datUrl.substring(70, datUrl.length));
+	window.location.replace("http://"+datUrl.substring(6, 70)+".dat_site"+datUrl.substring(70, datUrl.length));

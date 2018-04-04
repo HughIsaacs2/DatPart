@@ -29,6 +29,6 @@ document.body.appendChild(onx);
 
 var datLink = document.createElement('a');
 datLink.href = "dat://"+datHash+datPath;
-datLink.innerText = "Dat link";
+datLink.innerText = "dat:// link";
 datLink.className = "button";
 document.body.appendChild(datLink);

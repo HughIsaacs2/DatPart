@@ -1,4 +1,4 @@
-var chromeos_server_app_id = chrome.runtime.getManifest().externally_connectable.ids[0];
+var chromeos_server_app_id = chrome.runtime.getManifest().externally_connectable.ids[0]; //Chrome specific
 
 var appip = "127.0.0.1";
 var port = "9989";
@@ -9,13 +9,6 @@ function fakeDisable() {
     });
     chrome.browserAction.setBadgeBackgroundColor({color: "#000000"});
     //chrome.browserAction.setPopup({popup: "other_popup.html"});
-	var views = chrome.extension.getViews({
-		type: "popup"
-	});
-	for (var i = 0; i < views.length; i++) {
-		views[i].document.documentElement.setAttribute('dat-site', 'false');
-		views[i].document.documentElement.setAttribute('dat-available', 'false');
-	}
 }
 
 function fakeEnable() {
@@ -26,12 +19,6 @@ function fakeEnable() {
         color: "#2aca4b"
     }); //Dat logo color
     //chrome.browserAction.setPopup({popup: chrome.runtime.getManifest().browser_action.default_popup});
-	var views = chrome.extension.getViews({
-		type: "popup"
-	});
-	for (var i = 0; i < views.length; i++) {
-		views[i].document.documentElement.setAttribute('dat-site', 'true');
-	}
 }
 
 function datAvailable() {
@@ -41,12 +28,6 @@ function datAvailable() {
     chrome.browserAction.setBadgeBackgroundColor({
         color: "#006fdf"
     }); //Beaker logo color
-	var views = chrome.extension.getViews({
-		type: "popup"
-	});
-	for (var i = 0; i < views.length; i++) {
-		views[i].document.documentElement.setAttribute('dat-available', 'true');
-	}
 }
 
 function getDatSite(currentURLhost) {
@@ -199,7 +180,6 @@ function decideEnable(currentTLD) {
     else {
         fakeEnable();
     }
-
 }
 
 chrome.runtime.onInstalled.addListener(function(details) {
@@ -284,13 +264,13 @@ console.log("Before Navigate "+currentURLRequest.hostname);
     }
 });
 
-chrome.webRequest.onBeforeRequest.addListener(function(details) {
+chrome.webRequest.onBeforeRequest.addListener(function(details) {  //Chrome specific
     var currentURLRequest = document.createElement('a');
     currentURLRequest.href = details.url;
     console.log(details.url);
     var currentTLD = currentURLRequest.hostname.split(".").pop();
     var currentURLhostNoTLD = currentURLRequest.hostname.split(".")[0];
-console.log("Before Request "+currentURLRequest.hostname);
+    console.log("Before Request "+currentURLRequest.hostname);
     console.log(details);
 
     if (currentTLD != 'dat_site') {
