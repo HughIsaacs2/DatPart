@@ -26,6 +26,9 @@ if (datUrl.substring(0, 4) == "web+") {
 	document.body.textContent = "Redirecting to "+datUrl;
 }
 
+var datPartUrl = "http://"+datUrl.substring(6, 70)+".dat_site"+datUrl.substring(70, datUrl.length);
+
+	document.body.appendChild(document.createElement('br'));
 	document.body.appendChild(document.createElement('br'));
 	
     var redirectLink = document.createElement('a');

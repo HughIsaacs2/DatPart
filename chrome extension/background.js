@@ -309,7 +309,6 @@ chrome.webRequest.onBeforeRequest.addListener(function(details) {  //Chrome spec
 chrome.webRequest.onErrorOccurred.addListener(function(details) {
     var currentURLRequest = document.createElement('a');
     currentURLRequest.href = details.url;
-    var currentURLpage = currentURLRequest.pathname;
     var currentTLD = currentURLRequest.hostname.split(".").pop();
     var currentURLhostNoTLD = currentURLRequest.hostname.split(".")[0];
     console.log("Error Occurred "+currentURLRequest.hostname);
@@ -317,10 +316,9 @@ chrome.webRequest.onErrorOccurred.addListener(function(details) {
     
     if (currentTLD != 'dat_site') {
         return;
-    }
-    else {
+    } else {
         chrome.tabs.update(details.tabId, {
-            url: "/dat_error.html?datHash=" + currentURLhostNoTLD + "&path=" + currentURLpage
+            url: "/dat_error.html?dat=dat://" + currentURLhostNoTLD + currentURLRequest.pathname + currentURLRequest.search + currentURLRequest.hash
         });
     }
 }, {
