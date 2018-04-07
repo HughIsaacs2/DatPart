@@ -228,6 +228,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
     decideEnable(currentTLD);
 });
 
+/*
 chrome.omnibox.onInputChanged.addListener(function(text, suggest) {
     console.log('inputChanged: ' + text);
     suggest([{
@@ -240,10 +241,14 @@ chrome.omnibox.onInputChanged.addListener(function(text, suggest) {
         }
     ]);
 });
+*/
 
 chrome.omnibox.onInputEntered.addListener(function(text) {
     console.log('inputEntered: ' + text);
-
+	
+  chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+    chrome.tabs.update(tabs[0].id, {url: "/redirector.html?dat=" + encodeURIComponent(text)});
+  });
 });
 
 chrome.webNavigation.onBeforeNavigate.addListener(function(details) {
@@ -251,7 +256,7 @@ chrome.webNavigation.onBeforeNavigate.addListener(function(details) {
     currentURLRequest.href = details.url;
     var currentTLD = currentURLRequest.hostname.split(".").pop();
     var currentURLhostNoTLD = currentURLRequest.hostname.split(".")[0];
-console.log("Before Navigate "+currentURLRequest.hostname);
+	console.log("Before Navigate "+currentURLRequest.hostname);
     console.log(details);
     if (currentTLD != 'dat_site') {
         //Do nothing
@@ -300,8 +305,6 @@ chrome.webRequest.onBeforeRequest.addListener(function(details) {  //Chrome spec
     }, function() {});
     console.log('IP ' + appip + ' for ' + dathost + ' found, config is changed: ' + JSON.stringify(config));
 
-    //var redirectBackup = "redirect.html#"+currentURLhostNoTLD;
-    //return {cancel: true, redirectUrl: "redirect.html"};
 }, {
     urls: ["http://*.dat_site/*"]
 }, ["blocking"]);
@@ -403,6 +406,46 @@ chrome.webRequest.onHeadersReceived.addListener(function(details) {
     urls: ["http://*.dat_site/*"],
     types: ["main_frame"]
 });
+
+chrome.webRequest.onBeforeRequest.addListener(function(details) {  //Chrome specific
+    var currentURLRequest = document.createElement('a');
+    currentURLRequest.href = details.url;
+    console.log(details.url);
+    var currentTLD = currentURLRequest.hostname.split(".").pop();
+    var currentURLhostNoTLD = currentURLRequest.hostname.split(".")[0];
+    console.log("Before Request "+currentURLRequest.hostname);
+    console.log(details);
+
+    if (currentTLD != 'torrent_site') {
+        return;
+    }
+    else {
+        chrome.runtime.sendMessage(chromeos_server_app_id, { launch: true });
+    };
+
+    var torrenthost = currentURLRequest.hostname;
+    var access = "PROXY";
+
+    var config = {
+        mode: "pac_script",
+        pacScript: {
+            data: "function FindProxyForURL(url, host) {\n" +
+                "  if (dnsDomainIs(host, '" + torrenthost + "'))\n" +
+                "    return '" + access + " " + appip + ":" + port + "';\n" +
+                "  return 'DIRECT';\n" +
+                "}"
+        }
+    };
+
+    chrome.proxy.settings.set({
+        value: config,
+        scope: 'regular'
+    }, function() {});
+    console.log('IP ' + appip + ' for ' + torrenthost + ' found, config is changed: ' + JSON.stringify(config));
+
+}, {
+    urls: ["http://*.torrent_site/*"]
+}, ["blocking"]);
 
 chrome.webRequest.onErrorOccurred.addListener(function(details) {
     var currentURLRequest = document.createElement('a');

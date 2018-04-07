@@ -264,6 +264,8 @@ function checkDatAvailable() {
 							
 							document.documentElement.setAttribute('dat-available', 'true');
 							
+							document.getElementById("dat-hash").textContent=currentURLRequest.hostname+" "+result[currentURLhost].dat;
+							
 							document.getElementById("dat-version").href="dat://";
 							document.getElementById("dat-version").href="dat://"+result[currentURLhost].dat;
 							document.getElementById("dat-version").href="http://"+result[currentURLhost].dat+".dat_site/";
