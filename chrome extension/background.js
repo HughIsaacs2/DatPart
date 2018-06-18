@@ -1,7 +1,7 @@
 var chromeos_server_app_id = chrome.runtime.getManifest().externally_connectable.ids[0]; //Chrome specific
 
-var appip = "127.0.0.1";
-var port = "9989";
+var defaultproxyaccess = "PROXY";
+var defaultproxyurl = "localhost:9989";
 
 function fakeDisable() {
     chrome.browserAction.setBadgeText({
@@ -188,6 +188,17 @@ chrome.runtime.onInstalled.addListener(function(details) {
         chrome.tabs.create({
             url: chrome.runtime.getURL("/welcome.html")
         });
+		var theGate = {};
+		theGate = {
+			'proxyurl': defaultproxyurl,
+			'proxyaccess': defaultproxyaccess
+		};
+		var gatewaySet = {};
+		gatewaySet["gatewaySettings"] = theGate;
+		chrome.storage.local.set(gatewaySet, function() {
+			console.log('First run. Gateway settings set to ' + theGate);
+			console.log(theGate);
+		});
     }
     else if (details.reason == "update") {
         console.log("Updated from " + details.previousVersion + " to " + chrome.runtime.getManifest().version + ".");
@@ -228,27 +239,24 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
     decideEnable(currentTLD);
 });
 
-/*
 chrome.omnibox.onInputChanged.addListener(function(text, suggest) {
     console.log('inputChanged: ' + text);
-    suggest([{
-            content: text + " one",
-            description: "the first one"
-        },
-        {
-            content: text + " number two",
-            description: "the second entry"
-        }
-    ]);
+	if (text.substring(0, 6) == "dat://") {
+		
+		suggest([{
+				content: text,
+				description: "Open " + text + " with DatPart?" + chrome.runtime.getManifest().name[0] + "?" //Create as object in variable first
+			}]);
+	
+	}
 });
-*/
 
 chrome.omnibox.onInputEntered.addListener(function(text) {
     console.log('inputEntered: ' + text);
 	
-  chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-    chrome.tabs.update(tabs[0].id, {url: "/redirector.html?dat=" + encodeURIComponent(text)});
-  });
+	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+		chrome.tabs.update(tabs[0].id, {url: "/redirector.html?dat=" + encodeURIComponent(text)});
+	});
 });
 
 chrome.webNavigation.onBeforeNavigate.addListener(function(details) {
@@ -282,28 +290,44 @@ chrome.webRequest.onBeforeRequest.addListener(function(details) {  //Chrome spec
         return;
     }
     else {
-        //chrome.runtime.sendMessage(chromeos_server_app_id, { launch: true });
+		chrome.runtime.getPlatformInfo(function(info) {
+			console.log(info.os);
+			if (info.os = "cros") {
+			chrome.runtime.sendMessage(chromeos_server_app_id, { launch: true });
+			}
+		});
     };
-
+	
     var dathost = currentURLRequest.hostname;
-    var access = "PROXY";
+	
+	chrome.storage.local.get(["gatewaySettings"], function(result) {
 
-    var config = {
-        mode: "pac_script",
-        pacScript: {
-            data: "function FindProxyForURL(url, host) {\n" +
-                "  if (dnsDomainIs(host, '" + dathost + "'))\n" +
-                "    return '" + access + " " + appip + ":" + port + "';\n" +
-                "  return 'DIRECT';\n" +
-                "}"
-        }
-    };
+		console.log(result);
+		console.log(result.constructor === Object);
+		console.log(Object.keys(result).length);
+		
+		if (Object.keys(result).length != 0 && result.constructor == Object) {
+			
+			var config = {
+				mode: "pac_script",
+				pacScript: {
+					data: "function FindProxyForURL(url, host) {\n" +
+						"  if (dnsDomainIs(host, '" + dathost + "'))\n" +
+						"    return '" + result.gatewaySettings.proxyaccess + " " + result.gatewaySettings.proxyurl + "';\n" +
+						"  return 'DIRECT';\n" +
+						"}"
+				}
+			};
 
-    chrome.proxy.settings.set({
-        value: config,
-        scope: 'regular'
-    }, function() {});
-    console.log('IP ' + appip + ' for ' + dathost + ' found, config is changed: ' + JSON.stringify(config));
+			chrome.proxy.settings.set({
+				value: config,
+				scope: 'regular'
+			}, function() {});
+			
+			console.log('IP ' + result + ' for ' + dathost + ' found, config is changed: ' + JSON.stringify(config));
+			
+		}
+	});
 
 }, {
     urls: ["http://*.dat_site/*"]
@@ -321,7 +345,7 @@ chrome.webRequest.onErrorOccurred.addListener(function(details) {
         return;
     } else {
         chrome.tabs.update(details.tabId, {
-            url: "/dat_error.html?dat=dat://" + currentURLhostNoTLD + currentURLRequest.pathname + currentURLRequest.search + currentURLRequest.hash
+            url: "/dat_error.html?dat="+encodeURIComponent("dat://" + currentURLhostNoTLD + currentURLRequest.pathname + currentURLRequest.search + currentURLRequest.hash)
         });
     }
 }, {
@@ -378,7 +402,7 @@ chrome.webRequest.onHeadersReceived.addListener(function(details) {
     console.log(details);
     console.log(details.responseHeaders);
     console.log("HTTP Headers: " + details.responseHeaders);
-	
+	/*
 	if (details.responseHeaders['Site-Pinned'] == "true") {
 		var views = chrome.extension.getViews({
 			type: "popup"
@@ -394,7 +418,7 @@ chrome.webRequest.onHeadersReceived.addListener(function(details) {
 			views[i].document.documentElement.setAttribute('dat-site-pinned', 'false');
 		}
 	}
-	
+	*/
 	var currentURLRequest = document.createElement('a');
     currentURLRequest.href = details.url;
 
@@ -420,28 +444,44 @@ chrome.webRequest.onBeforeRequest.addListener(function(details) {  //Chrome spec
         return;
     }
     else {
-        chrome.runtime.sendMessage(chromeos_server_app_id, { launch: true });
+		chrome.runtime.getPlatformInfo(function(info) {
+			console.log(info.os);
+			if (info.os = "cros") {
+			chrome.runtime.sendMessage(chromeos_server_app_id, { launch: true });
+			}
+		});
     };
 
     var torrenthost = currentURLRequest.hostname;
-    var access = "PROXY";
+	
+	chrome.storage.local.get(["gatewaySettings"], function(result) {
 
-    var config = {
-        mode: "pac_script",
-        pacScript: {
-            data: "function FindProxyForURL(url, host) {\n" +
-                "  if (dnsDomainIs(host, '" + torrenthost + "'))\n" +
-                "    return '" + access + " " + appip + ":" + port + "';\n" +
-                "  return 'DIRECT';\n" +
-                "}"
-        }
-    };
+		console.log(result);
+		console.log(result.constructor === Object);
+		console.log(Object.keys(result).length);
+		
+		if (Object.keys(result).length != 0 && result.constructor == Object) {
+			
+			var config = {
+				mode: "pac_script",
+				pacScript: {
+					data: "function FindProxyForURL(url, host) {\n" +
+						"  if (dnsDomainIs(host, '" + torrenthost + "'))\n" +
+						"    return '" + result.gatewaySettings.proxyaccess + " " + result.gatewaySettings.proxyurl + "';\n" +
+						"  return 'DIRECT';\n" +
+						"}"
+				}
+			};
 
-    chrome.proxy.settings.set({
-        value: config,
-        scope: 'regular'
-    }, function() {});
-    console.log('IP ' + appip + ' for ' + torrenthost + ' found, config is changed: ' + JSON.stringify(config));
+			chrome.proxy.settings.set({
+				value: config,
+				scope: 'regular'
+			}, function() {});
+			
+			console.log('IP ' + result + ' for ' + torrenthost + ' found, config is changed: ' + JSON.stringify(config));
+			
+		}
+	});
 
 }, {
     urls: ["http://*.torrent_site/*"]

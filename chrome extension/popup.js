@@ -2,129 +2,6 @@ var appip = "127.0.0.1";
 var port = "9989";
 var commandPort = "9988";
 
-function pinSite() {
-			chrome.tabs.query (
-                { currentWindow: true, active: true }, 
-                function(tabs) {
-                    var activeTab = tabs[0];
-                    console.log(JSON.stringify(activeTab));
-					
-					var currentURLRequest = document.createElement('a');
-					currentURLRequest.href = activeTab.url;
-					
-					var currentTLD = currentURLRequest.hostname.split(".").pop();
-					console.log(currentTLD);
-					
-				if (currentTLD != 'dat_site') {
-					return;
-				} else {
-					
-					var currentURLhostNoTLD = currentURLRequest.hostname.split(".")[0];
-					console.log(currentURLhostNoTLD);
-
-					var myHeaders = new Headers();
-					myHeaders.append("Content-Type", "text/plain");
-					myHeaders.append("Type", "dat");
-					myHeaders.append("Dat", currentURLhostNoTLD);
-					myHeaders.append("Task", "pin");
-					
-					fetch("http://"+ appip +":" + commandPort + "/pin/", {
-						method: "POST",
-						headers: myHeaders
-					}).then(function(response) {
-						console.log("Server response: "+response);
-						console.log(response);
-					}).then(function(data) {
-						console.log("Data: "+data);
-					});
-				
-				}
-
-      });
-}
-
-function unpinSite() {
-			chrome.tabs.query (
-                { currentWindow: true, active: true }, 
-                function(tabs) {
-                    var activeTab = tabs[0];
-                    console.log(JSON.stringify(activeTab));
-					
-					var currentURLRequest = document.createElement('a');
-					currentURLRequest.href = activeTab.url;
-					
-					var currentTLD = currentURLRequest.hostname.split(".").pop();
-					console.log(currentTLD);
-					
-				if (currentTLD != 'dat_site') {
-					return;
-				} else {
-					
-					var currentURLhostNoTLD = currentURLRequest.hostname.split(".")[0];
-					console.log(currentURLhostNoTLD);
-
-					var myHeaders = new Headers();
-					myHeaders.append("Content-Type", "text/plain");
-					myHeaders.append("Type", "dat");
-					myHeaders.append("Dat", currentURLhostNoTLD);
-					myHeaders.append("Task", "unpin");
-					
-					fetch("http://"+ appip +":" + commandPort + "/unpin/", {
-						method: "POST",
-						headers: myHeaders
-					}).then(function(response) {
-						console.log("Server response: "+response);
-						console.log(response);
-					}).then(function(data) {
-						console.log("Data: "+data);
-					});
-				
-				}
-
-      });
-}
-
-function checkPin() {
-			chrome.tabs.query (
-                { currentWindow: true, active: true }, 
-                function(tabs) {
-                    var activeTab = tabs[0];
-                    console.log(JSON.stringify(activeTab));
-					
-					var currentURLRequest = document.createElement('a');
-					currentURLRequest.href = activeTab.url;
-					
-					var currentTLD = currentURLRequest.hostname.split(".").pop();
-					console.log(currentTLD);
-					
-				if (currentTLD != 'dat_site') {
-					return;
-				} else {
-					
-					var currentURLhostNoTLD = currentURLRequest.hostname.split(".")[0];
-					console.log(currentURLhostNoTLD);
-
-					var myHeaders = new Headers();
-					myHeaders.append("Content-Type", "text/plain");
-					myHeaders.append("Type", "dat");
-					myHeaders.append("Dat", currentURLhostNoTLD);
-					myHeaders.append("Task", "checkpin");
-					
-					fetch("http://"+ appip +":" + commandPort + "/checkpin/", {
-						method: "POST",
-						headers: myHeaders
-					}).then(function(response) {
-						console.log("Server response: "+response);
-						console.log(response);
-					}).then(function(data) {
-						console.log("Data: "+data);
-					});
-				
-				}
-
-      });
-}
-
 function checkDatJSON() {
 
 	chrome.tabs.query (
@@ -156,6 +33,13 @@ function checkDatJSON() {
 					var siteDescription = document.getElementById("site-description");
 					siteDescription.innerText = activeTab.title;
 					
+					var siteREADME = document.getElementById("site-readme");
+					var siteREADMEsection = document.getElementById("site-readme-section");
+					siteREADMEsection.setAttribute("hidden","");
+					
+					var donateLink = document.getElementById("donate-link");
+					donateLink.setAttribute("hidden","");
+					
 					var faviconIMG = document.getElementById("site-favicon");
 					if(activeTab.favIconUrl != "undefined"){faviconIMG.src = activeTab.favIconUrl;}
 					
@@ -169,6 +53,34 @@ function checkDatJSON() {
 					*/
 					siteURL.innerText = "dat://" + currentURLhostNoTLD + currentURLRequest.pathname + currentURLRequest.search + currentURLRequest.hash;
 					document.getElementById("copy-link").href = "dat://" + currentURLhostNoTLD + currentURLRequest.pathname + currentURLRequest.search + currentURLRequest.hash;
+					
+					fetch("http://"+ currentURLhostNoTLD + "." + currentTLD + "/favicon.ico").then(function(response) {
+						if (response.status !== 200) {
+								console.log('Looks like there was a problem. Status Code: ' +
+								  response.status);
+								if(activeTab.favIconUrl != "undefined"){faviconIMG.src = activeTab.favIconUrl;}
+								return;
+							  }
+						
+						faviconIMG.src = "http://"+ currentURLhostNoTLD + "." + currentTLD + "/favicon.ico";
+						
+					});
+					
+					fetch("http://"+ currentURLhostNoTLD + "." + currentTLD + "/README.md").then(function(response) {
+						if (response.status !== 200) {
+								console.log('Looks like there was a problem. Status Code: ' +
+								  response.status);
+								siteREADMEsection.setAttribute("hidden","");
+								return;
+							}
+							  
+						response.text().then(function(data) {
+							console.log(data);
+							siteREADME.innerText = data;
+							siteREADMEsection.removeAttribute("hidden"); 
+						});
+						
+					});
 					
 					fetch("http://"+ currentURLhostNoTLD + "." + currentTLD + "/dat.json").then(function(response) {
 						console.log("Server response: "+response);
@@ -185,15 +97,27 @@ function checkDatJSON() {
 								console.log(data);
 								
 								if(data.title != "undefined"){
-								siteTitle.innerText = data.title;}
+								siteTitle.innerText = data.title;
+								faviconIMG.title = data.title;
+								donateLink.getElementsByTagName('span')[0].innerText = "Contribute to "+data.title;
+								}
 								
 								if(data.description != "undefined"){
 								siteDescription.innerText = data.description;}else{
-								siteDescription.innerText = data.title;}
+								siteDescription.innerText = data.title;
+								}
 								
-								//if(activeTab.favIconUrl != "undefined"){faviconIMG.src = activeTab.favIconUrl;}
-								//faviconIMG.title = data.title;
-								
+								if(data.links.payment[0].href != "undefined"){	
+								donateLink.href = data.links.payment[0].href; 
+								donateLink.removeAttribute("hidden"); 
+								} else {
+								donateLink.setAttribute("hidden","");
+								}
+								/*
+								if(data.links.icon[0].href != "undefined"){	
+								faviconIMG.src = data.links.icon[0].href;
+								}
+								*/
 							  });
 					
 					});
@@ -230,8 +154,6 @@ function checkTab() {
 				}
 
       });
-	  
-	checkPin();
 }
 
 function checkDatAvailable() {
@@ -305,23 +227,10 @@ checkTab();
 
 checkDatAvailable();
 
-document.getElementById("pin").addEventListener("click",pinSite);
-
-document.getElementById("unpin").addEventListener("click",unpinSite);
-
       document.getElementById("check-dat").addEventListener('click', function(event) {
-        // Permissions must be requested from inside a user gesture, like a button's
-        // click handler.
-        chrome.permissions.request({
-          origins: ['https://*/.well-known/dat']
-        }, function(granted) {
-          // The callback argument will be true if the user granted the permissions.
-          if (granted) {
-            document.documentElement.setAttribute('check-dat', 'true');
-          } else {
-            document.documentElement.setAttribute('check-dat', 'false');
-          }
-        });
+
+		chrome.runtime.openOptionsPage();
+	  
       });
 
 };

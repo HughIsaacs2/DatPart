@@ -13,6 +13,17 @@ color: #000000;
 font-size: 1em;
 }
 
+.section-name {
+display: inline-block;
+padding: 0;
+margin: 0;
+width: 100%;
+height: 1.4em;
+font-size: 0.8em;
+text-align: left;
+text-indent: 0.3em;
+}
+
 #site-favicon {
 display: inline-block;
 width: 1em;
@@ -29,12 +40,13 @@ font-size: 1em;
 font-size: 0.8em;
 }
 
-#site-url {
+#site-url, #site-readme {
 resize: none;
-width: 100%;
 background-color: #424242;
 color: #ffffff;
+width: 100%;
 width: calc(100% - 8px);
+overflow: auto;
 }
 
 #dat-hash {
@@ -73,10 +85,16 @@ display: block;
 	<main id="site-info">
 	<img id="site-favicon" src="/logo.svg" width="5px" height="5px" role="presentation" /><span id="site-title">Title</span><br/>
 	<span id="site-description">Description</span><br/><br/>
+	<!--
 	<button class="button" id="pin" title="Pin this Dat offline and seed it"><svg class="icon" role="presentation" width="10" height="10" viewBox="0 0 1792 1792" xmlns="https://www.w3.org/2000/svg"><path d="M1248 928q0 12-10 24l-319 319q-11 9-23 9t-23-9l-320-320q-15-16-7-35 8-20 30-20h192v-352q0-14 9-23t23-9h192q14 0 23 9t9 23v352h192q14 0 23 9t9 23zm-352-576q-148 0-273 73t-198 198-73 273 73 273 198 198 273 73 273-73 198-198 73-273-73-273-198-198-273-73zm768 544q0 209-103 385.5t-279.5 279.5-385.5 103-385.5-103-279.5-279.5-103-385.5 103-385.5 279.5-279.5 385.5-103 385.5 103 279.5 279.5 103 385.5z" fill="#fff"/></svg> Pin</button>
 	<button class="button" id="unpin" title="UnPin this Dat and stop seeding"><svg class="icon" role="presentation" width="10" height="10" viewBox="0 0 1792 1792" xmlns="https://www.w3.org/2000/svg"><path d="M1246 876q-8 20-30 20h-192v352q0 14-9 23t-23 9h-192q-14 0-23-9t-9-23v-352h-192q-14 0-23-9t-9-23q0-12 10-24l319-319q11-9 23-9t23 9l320 320q15 16 7 35zm-350-524q-148 0-273 73t-198 198-73 273 73 273 198 198 273 73 273-73 198-198 73-273-73-273-198-198-273-73zm768 544q0 209-103 385.5t-279.5 279.5-385.5 103-385.5-103-279.5-279.5-103-385.5 103-385.5 279.5-279.5 385.5-103 385.5 103 279.5 279.5 103 385.5z" fill="#fff"/></svg> UnPin</button><br/><br/>
-	<textarea id="site-url" name="site-url" rows="5" cols="40" title="Dat URL" placeholder="dat://" readonly="true" spellcheck="false"></textarea>
+	-->
+	<span><sub class="section-name">Dat URL</sub>
+	<textarea id="site-url" name="site-url" rows="5" cols="40" title="Dat URL" placeholder="dat://" readonly="true" spellcheck="false"></textarea></span>
+	<span id="site-readme-section" hidden><sub class="section-name">README.md</sub>
+	<textarea id="site-readme" name="site-readme" rows="5" cols="40" title="Dat README" placeholder="README" readonly="true" spellcheck="false"></textarea></span>
 	<a class="button" id="copy-link" href="about:blank" target="_blank" title="dat:// Link"><svg class="icon" role="presentation" width="10" height="10" viewBox="0 0 1792 1792" xmlns="https://www.w3.org/2000/svg"><title>dat:// Link</title><desc>dat:// Link</desc><path d="M1520 1216q0-40-28-68l-208-208q-28-28-68-28-42 0-72 32 3 3 19 18.5t21.5 21.5 15 19 13 25.5 3.5 27.5q0 40-28 68t-68 28q-15 0-27.5-3.5t-25.5-13-19-15-21.5-21.5-18.5-19q-33 31-33 73 0 40 28 68l206 207q27 27 68 27 40 0 68-26l147-146q28-28 28-67zm-703-705q0-40-28-68l-206-207q-28-28-68-28-39 0-68 27l-147 146q-28 28-28 67 0 40 28 68l208 208q27 27 68 27 42 0 72-31-3-3-19-18.5t-21.5-21.5-15-19-13-25.5-3.5-27.5q0-40 28-68t68-28q15 0 27.5 3.5t25.5 13 19 15 21.5 21.5 18.5 19q33-31 33-73zm895 705q0 120-85 203l-147 146q-83 83-203 83-121 0-204-85l-206-207q-83-83-83-203 0-123 88-209l-88-88q-86 88-208 88-120 0-204-84l-208-208q-84-84-84-204t85-203l147-146q83-83 203-83 121 0 204 85l206 207q83 83 83 203 0 123-88 209l88 88q86-88 208-88 120 0 204 84l208 208q84 84 84 204z" fill="#fff"/></svg> dat:// </a>
+	<a class="button" id="donate-link" href="about:blank" target="_blank" title="Donate Link" hidden><svg class="icon" role="presentation" width="10" height="10" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><title>donate Link</title><desc>donate Link</desc><path d="M896 1664q-26 0-44-18l-624-602q-10-8-27.5-26t-55.5-65.5-68-97.5-53.5-121-23.5-138q0-220 127-344t351-124q62 0 126.5 21.5t120 58 95.5 68.5 76 68q36-36 76-68t95.5-68.5 120-58 126.5-21.5q224 0 351 124t127 344q0 221-229 450l-623 600q-18 18-44 18z" fill="#fff"/></svg> <span>Donate</span></a>
 	</main>
 	
 	<aside id="dat-dns-link">
@@ -87,6 +105,7 @@ display: block;
 	
 	<hr/>
 	<a href="options.html" title="Options" target="_blank" class="button"><svg role="presentation" class="icon" width="10" height="10" viewBox="0 0 1792 1792" xmlns="https://www.w3.org/2000/svg"><path d="M832 896q0-106-75-181t-181-75-181 75-75 181 75 181 181 75 181-75 75-181zm768 512q0-52-38-90t-90-38-90 38-38 90q0 53 37.5 90.5t90.5 37.5 90.5-37.5 37.5-90.5zm0-1024q0-52-38-90t-90-38-90 38-38 90q0 53 37.5 90.5t90.5 37.5 90.5-37.5 37.5-90.5zm-384 421v185q0 10-7 19.5t-16 10.5l-155 24q-11 35-32 76 34 48 90 115 7 10 7 20 0 12-7 19-23 30-82.5 89.5t-78.5 59.5q-11 0-21-7l-115-90q-37 19-77 31-11 108-23 155-7 24-30 24h-186q-11 0-20-7.5t-10-17.5l-23-153q-34-10-75-31l-118 89q-7 7-20 7-11 0-21-8-144-133-144-160 0-9 7-19 10-14 41-53t47-61q-23-44-35-82l-152-24q-10-1-17-9.5t-7-19.5v-185q0-10 7-19.5t16-10.5l155-24q11-35 32-76-34-48-90-115-7-11-7-20 0-12 7-20 22-30 82-89t79-59q11 0 21 7l115 90q34-18 77-32 11-108 23-154 7-24 30-24h186q11 0 20 7.5t10 17.5l23 153q34 10 75 31l118-89q8-7 20-7 11 0 21 8 144 133 144 160 0 9-7 19-12 16-42 54t-45 60q23 48 34 82l152 23q10 2 17 10.5t7 19.5zm640 533v140q0 16-149 31-12 27-30 52 51 113 51 138 0 4-4 7-122 71-124 71-8 0-46-47t-52-68q-20 2-30 2t-30-2q-14 21-52 68t-46 47q-2 0-124-71-4-3-4-7 0-25 51-138-18-25-30-52-149-15-149-31v-140q0-16 149-31 13-29 30-52-51-113-51-138 0-4 4-7 4-2 35-20t59-34 30-16q8 0 46 46.5t52 67.5q20-2 30-2t30 2q51-71 92-112l6-2q4 0 124 70 4 3 4 7 0 25-51 138 17 23 30 52 149 15 149 31zm0-1024v140q0 16-149 31-12 27-30 52 51 113 51 138 0 4-4 7-122 71-124 71-8 0-46-47t-52-68q-20 2-30 2t-30-2q-14 21-52 68t-46 47q-2 0-124-71-4-3-4-7 0-25 51-138-18-25-30-52-149-15-149-31v-140q0-16 149-31 13-29 30-52-51-113-51-138 0-4 4-7 4-2 35-20t59-34 30-16q8 0 46 46.5t52 67.5q20-2 30-2t30 2q51-71 92-112l6-2q4 0 124 70 4 3 4 7 0 25-51 138 17 23 30 52 149 15 149 31z" fill="#fff"/></svg> Options</a><br/>
-	<button id="check-dat" title="Grant permission to check for Dats" class="button">Enable Check Dat available</button>
+	
+	<a id="check-dat" title="Grant permission to check for Dats in domains" class="button" href="/options.html" target="_blank">Enable domain Dat check</a>
 </div></body>
 </html>

@@ -23,22 +23,38 @@
 	float: left;
 	opacity: 0.5;
 }
-
-[check-dat="false"] #check-dat {
-display: inline-block;
-}
-
-[check-dat="true"] #check-dat {
-display: none;
-}
 </style>
 <script type="text/javascript" src="/protocol_script.js"></script>
 <script type="text/javascript" src="/options_script.js"></script>
 </head>
 <body>
-<header><h1>🔧 The options page isn't ready yet.</h1></header>
+<header><h1>🔧 Options</h1></header>
 <main>
 
+<h3>Gateway</h3>
+<select id="proxyaccess" name="proxyaccess">
+  <option value="PROXY" selected>PROXY</option>
+  <option value="HTTP">HTTP</option>
+  <option value="HTTPS">HTTPS</option>
+  <option value="SOCKS">SOCKS</option>
+  <option value="SOCKS4">SOCKS4</option>
+  <option value="SOCKS5">SOCKS5</option>
+</select>
+
+<input id="proxyurl" name="proxyurl" title="Proxy URL" role="textbox" spellcheck="false" type="url" placeholder="localhost:9989" value="localhost:9989" />
+
+<button id="proxysave" class="button" title="Save settings"><svg class="icon" width="10" height="10" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M512 1536h768v-384h-768v384zm896 0h128v-896q0-14-10-38.5t-20-34.5l-281-281q-10-10-34-20t-39-10v416q0 40-28 68t-68 28h-576q-40 0-68-28t-28-68v-416h-128v1280h128v-416q0-40 28-68t68-28h832q40 0 68 28t28 68v416zm-384-928v-320q0-13-9.5-22.5t-22.5-9.5h-192q-13 0-22.5 9.5t-9.5 22.5v320q0 13 9.5 22.5t22.5 9.5h192q13 0 22.5-9.5t9.5-22.5zm640 32v928q0 40-28 68t-68 28h-1344q-40 0-68-28t-28-68v-1344q0-40 28-68t68-28h928q40 0 88 20t76 48l280 280q28 28 48 76t20 88z" fill="#fff"/></svg> Save</button>
+
+<button id="proxydefault" class="button" title="Restore default settings"><svg class="icon" width="10" height="10" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1664 256v448q0 26-19 45t-45 19h-448q-42 0-59-40-17-39 14-69l138-138q-148-137-349-137-104 0-198.5 40.5t-163.5 109.5-109.5 163.5-40.5 198.5 40.5 198.5 109.5 163.5 163.5 109.5 198.5 40.5q119 0 225-52t179-147q7-10 23-12 14 0 25 9l137 138q9 8 9.5 20.5t-7.5 22.5q-109 132-264 204.5t-327 72.5q-156 0-298-61t-245-164-164-245-61-298 61-298 164-245 245-164 298-61q147 0 284.5 55.5t244.5 156.5l130-129q29-31 70-14 39 17 39 59z" fill="#fff"/></svg> Default</button>
+
+<h3>Permissions</h3>
+<ul>
+<li id="datdomain">Enable checking domains for Dat sites: <input id="check-dat" type="checkbox" class="toggle" /><label for="check-dat" class="toggle" style="font-size: 20px;">Toggle</label></li>
+
+<li id="notifications">Enable notifications: <input id="check-notifications" type="checkbox" class="toggle" /><label for="check-notifications" class="toggle" style="font-size: 20px;">Toggle</label></li>
+</ul>
+
+<h3>Links</h3>
 <ul>
 	<li><a href="welcome.html" target="_blank">Welcome page</a></li>
 	<li><a href="http://1c7639eedaf8f7533f92e7c34f5a6d2b43645347836ab5e9f2489e89d3b08306.dat_site/" target="_blank">Test dat_site link</a></li>
@@ -47,13 +63,10 @@ display: none;
 	<li><a href="redirector.html?dat=dat://1c7639eedaf8f7533f92e7c34f5a6d2b43645347836ab5e9f2489e89d3b08306/" target="_blank">Test Chrome_extension link</a></li>
 	<li><a href="datPart://open" target="_blank">datPart://open</a></li>
 	<li><a href="datPart://open-minimized" target="_blank">datPart://open-minimized</a></li>
-	23f6806455d3ab709331ac4203ff3d321281d571
 </ul>
 
-<button id="check-dat" title="" class="button">Check Dat available</button>
-	
-	<br/><br/><br/><br/><br/><br/><br/>
-	
+<br/><br/><br/><br/><br/><br/><br/>
+
 </main>
 <footer>
 <a href="https://github.com/hughisaacs2/datpart" target="_blank" title="Github"><svg role="presentation" width="25" height="25" viewBox="0 0 1792 1792" xmlns="https://www.w3.org/2000/svg"><title>Github</title><desc>Github</desc><path d="M896 128q209 0 385.5 103t279.5 279.5 103 385.5q0 251-146.5 451.5t-378.5 277.5q-27 5-40-7t-13-30q0-3 .5-76.5t.5-134.5q0-97-52-142 57-6 102.5-18t94-39 81-66.5 53-105 20.5-150.5q0-119-79-206 37-91-8-204-28-9-81 11t-92 44l-38 24q-93-26-192-26t-192 26q-16-11-42.5-27t-83.5-38.5-85-13.5q-45 113-8 204-79 87-79 206 0 85 20.5 150t52.5 105 80.5 67 94 39 102.5 18q-39 36-49 103-21 10-45 15t-57 5-65.5-21.5-55.5-62.5q-19-32-48.5-52t-49.5-24l-20-3q-21 0-29 4.5t-5 11.5 9 14 13 12l7 5q22 10 43.5 38t31.5 51l10 23q13 38 44 61.5t67 30 69.5 7 55.5-3.5l23-4q0 38 .5 88.5t.5 54.5q0 18-13 30t-40 7q-232-77-378.5-277.5t-146.5-451.5q0-209 103-385.5t279.5-279.5 385.5-103zm-477 1103q3-7-7-12-10-3-13 2-3 7 7 12 9 6 13-2zm31 34q7-5-2-16-10-9-16-3-7 5 2 16 10 10 16 3zm30 45q9-7 0-19-8-13-17-6-9 5 0 18t17 7zm42 42q8-8-4-19-12-12-20-3-9 8 4 19 12 12 20 3zm57 25q3-11-13-16-15-4-19 7t13 15q15 6 19-6zm63 5q0-13-17-11-16 0-16 11 0 13 17 11 16 0 16-11zm58-10q-2-11-18-9-16 3-14 15t18 8 14-14z" fill="#fff"/></svg></a>
@@ -63,7 +76,7 @@ Support them by donating today!</h5>
 
 💳 Donate to <a href="https://donate.datproject.org/" target="_blank">the Dat Project team</a>.<br/><br/>
 
-💳 Donate to <a href="https://opencollective.com/beaker/donate?referral=13038" target="_blank">the Beaker Browser team</a>.<br/><br/>
+💳 Donate to <a href="https://opencollective.com/beaker?referral=17298" target="_blank">the Beaker Browser team</a>.<br/><br/>
 
 🌐
 <sub id="version-notice">🌌</sub>

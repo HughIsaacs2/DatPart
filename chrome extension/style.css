@@ -75,8 +75,8 @@ a, a:visited {
 display: inline-block;
 width: 1em;
 height: 1em;
-width: 1.4em;
-height: 1.4em;
+//width: 1.4em;
+//height: 1.4em;
 margin-top: 0.4em;
 }
 
@@ -163,4 +163,60 @@ border-top: 1px solid transparent;
 
 .button:visited {
 color: #ffffff;
+}
+
+.button[hidden] {
+visibility: hidden;
+display: none;
+opacity: 0;
+
+}
+
+input[type=checkbox].toggle {
+	height: 0;
+	width: 0;
+	visibility: hidden;
+}
+
+label.toggle {
+	cursor: pointer;
+	text-indent: -9999px;
+	width: 2em;
+	height: 1em;
+	background-color: grey;
+	display: inline-block;
+	border-radius: 100px;
+	position: relative;
+	top: 0.2em;
+	overflow: hidden;
+}
+
+label.toggle:after {
+	content: '';
+	position: absolute;
+    top: 0.05em;
+	left: 0.05em;
+    width: 0.9em;
+    height: 0.9em;
+	background-color: #fff;
+	border-radius: 90px;
+	transition-duration: 0.3s;
+	transition-property: transform;
+	transform: scaleX(1);
+}
+
+input.toggle:checked + label.toggle {
+	background-color: #bada55;
+}
+
+input.toggle:checked + label.toggle:after {
+	transform: translateX(1em);
+}
+
+label.toggle:active:after {
+	transform: scaleX(2);
+}
+
+input.toggle:checked + label.toggle:active:after {
+	transform: scaleX(2);
 }
