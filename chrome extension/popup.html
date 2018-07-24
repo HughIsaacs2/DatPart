@@ -28,6 +28,7 @@ text-indent: 0.3em;
 display: inline-block;
 width: 1em;
 height: 1em;
+margin-right: 4px;
 }
 
 #site-title {
@@ -47,6 +48,18 @@ color: #ffffff;
 width: 100%;
 width: calc(100% - 8px);
 overflow: auto;
+}
+
+#site-author-section {
+display: block;
+clear: both;
+text-align: left;
+margin-bottom: 10px;
+padding-left: 8px;
+}
+
+#site-author-section .section-name {
+margin-left: -8px;
 }
 
 #dat-hash {
@@ -80,7 +93,7 @@ display: block;
 <script src="popup.js" defer="true" lazyload="1"></script>
 </head>
 <body><div id="universe">
-    <header><h3><img id="" src="/logo.svg" width="5px" height="5px" alt="" class="icon" role="presentation" /> DatPart!</h3></header>
+    <header><h3><img id="" src="/logo.svg" width="5px" height="5px" alt="" class="icon" role="presentation" />&nbsp; DatPart!</h3></header>
 	
 	<main id="site-info">
 	<img id="site-favicon" src="/logo.svg" width="5px" height="5px" role="presentation" /><span id="site-title">Title</span><br/>
@@ -89,18 +102,26 @@ display: block;
 	<button class="button" id="pin" title="Pin this Dat offline and seed it"><svg class="icon" role="presentation" width="10" height="10" viewBox="0 0 1792 1792" xmlns="https://www.w3.org/2000/svg"><path d="M1248 928q0 12-10 24l-319 319q-11 9-23 9t-23-9l-320-320q-15-16-7-35 8-20 30-20h192v-352q0-14 9-23t23-9h192q14 0 23 9t9 23v352h192q14 0 23 9t9 23zm-352-576q-148 0-273 73t-198 198-73 273 73 273 198 198 273 73 273-73 198-198 73-273-73-273-198-198-273-73zm768 544q0 209-103 385.5t-279.5 279.5-385.5 103-385.5-103-279.5-279.5-103-385.5 103-385.5 279.5-279.5 385.5-103 385.5 103 279.5 279.5 103 385.5z" fill="#fff"/></svg> Pin</button>
 	<button class="button" id="unpin" title="UnPin this Dat and stop seeding"><svg class="icon" role="presentation" width="10" height="10" viewBox="0 0 1792 1792" xmlns="https://www.w3.org/2000/svg"><path d="M1246 876q-8 20-30 20h-192v352q0 14-9 23t-23 9h-192q-14 0-23-9t-9-23v-352h-192q-14 0-23-9t-9-23q0-12 10-24l319-319q11-9 23-9t23 9l320 320q15 16 7 35zm-350-524q-148 0-273 73t-198 198-73 273 73 273 198 198 273 73 273-73 198-198 73-273-73-273-198-198-273-73zm768 544q0 209-103 385.5t-279.5 279.5-385.5 103-385.5-103-279.5-279.5-103-385.5 103-385.5 279.5-279.5 385.5-103 385.5 103 279.5 279.5 103 385.5z" fill="#fff"/></svg> UnPin</button><br/><br/>
 	-->
-	<span><sub class="section-name">Dat URL</sub>
-	<textarea id="site-url" name="site-url" rows="5" cols="40" title="Dat URL" placeholder="dat://" readonly="true" spellcheck="false"></textarea></span>
-	<span id="site-readme-section" hidden><sub class="section-name">README.md</sub>
-	<textarea id="site-readme" name="site-readme" rows="5" cols="40" title="Dat README" placeholder="README" readonly="true" spellcheck="false"></textarea></span>
-	<a class="button" id="copy-link" href="about:blank" target="_blank" title="dat:// Link"><svg class="icon" role="presentation" width="10" height="10" viewBox="0 0 1792 1792" xmlns="https://www.w3.org/2000/svg"><title>dat:// Link</title><desc>dat:// Link</desc><path d="M1520 1216q0-40-28-68l-208-208q-28-28-68-28-42 0-72 32 3 3 19 18.5t21.5 21.5 15 19 13 25.5 3.5 27.5q0 40-28 68t-68 28q-15 0-27.5-3.5t-25.5-13-19-15-21.5-21.5-18.5-19q-33 31-33 73 0 40 28 68l206 207q27 27 68 27 40 0 68-26l147-146q28-28 28-67zm-703-705q0-40-28-68l-206-207q-28-28-68-28-39 0-68 27l-147 146q-28 28-28 67 0 40 28 68l208 208q27 27 68 27 42 0 72-31-3-3-19-18.5t-21.5-21.5-15-19-13-25.5-3.5-27.5q0-40 28-68t68-28q15 0 27.5 3.5t25.5 13 19 15 21.5 21.5 18.5 19q33-31 33-73zm895 705q0 120-85 203l-147 146q-83 83-203 83-121 0-204-85l-206-207q-83-83-83-203 0-123 88-209l-88-88q-86 88-208 88-120 0-204-84l-208-208q-84-84-84-204t85-203l147-146q83-83 203-83 121 0 204 85l206 207q83 83 83 203 0 123-88 209l88 88q86-88 208-88 120 0 204 84l208 208q84 84 84 204z" fill="#fff"/></svg> dat:// </a>
-	<a class="button" id="donate-link" href="about:blank" target="_blank" title="Donate Link" hidden><svg class="icon" role="presentation" width="10" height="10" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><title>donate Link</title><desc>donate Link</desc><path d="M896 1664q-26 0-44-18l-624-602q-10-8-27.5-26t-55.5-65.5-68-97.5-53.5-121-23.5-138q0-220 127-344t351-124q62 0 126.5 21.5t120 58 95.5 68.5 76 68q36-36 76-68t95.5-68.5 120-58 126.5-21.5q224 0 351 124t127 344q0 221-229 450l-623 600q-18 18-44 18z" fill="#fff"/></svg> <span>Donate</span></a>
+	<div><sub class="section-name">Dat URL</sub>
+	<textarea id="site-url" name="site-url" rows="5" cols="40" title="Dat URL" placeholder="dat://" readonly="true" spellcheck="false"></textarea></div>
+	
+	<div id="site-readme-section" hidden><sub class="section-name">README.md</sub>
+	<textarea id="site-readme" name="site-readme" rows="5" cols="40" title="Dat README" placeholder="README" readonly="true" spellcheck="false"></textarea></div>
+	
+	<div id="site-author-section" hidden><sub class="section-name">Author</sub>
+	<span id="author-name" title="Author name"></span><br/>
+	<a id="author-email" title="Author email" href="about:blank" target="_blank" rel="noopener"></a><br/>
+	<a id="author-web" title="Author website" href="about:blank" target="_blank" rel="noopener"></a><br/>
+	</div>
+	
+	<a class="button" id="copy-link" href="about:blank" target="_blank" rel="noopener" title="dat:// Link"><svg class="icon" role="presentation" width="10" height="10" viewBox="0 0 1792 1792" xmlns="https://www.w3.org/2000/svg"><title>dat:// Link</title><desc>dat:// Link</desc><path d="M1520 1216q0-40-28-68l-208-208q-28-28-68-28-42 0-72 32 3 3 19 18.5t21.5 21.5 15 19 13 25.5 3.5 27.5q0 40-28 68t-68 28q-15 0-27.5-3.5t-25.5-13-19-15-21.5-21.5-18.5-19q-33 31-33 73 0 40 28 68l206 207q27 27 68 27 40 0 68-26l147-146q28-28 28-67zm-703-705q0-40-28-68l-206-207q-28-28-68-28-39 0-68 27l-147 146q-28 28-28 67 0 40 28 68l208 208q27 27 68 27 42 0 72-31-3-3-19-18.5t-21.5-21.5-15-19-13-25.5-3.5-27.5q0-40 28-68t68-28q15 0 27.5 3.5t25.5 13 19 15 21.5 21.5 18.5 19q33-31 33-73zm895 705q0 120-85 203l-147 146q-83 83-203 83-121 0-204-85l-206-207q-83-83-83-203 0-123 88-209l-88-88q-86 88-208 88-120 0-204-84l-208-208q-84-84-84-204t85-203l147-146q83-83 203-83 121 0 204 85l206 207q83 83 83 203 0 123-88 209l88 88q86-88 208-88 120 0 204 84l208 208q84 84 84 204z" fill="#fff"/></svg> dat:// </a>
+	<a class="button" id="donate-link" href="about:blank" target="_blank" rel="noopener" title="Donate Link" hidden><svg class="icon" role="presentation" width="10" height="10" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><title>donate Link</title><desc>donate Link</desc><path d="M896 1664q-26 0-44-18l-624-602q-10-8-27.5-26t-55.5-65.5-68-97.5-53.5-121-23.5-138q0-220 127-344t351-124q62 0 126.5 21.5t120 58 95.5 68.5 76 68q36-36 76-68t95.5-68.5 120-58 126.5-21.5q224 0 351 124t127 344q0 221-229 450l-623 600q-18 18-44 18z" fill="#fff"/></svg> <span>Donate</span></a>
 	</main>
 	
 	<aside id="dat-dns-link">
 	<sub id="dat-hash"></sub><br/><br/>
-	<a id="dat-version" href="about:blank" title="Go to Dat version" class="button" target="_blank"><svg class="icon" role="presentation" xmlns="https://www.w3.org/2000/svg" viewBox="0 0 240 240"><path fill="#2aca4b" d="M119.5-.5L15 59.5v120l104.5 60 104.5-60v-120L119.5-.5zM85 81.1h13v62H87.4l-1-4.3h-.3a17.4 17.4 0 0 1-11.7 5.4c-10.8 0-18-8.7-18-23s9-23 18.3-23c4.9 0 7.8 1.8 10.8 4.6l-.5-6.7V81zm74.4 6.5h10.8v11.7h10.5v10.1h-10.5V127c0 5 2.2 7 5.7 7 1.4 0 3-.4 4.1-.9l2 9.5c-2.2.7-5.4 1.6-9.7 1.6-10.8 0-15-6.8-15-17v-17.8h-6.1v-9.6l6.7-.5 1.5-11.7zM127 98.2c11.2 0 17.4 6.4 17.4 19.8v25.1h-10.6l-1-4.5h-.2a19.3 19.3 0 0 1-12.9 5.6c-8 0-13-5.9-13-13.3 0-9.2 7.4-14.2 24.7-16-.3-3.9-2.2-6.4-6.9-6.4-3.7 0-7.4 1.5-11.7 4l-4.6-8.6a36.3 36.3 0 0 1 18.8-5.7zm-49.2 10.6c-4.1 0-7.9 3.9-7.9 12.2 0 8.7 3 12.6 8 12.6 2.8 0 5-1 7.2-4v-18a10.4 10.4 0 0 0-7.3-2.8zm53.6 13.9c-9.3 1.2-12.3 3.9-12.3 7.2 0 2.9 2 4.2 5 4.2s5-1.4 7.3-3.7v-7.7z"/></svg> Go to Dat site</a>
-	<a id="dat-version-url" href="about:blank" title="dat:// Link" class="button" target="_blank"><svg class="icon" role="presentation" width="10" height="10" viewBox="0 0 1792 1792" xmlns="https://www.w3.org/2000/svg"><title>dat:// Link</title><desc>dat:// Link</desc><path d="M1520 1216q0-40-28-68l-208-208q-28-28-68-28-42 0-72 32 3 3 19 18.5t21.5 21.5 15 19 13 25.5 3.5 27.5q0 40-28 68t-68 28q-15 0-27.5-3.5t-25.5-13-19-15-21.5-21.5-18.5-19q-33 31-33 73 0 40 28 68l206 207q27 27 68 27 40 0 68-26l147-146q28-28 28-67zm-703-705q0-40-28-68l-206-207q-28-28-68-28-39 0-68 27l-147 146q-28 28-28 67 0 40 28 68l208 208q27 27 68 27 42 0 72-31-3-3-19-18.5t-21.5-21.5-15-19-13-25.5-3.5-27.5q0-40 28-68t68-28q15 0 27.5 3.5t25.5 13 19 15 21.5 21.5 18.5 19q33-31 33-73zm895 705q0 120-85 203l-147 146q-83 83-203 83-121 0-204-85l-206-207q-83-83-83-203 0-123 88-209l-88-88q-86 88-208 88-120 0-204-84l-208-208q-84-84-84-204t85-203l147-146q83-83 203-83 121 0 204 85l206 207q83 83 83 203 0 123-88 209l88 88q86-88 208-88 120 0 204 84l208 208q84 84 84 204z" fill="#fff"/></svg> dat:// </a>
+	<a id="dat-version" href="about:blank" title="Go to Dat version" class="button" target="_blank" rel="noopener"><svg class="icon" role="presentation" xmlns="https://www.w3.org/2000/svg" viewBox="0 0 240 240"><path fill="#2aca4b" d="M119.5-.5L15 59.5v120l104.5 60 104.5-60v-120L119.5-.5zM85 81.1h13v62H87.4l-1-4.3h-.3a17.4 17.4 0 0 1-11.7 5.4c-10.8 0-18-8.7-18-23s9-23 18.3-23c4.9 0 7.8 1.8 10.8 4.6l-.5-6.7V81zm74.4 6.5h10.8v11.7h10.5v10.1h-10.5V127c0 5 2.2 7 5.7 7 1.4 0 3-.4 4.1-.9l2 9.5c-2.2.7-5.4 1.6-9.7 1.6-10.8 0-15-6.8-15-17v-17.8h-6.1v-9.6l6.7-.5 1.5-11.7zM127 98.2c11.2 0 17.4 6.4 17.4 19.8v25.1h-10.6l-1-4.5h-.2a19.3 19.3 0 0 1-12.9 5.6c-8 0-13-5.9-13-13.3 0-9.2 7.4-14.2 24.7-16-.3-3.9-2.2-6.4-6.9-6.4-3.7 0-7.4 1.5-11.7 4l-4.6-8.6a36.3 36.3 0 0 1 18.8-5.7zm-49.2 10.6c-4.1 0-7.9 3.9-7.9 12.2 0 8.7 3 12.6 8 12.6 2.8 0 5-1 7.2-4v-18a10.4 10.4 0 0 0-7.3-2.8zm53.6 13.9c-9.3 1.2-12.3 3.9-12.3 7.2 0 2.9 2 4.2 5 4.2s5-1.4 7.3-3.7v-7.7z"/></svg> Go to Dat site</a>
+	<a id="dat-version-url" href="about:blank" title="dat:// Link" class="button" target="_blank" rel="noopener"><svg class="icon" role="presentation" width="10" height="10" viewBox="0 0 1792 1792" xmlns="https://www.w3.org/2000/svg"><title>dat:// Link</title><desc>dat:// Link</desc><path d="M1520 1216q0-40-28-68l-208-208q-28-28-68-28-42 0-72 32 3 3 19 18.5t21.5 21.5 15 19 13 25.5 3.5 27.5q0 40-28 68t-68 28q-15 0-27.5-3.5t-25.5-13-19-15-21.5-21.5-18.5-19q-33 31-33 73 0 40 28 68l206 207q27 27 68 27 40 0 68-26l147-146q28-28 28-67zm-703-705q0-40-28-68l-206-207q-28-28-68-28-39 0-68 27l-147 146q-28 28-28 67 0 40 28 68l208 208q27 27 68 27 42 0 72-31-3-3-19-18.5t-21.5-21.5-15-19-13-25.5-3.5-27.5q0-40 28-68t68-28q15 0 27.5 3.5t25.5 13 19 15 21.5 21.5 18.5 19q33-31 33-73zm895 705q0 120-85 203l-147 146q-83 83-203 83-121 0-204-85l-206-207q-83-83-83-203 0-123 88-209l-88-88q-86 88-208 88-120 0-204-84l-208-208q-84-84-84-204t85-203l147-146q83-83 203-83 121 0 204 85l206 207q83 83 83 203 0 123-88 209l88 88q86-88 208-88 120 0 204 84l208 208q84 84 84 204z" fill="#fff"/></svg> dat:// </a>
 	</aside>
 	
 	<hr/>

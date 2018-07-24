@@ -33,6 +33,12 @@ function checkDatJSON() {
 					var siteDescription = document.getElementById("site-description");
 					siteDescription.innerText = activeTab.title;
 					
+					var siteAuthorName = document.getElementById("author-name");
+					var siteAuthorEmail = document.getElementById("author-email");
+					var siteAuthorWeb = document.getElementById("author-web");
+					var siteAuthorSection = document.getElementById("site-author-section");
+					siteAuthorSection.setAttribute("hidden","");
+					
 					var siteREADME = document.getElementById("site-readme");
 					var siteREADMEsection = document.getElementById("site-readme-section");
 					siteREADMEsection.setAttribute("hidden","");
@@ -56,13 +62,23 @@ function checkDatJSON() {
 					
 					fetch("http://"+ currentURLhostNoTLD + "." + currentTLD + "/favicon.ico").then(function(response) {
 						if (response.status !== 200) {
-								console.log('Looks like there was a problem. Status Code: ' +
+								console.log('Looks like there was a problem getting favicon.ico. Status Code: ' +
 								  response.status);
-								if(activeTab.favIconUrl != "undefined"){faviconIMG.src = activeTab.favIconUrl;}
+								  
+									fetch("http://"+ currentURLhostNoTLD + "." + currentTLD + "/favicon.png").then(function(response) {
+										console.log("Trying for favicon.png now.");
+										
+										if (response.status !== 200) {
+												console.log('Looks like there was a problem getting favicon.png. Status Code: ' +
+												  response.status);
+												  if(activeTab.favIconUrl != "undefined"){faviconIMG.src = activeTab.favIconUrl;}
+												return;
+											  } else { faviconIMG.src = "http://"+ currentURLhostNoTLD + "." + currentTLD + "/favicon.png"; }
+										
+									});
+
 								return;
-							  }
-						
-						faviconIMG.src = "http://"+ currentURLhostNoTLD + "." + currentTLD + "/favicon.ico";
+							  } else { faviconIMG.src = "http://"+ currentURLhostNoTLD + "." + currentTLD + "/favicon.ico"; }
 						
 					});
 					
@@ -107,7 +123,36 @@ function checkDatJSON() {
 								siteDescription.innerText = data.title;
 								}
 								
-								if(data.links.payment[0].href != "undefined"){	
+								if (data.author != "undefined" && typeof data.author == 'string' || data.author != "undefined" && data.author instanceof String) {
+									siteAuthorName.innerText = data.author;
+									siteAuthorSection.removeAttribute("hidden"); 
+								} else {
+									if(data.author.name != "undefined"){
+										siteAuthorName.innerText = data.author.name;
+										
+										siteAuthorSection.removeAttribute("hidden"); 
+									}
+									
+									if(data.author.email != "undefined"){
+										siteAuthorEmail.innerText = "";
+										
+										siteAuthorEmail.href = "mailto:" + data.author.email;
+										siteAuthorEmail.innerText = data.author.email;
+										
+										siteAuthorSection.removeAttribute("hidden"); 
+									}
+									
+									if(data.author.web != "undefined"){
+										siteAuthorWeb.innerText = "";
+										
+										siteAuthorWeb.href = data.author.web;
+										siteAuthorWeb.innerText = data.author.web;
+										
+										siteAuthorSection.removeAttribute("hidden"); 
+									}
+								}
+								
+								if(data.links.payment[0].href != "undefined"){
 								donateLink.href = data.links.payment[0].href; 
 								donateLink.removeAttribute("hidden"); 
 								} else {

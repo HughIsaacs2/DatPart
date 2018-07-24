@@ -330,7 +330,7 @@ chrome.webRequest.onBeforeRequest.addListener(function(details) {  //Chrome spec
 	});
 
 }, {
-    urls: ["http://*.dat_site/*"]
+    urls: ["*://*.dat_site/*"]
 }, ["blocking"]);
 
 chrome.webRequest.onErrorOccurred.addListener(function(details) {
@@ -349,7 +349,7 @@ chrome.webRequest.onErrorOccurred.addListener(function(details) {
         });
     }
 }, {
-    urls: ["http://*.dat_site/*"],
+    urls: ["*://*.dat_site/*"],
     types: ["main_frame"]
 });
 
@@ -366,7 +366,7 @@ chrome.webRequest.onResponseStarted.addListener(function(details) {
 
     decideEnable(currentTLD);
 }, {
-    urls: ["http://*.dat_site/*"],
+    urls: ["*://*.dat_site/*"],
     types: ["main_frame"]
 });
 
@@ -375,7 +375,7 @@ chrome.webRequest.onBeforeRedirect.addListener(function(details) {
     console.log(details);
     console.log(details.responseHeaders);
 }, {
-    urls: ["http://*.dat_site/*"],
+    urls: ["*://*.dat_site/*"],
     types: ["main_frame"]
 });
 
@@ -393,7 +393,7 @@ chrome.webRequest.onCompleted.addListener(function(details) {
 
     decideEnable(currentTLD);
 }, {
-    urls: ["http://*.dat_site/*"],
+    urls: ["*://*.dat_site/*"],
     types: ["main_frame"]
 });
 
@@ -427,7 +427,7 @@ chrome.webRequest.onHeadersReceived.addListener(function(details) {
 
     decideEnable(currentTLD);
 }, {
-    urls: ["http://*.dat_site/*"],
+    urls: ["*://*.dat_site/*"],
     types: ["main_frame"]
 });
 
@@ -484,7 +484,7 @@ chrome.webRequest.onBeforeRequest.addListener(function(details) {  //Chrome spec
 	});
 
 }, {
-    urls: ["http://*.torrent_site/*"]
+    urls: ["*://*.torrent_site/*"]
 }, ["blocking"]);
 
 chrome.webRequest.onErrorOccurred.addListener(function(details) {
@@ -502,7 +502,7 @@ chrome.webRequest.onErrorOccurred.addListener(function(details) {
         });
     }
 }, {
-    urls: ["http://*.torrent_site/*"],
+    urls: ["*://*.torrent_site/*"],
     types: ["main_frame"]
 });
 
