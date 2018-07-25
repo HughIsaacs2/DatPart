@@ -7,16 +7,12 @@
 	const fs = require('fs');
 	const path = require("path");
 	
-	const express = require("express");
-	const bodyParser = require("body-parser");
-	const app = express();
-	
 	//    "chrome-native-messaging": "^0.2.0",
-    //    "node-dat-archive": "^1.5.0"
+    //    "node-dat-archive": "^1.5.0",
+    //    "pauls-dat-api": "^8.0.1"
 
 	var host = "127.0.0.1";
 	var port = "9989";
-	var commandPort = "9988";
 	
 	var versionNumber = require('electron').remote.getGlobal('sharedObject').appVersionNumber;
 	
@@ -106,130 +102,19 @@
 	var HTTPheaders = {
 	  "Server": "DatPart "+versionNumber,
 	  "X-Powered-By": "DatPart "+versionNumber,
-	  "Cache-Control": "no-cache, no-store, must-revalidate, no-transform",
-	  "Pragma": "no-cache",
-	  "Expires": "0",
+	  //"Cache-Control": "no-cache, no-store, must-revalidate, no-transform",
+	  //"Pragma": "no-cache",
+	  //"Expires": "0",
+	  "Cache-Control": "public, max-age: 60, no-transform",
 	  "Accept-Charset": "utf-8",
 	  "Access-Control-Allow-Origin": "*",
-	  "Content-Security-Policy": "frame-ancestors 'self' https://* http://*.dat_site"
+	  "Content-Security-Policy": "frame-ancestors 'self'",
+	  "Upgrade-Insecure-Requests": "1"
 	};
 	
 	if (!fs.existsSync(__dirname + '/../../dats/')) {
 		fs.mkdirSync(__dirname + '/../../dats/');
 	}
-	
-function pinDat(datToPin) {
-		if (!fs.existsSync(__dirname + '/../../dats/'+datToPin+'/')) {
-			fs.mkdirSync(__dirname + '/../../dats/'+datToPin+'/');
-		}
-		
-   	console.log("Storing Dat "+datToPin+" offline");
-	datMap[datToPin] = {'temp': false, 'sparse': false};
-   
-	dat( __dirname + '/../../dats/'+datToPin, {
-	  key: request.headers.dat, temp: datMap[datToPin].temp, sparse: datMap[datToPin].sparse // (a 64 character hash from above)
-	}, function (err, dat) {
-	  if (err) {throw err;console.log(err);}
-	  
-	  var stats = dat.trackStats();
-
-	dat.joinNetwork();
-	
-   console.log("Pinning dat "+datToPin);
-   console.log(fs.readdirSync(__dirname + '/../../dats/'));
-   
-	});
-}
-
-function unpinDat(datToUnpin) {
-	
-	datMap[datToUnpin] = {'temp': true, 'sparse': true};
-	console.log("Deleting Dat "+datToUnpin);
-   
-	if (fs.existsSync(__dirname + '/../../dats/'+datToUnpin+'/')) {
-		
-	var deleteFolderRecursive = function(path) {
-	  if( fs.existsSync(path) ) {
-		fs.readdirSync(path).forEach(function(file,index){
-		  var curPath = path + "/" + file;
-		  if(fs.lstatSync(curPath).isDirectory()) { // recurse
-			deleteFolderRecursive(curPath);
-		  } else { // delete file
-			fs.unlinkSync(curPath);
-		  }
-		});
-		fs.rmdirSync(path);
-	  }
-	};
-	
-	deleteFolderRecursive(__dirname + '/../../dats/'+datToUnpin+'/');
-	
-	}
-	
-}
-	
-app.use(bodyParser.urlencoded({extended : true}));
-
-   app.post("/pin/", function(request, response) {
-	   console.log("pin");
-	   console.log(request);
-	   console.log(request.headers.task);
-	   console.log(request.headers.type);
-	   console.log(request.headers.dat);
-	   
-	   if (request.headers.task == "pin") {
-			if (!fs.existsSync(__dirname + '/../../dats/')) {
-				fs.mkdirSync(__dirname + '/../../dats/');
-			}
-	   }
-	   
-	   if (request.headers.task == "pin" && request.headers.type == "dat" ) {
-
-pinDat(request.headers.dat);
-response.set('Content-Type', 'text/plain');
-response.send('Pinning '+request.headers.dat);
-			
-	   }
-	   
-   });
-   
-  app.post("/unpin/", function(request, response) {
-   console.log("unpin");
-   console.log(request);
-   console.log(request.headers.task);
-   console.log(request.headers.type);
-   console.log(request.headers.dat);
-   
-   if (request.headers.task == "unpin" && request.headers.type == "dat" ) {
-	   
-	   unpinDat(request.headers.dat);
-	   response.set('Content-Type', 'text/plain');
-	   response.send('Unpinning '+request.headers.dat);
-
-   }
-  });
-  
-   app.post("/checkpin/", function(request, response) {
-	   console.log("checkpin");
-	   console.log(request);
-	   console.log(request.headers.task);
-	   console.log(request.headers.type);
-	   console.log(request.headers.dat);
-	   
-	   if (request.headers.task == "pin") {
-			if (!fs.existsSync(__dirname + '/../../dats/')) {
-				fs.mkdirSync(__dirname + '/../../dats/');
-			}
-	   }
-	   
-	   if (request.headers.task == "checkpin" && request.headers.type == "dat" ) {
-
-			
-	   }
-	   
-   });
-
-app.listen(commandPort);
 
 const requestHandler = (request, response) => {
   console.log(request.url);
@@ -252,23 +137,16 @@ const requestHandler = (request, response) => {
 	
 	console.log(datPath);
 
-if(request.method == 'GET' && currentTLD == 'dat_site' && fs.existsSync(__dirname + "/../../dats/")) {
-
-		if (fs.existsSync(__dirname + '/../../dats/'+currentURLhostNoTLD+'/')) {
-			console.log(" dat://"+currentURLhostNoTLD+" folder exists.");
-			datMap[currentURLhostNoTLD] = {'temp': false, 'sparse': false};
-		} else {
-			console.log(" dat://"+currentURLhostNoTLD+" folder doesn't exist.");
-			datMap[currentURLhostNoTLD] = {'temp': true, 'sparse': true};
-		}
-
+if(request.method == 'GET' && currentTLD == 'dat_site') {
+	datMap[currentURLhostNoTLD] = {};
 dat( __dirname + '/../../dats/'+currentURLhostNoTLD, {
   // 2. Tell Dat what link I want
-  key: currentURLhostNoTLD, temp: datMap[currentURLhostNoTLD].temp, sparse: datMap[currentURLhostNoTLD].sparse // (a 64 character hash from above)
+  key: currentURLhostNoTLD, temp: true, sparse: true // (a 64 character hash from above)
 }, function (err, dat) {
   if (err) {throw err;console.log(err);}
   
   var stats = dat.trackStats();
+  console.log(dat.stats.get());
 
   // 3. Join the network & download (files are automatically downloaded)
   dat.joinNetwork(function (err) {
@@ -286,14 +164,12 @@ dat( __dirname + '/../../dats/'+currentURLhostNoTLD, {
 	  
 	  dat.archive.readFile('/dat.json', function (err, content) {
 		if (content != null) {
-			//datMap[currentURLhostNoTLD].datJSON = {};
-			//datMap[currentURLhostNoTLD].datJSON = JSON.parse(content);
-			console.log("Got Dat.json for "+ currentURLhostNoTLD);
+			console.log("Got dat.json for "+ currentURLhostNoTLD);
 			console.log(datMap[currentURLhostNoTLD]);
 			resolve(JSON.parse(content.toString()));
 		} else {
-			console.log("Dat.json not found for "+ currentURLhostNoTLD);
-			reject("Dat.json not found for "+ currentURLhostNoTLD);
+			console.log("dat.json not found for "+ currentURLhostNoTLD);
+			reject("dat.json not found for "+ currentURLhostNoTLD);
 		}
 		if (err) {throw err; console.log(err);}
 	  });
@@ -319,6 +195,26 @@ dat( __dirname + '/../../dats/'+currentURLhostNoTLD, {
 	  console.log(err);
 	});
   });
+  
+    var datContentSecurityPolicy = new Promise(function(resolve, reject) {
+	datMap[currentURLhostNoTLD].datJSON.then(function(result) {
+		
+	  console.log("Grabbing JSON for content_security_policy "+JSON.stringify(result));
+	  
+		dat.archive.readFile(result.content_security_policy, function (err, cspContent) {
+			if (cspContent != null) {
+				console.log("Got fallback page for dat://"+ currentURLhostNoTLD +" " + result.content_security_policy);
+				resolve(cspContent);
+			} else {
+				console.log("content_security_policy not found for dat://"+ currentURLhostNoTLD);
+				reject("content_security_policy not found for dat://"+ currentURLhostNoTLD);
+			}
+		});
+		
+	}, function(err) {
+	  console.log(err);
+	});
+  });
 
 var lastChar = request.url.substr(-1); // Selects the last character
 if (lastChar == '/') {         // If the last character is not a slash
@@ -333,21 +229,23 @@ if (lastChar == '/') {         // If the last character is not a slash
 		newHeaders["Content-Type"] = "text/html";
 		newHeaders["Alt-Svc"] = "dat='dat://"+currentURLhostNoTLD+datPath+"'";
 		newHeaders["Dat-Url"] = "dat://"+currentURLhostNoTLD+datPath;
-		newHeaders["Dat-JSON"] = JSON.stringify(datMap[currentURLhostNoTLD].datJSON);
-		newHeaders["Content-Security-Policy"] = "frame-ancestors 'self' https://* http://*.dat_site";
-		fs.access(__dirname + '/../../dats/' + currentURLhostNoTLD+'/', (err) => {
-		  if (!err) {
-		    newHeaders["Site-Pinned"] = "true";
-			return;
-		  } else {
-		    newHeaders["Site-Pinned"] = "false";
-	      }
-		});
-
-		//response.setHeader('Alt-Svc', 'dat="'+currentURLhostNoTLD+datPath+'"');
+		newHeaders["Content-Security-Policy"] = "frame-ancestors 'self' https://*";
+		newHeaders["Hyperdrive-Key"] = currentURLhostNoTLD;
+		newHeaders["Hyperdrive-Version"] = ""; //dat.stats.get().version;
 		
-		response.writeHead(200, newHeaders);
-		response.end(content);
+		datContentSecurityPolicy.then(function(result) {
+					console.log(result); // "Stuff worked!"
+					newHeaders["Content-Security-Policy"] = result;
+					response.writeHead(200, newHeaders);
+					response.end(content);
+		}, function(err) {
+					console.log(err); // Error: "It broke"
+					response.writeHead(200, newHeaders);
+					response.end(content);
+		});
+		
+		//response.writeHead(200, newHeaders);
+		//response.end(content);
 	} else {
 		console.log("File "+datPath+" not found!");
 		
@@ -356,18 +254,9 @@ if (lastChar == '/') {         // If the last character is not a slash
 		delete newHeaders["Location"];
 		newHeaders["Content-Security-Policy"] = "frame-ancestors 'none'";
 		newHeaders["X-Frame-Options"] = "DENY";
-		fs.access(__dirname + '/../../dats/' + currentURLhostNoTLD+'/', (err) => {
-		  if (!err) {
-		    newHeaders["Site-Pinned"] = "true";
-			return;
-		  } else {
-		    newHeaders["Site-Pinned"] = "false";
-	      }
-		});
 		
 		fourOhFourFallback.then(function(result) {
 					console.log(result); // "Stuff worked!"
-					//newHeaders["Location"] = "http://"+currentURLhostNoTLD+".dat_site"+datMap[currentURLhostNoTLD].datJSON.fallback_page;
   					response.writeHead(404, newHeaders);
 					response.end(result);
 		}, function(err) {
@@ -393,21 +282,27 @@ if (lastChar == '/') {         // If the last character is not a slash
 		newHeaders["Content-Type"] = mimeType;
 		newHeaders["Alt-Svc"] = "dat='dat://"+currentURLhostNoTLD+datPath+"'";
 		newHeaders["Dat-Url"] = "dat://"+currentURLhostNoTLD+datPath;
-		newHeaders["Content-Security-Policy"] = "frame-ancestors 'self' https://* http://*.dat_site";
-		fs.access(__dirname + '/../../dats/' + currentURLhostNoTLD+'/', (err) => {
-		  if (!err) {
-		    newHeaders["Site-Pinned"] = "true";
-			return;
-		  } else {
-		    newHeaders["Site-Pinned"] = "false";
-	      }
-		});
+		newHeaders["Content-Security-Policy"] = "frame-ancestors 'self' https://*";
+		newHeaders["Hyperdrive-Key"] = currentURLhostNoTLD;
+		newHeaders["Hyperdrive-Version"] = ""; //dat.stats.get().version;
+
 		delete newHeaders["X-Frame-Options"];
 		delete newHeaders["Location"];
 		//response.setHeader('Alt-Svc', 'dat="'+currentURLhostNoTLD+datPath+'"');
 		
-		response.writeHead(200, newHeaders);
-		response.end(content); 
+		datContentSecurityPolicy.then(function(result) {
+					console.log(result); // "Stuff worked!"
+					newHeaders["Content-Security-Policy"] = result;
+					response.writeHead(200, newHeaders);
+					response.end(content);
+		}, function(err) {
+					console.log(err); // Error: "It broke"
+					response.writeHead(200, newHeaders);
+					response.end(content);
+		});
+		
+		//response.writeHead(200, newHeaders);
+		//response.end(content); 
 	} else {
 		console.log("File "+datPath+" not found!");
 		
@@ -416,18 +311,9 @@ if (lastChar == '/') {         // If the last character is not a slash
 		delete newHeaders["Location"];
 		newHeaders["Content-Security-Policy"] = "frame-ancestors 'none'";
 		newHeaders["X-Frame-Options"] = "DENY";
-		fs.access(__dirname + '/../../dats/' + currentURLhostNoTLD+'/', (err) => {
-		  if (!err) {
-		    newHeaders["Site-Pinned"] = "true";
-			return;
-		  } else {
-		    newHeaders["Site-Pinned"] = "false";
-	      }
-		});
 		
 		fourOhFourFallback.then(function(result) {
 					console.log(result); // "Stuff worked!"
-					//newHeaders["Location"] = "http://"+currentURLhostNoTLD+".dat_site"+datMap[currentURLhostNoTLD].datJSON.fallback_page;
   					response.writeHead(404, newHeaders);
 					response.end(result);
 		}, function(err) {
@@ -441,6 +327,8 @@ if (lastChar == '/') {         // If the last character is not a slash
   });
 
 }
+  
+  dat.leaveNetwork();
   
 });
 
