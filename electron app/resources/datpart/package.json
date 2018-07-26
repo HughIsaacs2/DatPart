@@ -11,11 +11,7 @@
   "author": "Hugh Isaacs II <hughisaacs@acrylicstyle.com>",
   "license": "MIT",
   "main": "launch.js",
-  "dependencies": {
-    "body-parser": "^1.18.2",
-    "dat-node": "^3.5.8",
-    "express": "^4.16.2"
-  },
+  "dependencies": {},
   "build": {
     "files": [
       "node_modules/",
@@ -65,6 +61,8 @@
     }
   },
   "devDependencies": {
-    "electron": "1.8.3"
+    "dat-node": "^3.5.11",
+    "electron": "2.0.0",
+    "electron-rebuild": "^1.7.3"
   }
 }

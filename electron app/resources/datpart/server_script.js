@@ -108,7 +108,7 @@
 	  "Cache-Control": "public, max-age: 60, no-transform",
 	  "Accept-Charset": "utf-8",
 	  "Access-Control-Allow-Origin": "*",
-	  "Content-Security-Policy": "frame-ancestors 'self'",
+	  "Content-Security-Policy": "",
 	  "Upgrade-Insecure-Requests": "1"
 	};
 	
@@ -145,21 +145,22 @@ dat( __dirname + '/../../dats/'+currentURLhostNoTLD, {
 }, function (err, dat) {
   if (err) {throw err;console.log(err);}
   
-  var stats = dat.trackStats();
-  console.log(dat.stats.get());
+  //var stats = dat.trackStats();
+  //console.log(dat.stats.get());
 
   // 3. Join the network & download (files are automatically downloaded)
+  dat.joinNetwork();
+  /*
   dat.joinNetwork(function (err) {
   if (err) { throw err; }
 
-    // After the first round of network checks, the callback is called
-    // If no one is online, you can exit and let the user know.
     if (!dat.network.connected || !dat.network.connecting) {
       console.error('No users currently online for dat://'+currentURLhostNoTLD);
       process.exit(1);
     }
   });
-
+  */
+  
   datMap[currentURLhostNoTLD].datJSON = new Promise(function(resolve, reject) {
 	  
 	  dat.archive.readFile('/dat.json', function (err, content) {
@@ -167,6 +168,11 @@ dat( __dirname + '/../../dats/'+currentURLhostNoTLD, {
 			console.log("Got dat.json for "+ currentURLhostNoTLD);
 			console.log(datMap[currentURLhostNoTLD]);
 			resolve(JSON.parse(content.toString()));
+			
+			//datMap[currentURLhostNoTLD].fourOhFourFallback = JSON.parse(content.toString()).fallback_page;
+			
+			datMap[currentURLhostNoTLD].contentSecurityPolicy = JSON.parse(content.toString()).content_security_policy;
+			
 		} else {
 			console.log("dat.json not found for "+ currentURLhostNoTLD);
 			reject("dat.json not found for "+ currentURLhostNoTLD);
@@ -175,8 +181,8 @@ dat( __dirname + '/../../dats/'+currentURLhostNoTLD, {
 	  });
 	  
   });
-  
-  var fourOhFourFallback = new Promise(function(resolve, reject) {
+
+  datMap[currentURLhostNoTLD].fourOhFourFallback = new Promise(function(resolve, reject) {
 	datMap[currentURLhostNoTLD].datJSON.then(function(result) {
 		
 	  console.log("Grabbing JSON for fallback_page "+JSON.stringify(result));
@@ -195,8 +201,8 @@ dat( __dirname + '/../../dats/'+currentURLhostNoTLD, {
 	  console.log(err);
 	});
   });
-  
-    var datContentSecurityPolicy = new Promise(function(resolve, reject) {
+/*
+    datMap[currentURLhostNoTLD].contentSecurityPolicy = new Promise(function(resolve, reject) {
 	datMap[currentURLhostNoTLD].datJSON.then(function(result) {
 		
 	  console.log("Grabbing JSON for content_security_policy "+JSON.stringify(result));
@@ -215,7 +221,7 @@ dat( __dirname + '/../../dats/'+currentURLhostNoTLD, {
 	  console.log(err);
 	});
   });
-
+*/
 var lastChar = request.url.substr(-1); // Selects the last character
 if (lastChar == '/') {         // If the last character is not a slash
   
@@ -226,41 +232,36 @@ if (lastChar == '/') {         // If the last character is not a slash
 		var newHeaders = HTTPheaders;
 		delete newHeaders["X-Frame-Options"];
 		delete newHeaders["Location"];
-		newHeaders["Content-Type"] = "text/html";
+		newHeaders["Content-Type"] = "text/html; charset=utf8";
 		newHeaders["Alt-Svc"] = "dat='dat://"+currentURLhostNoTLD+datPath+"'";
 		newHeaders["Dat-Url"] = "dat://"+currentURLhostNoTLD+datPath;
-		newHeaders["Content-Security-Policy"] = "frame-ancestors 'self' https://*";
 		newHeaders["Hyperdrive-Key"] = currentURLhostNoTLD;
-		newHeaders["Hyperdrive-Version"] = ""; //dat.stats.get().version;
+		newHeaders["Hyperdrive-Version"] = "";
+		newHeaders["Content-Security-Policy"] = datMap[currentURLhostNoTLD].contentSecurityPolicy;
 		
-		datContentSecurityPolicy.then(function(result) {
-					console.log(result); // "Stuff worked!"
-					newHeaders["Content-Security-Policy"] = result;
-					response.writeHead(200, newHeaders);
-					response.end(content);
-		}, function(err) {
-					console.log(err); // Error: "It broke"
-					response.writeHead(200, newHeaders);
-					response.end(content);
-		});
-		
-		//response.writeHead(200, newHeaders);
-		//response.end(content);
+		response.writeHead(200, newHeaders);
+		response.end(content);
 	} else {
 		console.log("File "+datPath+" not found!");
 		
 		var newHeaders = HTTPheaders;
 		delete newHeaders["X-Frame-Options"];
 		delete newHeaders["Location"];
-		newHeaders["Content-Security-Policy"] = "frame-ancestors 'none'";
+		newHeaders["Content-Security-Policy"] = "";
 		newHeaders["X-Frame-Options"] = "DENY";
 		
-		fourOhFourFallback.then(function(result) {
-					console.log(result); // "Stuff worked!"
+		datMap[currentURLhostNoTLD].fourOhFourFallback.then(function(result) {
+					console.log(result);
+					
+					newHeaders["Alt-Svc"] = "dat='dat://"+currentURLhostNoTLD+datPath+"'";
+					newHeaders["Dat-Url"] = "dat://"+currentURLhostNoTLD+datPath;
+					newHeaders["Hyperdrive-Key"] = currentURLhostNoTLD;
+					newHeaders["Hyperdrive-Version"] = "";
+					
   					response.writeHead(404, newHeaders);
 					response.end(result);
 		}, function(err) {
-					console.log(err); // Error: "It broke"
+					console.log(err);
 					response.writeHead(204, newHeaders);
 					response.end("Nothing");
 		});
@@ -282,27 +283,16 @@ if (lastChar == '/') {         // If the last character is not a slash
 		newHeaders["Content-Type"] = mimeType;
 		newHeaders["Alt-Svc"] = "dat='dat://"+currentURLhostNoTLD+datPath+"'";
 		newHeaders["Dat-Url"] = "dat://"+currentURLhostNoTLD+datPath;
-		newHeaders["Content-Security-Policy"] = "frame-ancestors 'self' https://*";
 		newHeaders["Hyperdrive-Key"] = currentURLhostNoTLD;
-		newHeaders["Hyperdrive-Version"] = ""; //dat.stats.get().version;
+		newHeaders["Hyperdrive-Version"] = "";
 
 		delete newHeaders["X-Frame-Options"];
 		delete newHeaders["Location"];
-		//response.setHeader('Alt-Svc', 'dat="'+currentURLhostNoTLD+datPath+'"');
 		
-		datContentSecurityPolicy.then(function(result) {
-					console.log(result); // "Stuff worked!"
-					newHeaders["Content-Security-Policy"] = result;
-					response.writeHead(200, newHeaders);
-					response.end(content);
-		}, function(err) {
-					console.log(err); // Error: "It broke"
-					response.writeHead(200, newHeaders);
-					response.end(content);
-		});
+		newHeaders["Content-Security-Policy"] = datMap[currentURLhostNoTLD].contentSecurityPolicy;
 		
-		//response.writeHead(200, newHeaders);
-		//response.end(content); 
+		response.writeHead(200, newHeaders);
+		response.end(content);
 	} else {
 		console.log("File "+datPath+" not found!");
 		
@@ -312,12 +302,18 @@ if (lastChar == '/') {         // If the last character is not a slash
 		newHeaders["Content-Security-Policy"] = "frame-ancestors 'none'";
 		newHeaders["X-Frame-Options"] = "DENY";
 		
-		fourOhFourFallback.then(function(result) {
-					console.log(result); // "Stuff worked!"
+		datMap[currentURLhostNoTLD].fourOhFourFallback.then(function(result) {
+					console.log(result);
+					
+					newHeaders["Alt-Svc"] = "dat='dat://"+currentURLhostNoTLD+datPath+"'";
+					newHeaders["Dat-Url"] = "dat://"+currentURLhostNoTLD+datPath;
+					newHeaders["Hyperdrive-Key"] = currentURLhostNoTLD;
+					newHeaders["Hyperdrive-Version"] = "";
+					
   					response.writeHead(404, newHeaders);
 					response.end(result);
 		}, function(err) {
-					console.log(err); // Error: "It broke"
+					console.log(err);
 					response.writeHead(204, newHeaders);
 					response.end("Nothing");
 		});
@@ -328,7 +324,7 @@ if (lastChar == '/') {         // If the last character is not a slash
 
 }
   
-  dat.leaveNetwork();
+  //dat.leaveNetwork();
   
 });
 
