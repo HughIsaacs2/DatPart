@@ -1,6 +1,5 @@
 var appip = "127.0.0.1";
 var port = "9989";
-var commandPort = "9988";
 
 function checkDatJSON() {
 
@@ -91,9 +90,13 @@ function checkDatJSON() {
 							}
 							  
 						response.text().then(function(data) {
-							console.log(data);
-							siteREADME.innerText = data;
-							siteREADMEsection.removeAttribute("hidden"); 
+							if (data !== "") {
+								console.log(data);
+								siteREADME.innerText = data;
+								siteREADMEsection.removeAttribute("hidden"); 
+							} else {
+								siteREADMEsection.setAttribute("hidden","");
+							}
 						});
 						
 					});
@@ -126,7 +129,7 @@ function checkDatJSON() {
 								if (data.author != "undefined" && typeof data.author == 'string' || data.author != "undefined" && data.author instanceof String) {
 									siteAuthorName.innerText = data.author;
 									siteAuthorSection.removeAttribute("hidden"); 
-								} else {
+								} else if (data.author != "undefined") {
 									if(data.author.name != "undefined"){
 										siteAuthorName.innerText = data.author.name;
 										
@@ -221,7 +224,7 @@ function checkDatAvailable() {
 					var currentURLhost = currentURLRequest.hostname;
 					
 					chrome.storage.local.get([currentURLhost], function(result) {
-						if (Object.keys(result).length != 0 && result.constructor == Object && result.dat != "") {
+						if (Object.keys(result).length != 0 && result.constructor == Object && result.dat != "" && result[currentURLhost].dat != "") {
 							console.log(currentURLhost);
 							console.log('Value for '+currentURLhost+' currently is ' + result);
 							console.log(result);
@@ -231,7 +234,8 @@ function checkDatAvailable() {
 							
 							document.documentElement.setAttribute('dat-available', 'true');
 							
-							document.getElementById("dat-hash").textContent=currentURLRequest.hostname+" "+result[currentURLhost].dat;
+							document.getElementById("https-url").textContent=currentURLRequest.hostname;
+							document.getElementById("dat-hash").textContent="dat://"+result[currentURLhost].dat;
 							
 							document.getElementById("dat-version").href="dat://";
 							document.getElementById("dat-version").href="dat://"+result[currentURLhost].dat;
