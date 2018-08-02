@@ -111,8 +111,8 @@ function checkDatJSON() {
 					siteURL.innerText = "dat://" + currentURLhostNoTLD + currentURLRequest.pathname + currentURLRequest.search + currentURLRequest.hash;
 					document.getElementById("copy-link").href = "dat://" + currentURLhostNoTLD + currentURLRequest.pathname + currentURLRequest.search + currentURLRequest.hash;
 					
-					document.getElementById("qr-iframe").src="/qr_generator.html?dat=" + "dat://" + currentURLhostNoTLD + currentURLRequest.pathname + currentURLRequest.search + currentURLRequest.hash;
-					document.getElementById("qr-link").href="/qr_generator.html?dat=" + "dat://" + currentURLhostNoTLD + currentURLRequest.pathname + currentURLRequest.search + currentURLRequest.hash;
+					document.getElementById("qr-iframe").src="/qr_generator.html?link=" + "dat://" + currentURLhostNoTLD + currentURLRequest.pathname + currentURLRequest.search + currentURLRequest.hash;
+					document.getElementById("qr-link").href="/qr_generator.html?link=" + "dat://" + currentURLhostNoTLD + currentURLRequest.pathname + currentURLRequest.search + currentURLRequest.hash;
 					
 					fetch("http://"+ currentURLhostNoTLD + "." + currentTLD + "/favicon.ico").then(function(response) {
 						if (response.status !== 200) {
