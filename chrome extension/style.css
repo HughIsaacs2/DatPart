@@ -224,3 +224,16 @@ label.toggle:active:after {
 input.toggle:checked + label.toggle:active:after {
 	transform: scaleX(2);
 }
+
+.button, input.toggle:checked + label.toggle {
+background-color: rgba(51, 105, 158, 0.9);
+}
+
+#version-notice {
+	display: block;
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	float: left;
+	opacity: 0.5;
+}

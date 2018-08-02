@@ -20,6 +20,14 @@ if (datUrl.substring(0, 4) == "web+") {
 	datUrl = datUrl.substring(4, datUrl.length);
 }
 
+var siteInfo = document.createElement('span');
+siteInfo.id = "error-site-info";
+siteInfo.innerText = datUrl;
+document.body.appendChild(siteInfo);
+
+document.body.appendChild(document.createElement('br'));
+document.body.appendChild(document.createElement('br'));
+
 var retryLink = document.createElement('a');
 retryLink.href = "http://"+datUrl.substring(6, 70)+".dat_site"+datUrl.substring(70, datUrl.length);
 retryLink.innerText = "Retry";
@@ -32,6 +40,7 @@ document.body.appendChild(document.createElement('br'));
 
 var datLink = document.createElement('a');
 datLink.href = datUrl;
+datLink.title = datUrl;
 datLink.innerText = "dat:// link";
 datLink.className = "button";
 document.body.appendChild(datLink);

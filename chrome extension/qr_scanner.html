@@ -1,0 +1,48 @@
+<html>
+<head>
+<meta content='IE=edge;Chrome=1' http-equiv='X-UA-Compatible'/>
+<meta charset='utf-8' />
+<meta content='text/html; charset=UTF-8' http-equiv='Content-Type'/>
+
+<title>QR Code Scanner</title>
+
+<link href='/favicon.ico' rel='shortcut icon' type='image/x-icon' sizes="16x16" lazyload="1" id="ico-favicon"/>
+<link href='/favicon.ico' rel='icon' type='image/vnd.microsoft.icon' sizes="16x16" lazyload="1"/>
+
+<meta content="#424242" name="theme-color" id="theme-color" />
+
+<meta content='width=device-width, minimum-scale=1, initial-scale=1, shrink-to-fit=no' name='viewport'/>
+
+<link type="text/css" href="/style.css" rel="stylesheet" lazyload="1" />
+
+<script src="/jsQR.js"></script>
+<script type="text/javascript" src="/qr_scanner_script.js" defer="true"></script>
+<script type="text/javascript" src="/protocol_script.js"></script>
+<style>
+#canvas {
+border-radius: 4px;
+}
+</style>
+</head>
+<body>
+<header><h1>QR Code Scanner</h1></header>
+<main>
+
+  <div id="loadingMessage">ðŸŽ¥ Unable to access video stream (please make sure you have a webcam enabled)</div>
+  <canvas id="canvas" hidden></canvas>
+  
+  <div id="output" hidden>
+    <div id="outputMessage">No QR code detected.</div>
+    <div hidden><b>Data:</b> <span id="outputData"></span>
+	<a hidden id="output-link" href="about:blank" class="button" target="_blank"><svg class="icon" role="presentation" width="10" height="10" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1520 1216q0-40-28-68l-208-208q-28-28-68-28-42 0-72 32 3 3 19 18.5t21.5 21.5 15 19 13 25.5 3.5 27.5q0 40-28 68t-68 28q-15 0-27.5-3.5t-25.5-13-19-15-21.5-21.5-18.5-19q-33 31-33 73 0 40 28 68l206 207q27 27 68 27 40 0 68-26l147-146q28-28 28-67zm-703-705q0-40-28-68l-206-207q-28-28-68-28-39 0-68 27l-147 146q-28 28-28 67 0 40 28 68l208 208q27 27 68 27 42 0 72-31-3-3-19-18.5t-21.5-21.5-15-19-13-25.5-3.5-27.5q0-40 28-68t68-28q15 0 27.5 3.5t25.5 13 19 15 21.5 21.5 18.5 19q33-31 33-73zm895 705q0 120-85 203l-147 146q-83 83-203 83-121 0-204-85l-206-207q-83-83-83-203 0-123 88-209l-88-88q-86 88-208 88-120 0-204-84l-208-208q-84-84-84-204t85-203l147-146q83-83 203-83 121 0 204 85l206 207q83 83 83 203 0 123-88 209l88 88q86-88 208-88 120 0 204 84l208 208q84 84 84 204z" fill="#fff"/></svg> Link</a>
+	<a hidden id="output-datlink" href="about:blank" class="button" target="_blank"><svg class="icon" role="presentation" xmlns="https://www.w3.org/2000/svg" viewBox="0 0 240 240"><path fill="#2aca4b" d="M119.5-.5L15 59.5v120l104.5 60 104.5-60v-120L119.5-.5zM85 81.1h13v62H87.4l-1-4.3h-.3a17.4 17.4 0 0 1-11.7 5.4c-10.8 0-18-8.7-18-23s9-23 18.3-23c4.9 0 7.8 1.8 10.8 4.6l-.5-6.7V81zm74.4 6.5h10.8v11.7h10.5v10.1h-10.5V127c0 5 2.2 7 5.7 7 1.4 0 3-.4 4.1-.9l2 9.5c-2.2.7-5.4 1.6-9.7 1.6-10.8 0-15-6.8-15-17v-17.8h-6.1v-9.6l6.7-.5 1.5-11.7zM127 98.2c11.2 0 17.4 6.4 17.4 19.8v25.1h-10.6l-1-4.5h-.2a19.3 19.3 0 0 1-12.9 5.6c-8 0-13-5.9-13-13.3 0-9.2 7.4-14.2 24.7-16-.3-3.9-2.2-6.4-6.9-6.4-3.7 0-7.4 1.5-11.7 4l-4.6-8.6a36.3 36.3 0 0 1 18.8-5.7zm-49.2 10.6c-4.1 0-7.9 3.9-7.9 12.2 0 8.7 3 12.6 8 12.6 2.8 0 5-1 7.2-4v-18a10.4 10.4 0 0 0-7.3-2.8zm53.6 13.9c-9.3 1.2-12.3 3.9-12.3 7.2 0 2.9 2 4.2 5 4.2s5-1.4 7.3-3.7v-7.7z"/></svg> Dat Link</a>
+	<a hidden id="output-qrlink" href="about:blank" class="button" target="_blank"><svg role="presentation" class="icon" width="10" height="10" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M576 1152v128h-128v-128h128zm0-768v128h-128v-128h128zm768 0v128h-128v-128h128zm-1024 1023h384v-383h-384v383zm0-767h384v-384h-384v384zm768 0h384v-384h-384v384zm-256 256v640h-640v-640h640zm512 512v128h-128v-128h128zm256 0v128h-128v-128h128zm0-512v384h-384v-128h-128v384h-128v-640h384v128h128v-128h128zm-768-768v640h-640v-640h640zm768 0v640h-640v-640h640z" fill="#fff"/></svg> QR Link</a>
+	</div>
+  </div>
+
+</main>
+<footer>
+<sub id="version-notice">🌌</sub>
+</footer>
+</body>
+</html>
