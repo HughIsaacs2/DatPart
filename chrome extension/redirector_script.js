@@ -41,7 +41,7 @@ var datPartUrl = "http://"+datUrl.substring(6, 70)+".dat_site"+datUrl.substring(
 	redirectLink.title = "Click here to redirect to the site if it's not working.";
     redirectLink.href = "http://"+datUrl.substring(6, 70)+".dat_site"+datUrl.substring(70, datUrl.length);
 	document.body.appendChild(redirectLink);
-	/*
+	
     var redirectMeta = document.createElement('meta');
 	redirectMeta.setAttribute("http-equiv", "refresh");
 	redirectMeta.setAttribute("content", "0; url="+"http://"+datUrl.substring(6, 70)+".dat_site"+datUrl.substring(70, datUrl.length));
@@ -49,4 +49,4 @@ var datPartUrl = "http://"+datUrl.substring(6, 70)+".dat_site"+datUrl.substring(
 	
 	document.location.replace("http://"+datUrl.substring(6, 70)+".dat_site"+datUrl.substring(70, datUrl.length));
 	window.location.replace("http://"+datUrl.substring(6, 70)+".dat_site"+datUrl.substring(70, datUrl.length));
-	*/
+	
