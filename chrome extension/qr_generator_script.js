@@ -11,30 +11,12 @@ function queryObj() {
     return result;
 }
 
-var qrLink = queryObj()["link"];
+var code_URL = queryObj()["code_URL"];
 
-var qrUrl = unescape(qrLink);
-
-if (qrUrl.substring(0, 10) == "web+dat://") {
-	qrUrl = qrUrl.substring(4, qrUrl.length);
-}
+var qrUrl = unescape(code_URL);
 
 window.onload = function() {
-
-var qrcode = new QRCode({
-  content: qrUrl,
-  padding: 1,
-  width: 512,
-  height: 512,
-  color: "#000000",
-  background: "#ffffff",
-  ecl: "M"
-});
-var svg = qrcode.svg();
-document.getElementById("qrcode").innerHTML = svg;
-document.querySelector("#qrcode > svg").setAttribute("viewBox","0 0 512 512");
-document.getElementById("qrcode").title = "QR Code for "+qrUrl;
-document.querySelector("#qrcode > svg").appendChild(document.createElement("title"));
-document.querySelector("#qrcode > svg > title").innerText = "QR Code for "+qrUrl;
-document.title = "QR Code for "+qrUrl;
+document.getElementById("code_image").src = "/qr_code.html?link="+ qrUrl;
+document.getElementById("code_image").title = "QR Code for "+ qrUrl;
+document.getElementById("version-notice").textContent="This is version "+chrome.runtime.getManifest().version+" of  "+chrome.runtime.getManifest().short_name+".";
 }

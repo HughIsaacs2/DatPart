@@ -27,7 +27,7 @@ if (datUrl.substring(0, 4) == "web+") {
 }
 
   var firstBracket = datUrl.indexOf('dat://');
-  var secondBracket = datUrl.indexOf(0, firstBracket+1)
+  var secondBracket = datUrl.indexOf(0, firstBracket+1);
   console.log(datUrl.substring(firstBracket, secondBracket));
 
 var datPartUrl = "http://"+datUrl.substring(6, 70)+".dat_site"+datUrl.substring(70, datUrl.length);

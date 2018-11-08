@@ -1,4 +1,6 @@
+
 var chromeos_server_app_id = chrome.runtime.getManifest().externally_connectable.ids[0]; //Chrome specific
+
 
 var defaultproxyaccess = "PROXY";
 var defaultproxyurl = "localhost:9989";
@@ -270,9 +272,12 @@ chrome.webNavigation.onBeforeNavigate.addListener(function(details) {
         //Do nothing
     }
     else {
-        chrome.runtime.sendMessage(chromeos_server_app_id, {
-            launch: true
-        });
+		chrome.runtime.getPlatformInfo(function(info) {
+			console.log(info.os);
+			if (info.os = "cros") {
+			chrome.runtime.sendMessage(chromeos_server_app_id, { launch: true });
+			}
+		});
         console.log('inputEntered: ' + details.url + "|" + currentTLD);
     }
 });
@@ -512,3 +517,53 @@ Array.from(document.querySelectorAll('[href^="dat://"],[src^="dat://"]')).forEac
 });
 
 */
+if (chrome.runtime.getURL("/").startsWith('moz-extension://') == "true"){
+function shouldProxyRequest(requestInfo) {
+  return requestInfo.parentFrameId != -1;
+}
+
+function handleProxyRequest(requestInfo) {
+  if (shouldProxyRequest(requestInfo)) {
+    console.log(`Proxying: ${requestInfo.url}`);
+    return {type: "http", host: "127.0.0.1", port: 9989};
+  }
+  return {type: "direct"};
+}
+
+browser.proxy.onRequest.addListener(handleProxyRequest, {
+    urls: ["*://*.dat_site/*"],
+    types: ["main_frame"]
+});
+}
+/*
+    var dathost = currentURLRequest.hostname;
+	
+	chrome.storage.local.get(["gatewaySettings"], function(result) {
+
+		console.log(result);
+		console.log(result.constructor === Object);
+		console.log(Object.keys(result).length);
+		
+		if (Object.keys(result).length != 0 && result.constructor == Object) {
+			
+			var config = {
+				mode: "pac_script",
+				pacScript: {
+					data: "function FindProxyForURL(url, host) {\n" +
+						"  if (dnsDomainIs(host, '" + dathost + "'))\n" +
+						"    return '" + result.gatewaySettings.proxyaccess + " " + result.gatewaySettings.proxyurl + "';\n" +
+						"  return 'DIRECT';\n" +
+						"}"
+				}
+			};
+
+			chrome.proxy.settings.set({
+				value: config,
+				scope: 'regular'
+			}, function() {});
+			
+			console.log('IP ' + result + ' for ' + dathost + ' found, config is changed: ' + JSON.stringify(config));
+			
+		}
+	});
+	*/

@@ -10,25 +10,19 @@ const cachedFetch = (url, options) => {
     // I hope you didn't set it to 0 seconds
     expiry = options.seconds || expiry
   }
-  // Use the URL as the cache key to sessionStorage
-  let cacheKey = url
-  let cached = localStorage.getItem(cacheKey)
-  let whenCached = localStorage.getItem(cacheKey + ':ts')
-  if (cached !== null && whenCached !== null) {
-    // it was in sessionStorage! Yay!
-    // Even though 'whenCached' is a string, this operation
-    // works because the minus sign converts the
-    // string to an integer and it will work.
-    let age = (Date.now() - whenCached) / 1000
-    if (age < expiry) {
-      let response = new Response(new Blob([cached]))
-      return Promise.resolve(response)
-    } else {
-      // We need to clean up this old key
-      localStorage.removeItem(cacheKey)
-      localStorage.removeItem(cacheKey + ':ts')
-    }
-  }
+  
+	var currentURLRequest = document.createElement('a');
+	currentURLRequest.href = url;
+	
+	var currentTLD = currentURLRequest.hostname.split(".").pop();
+	var currentURLhostNoTLD = currentURLRequest.hostname.split(".")[0];
+				
+	caches.open('dat-'+currentURLhostNoTLD).then(function(cache) {
+		cache.match(url).then(function(matchedResponse) {
+			console.log(matchedResponse);
+			return matchedResponse;
+		});
+	});
 
   return fetch(url, options).then(response => {
     // let's only store in cache if the content-type is
@@ -42,10 +36,23 @@ const cachedFetch = (url, options) => {
         // If we don't clone the response, it will be
         // consumed by the time it's returned. This
         // way we're being un-intrusive.
+		
+		var currentURLRequest = document.createElement('a');
+		currentURLRequest.href = url;
+		
+		var currentTLD = currentURLRequest.hostname.split(".").pop();
+		var currentURLhostNoTLD = currentURLRequest.hostname.split(".")[0];
+		
+		caches.open('dat-'+currentURLhostNoTLD).then(function(cache) {
+			// Cache is created and accessible
+			cache.add(url);
+		});
+		/*
         response.clone().text().then(content => {
           localStorage.setItem(cacheKey, content)
           localStorage.setItem(cacheKey+':ts', Date.now())
         })
+		*/
       }
     }
     return response
@@ -111,8 +118,8 @@ function checkDatJSON() {
 					siteURL.innerText = "dat://" + currentURLhostNoTLD + currentURLRequest.pathname + currentURLRequest.search + currentURLRequest.hash;
 					document.getElementById("copy-link").href = "dat://" + currentURLhostNoTLD + currentURLRequest.pathname + currentURLRequest.search + currentURLRequest.hash;
 					
-					document.getElementById("qr-iframe").src="/qr_generator.html?link=" + "dat://" + currentURLhostNoTLD + currentURLRequest.pathname + currentURLRequest.search + currentURLRequest.hash;
-					document.getElementById("qr-link").href="/qr_generator.html?link=" + "dat://" + currentURLhostNoTLD + currentURLRequest.pathname + currentURLRequest.search + currentURLRequest.hash;
+					document.getElementById("qr-iframe").src="/qr_code.html?link=" + "dat://" + currentURLhostNoTLD + currentURLRequest.pathname + currentURLRequest.search + currentURLRequest.hash;
+					document.getElementById("qr-link").href="/qr_code.html?link=" + "dat://" + currentURLhostNoTLD + currentURLRequest.pathname + currentURLRequest.search + currentURLRequest.hash;
 					
 					fetch("http://"+ currentURLhostNoTLD + "." + currentTLD + "/favicon.ico").then(function(response) {
 						if (response.status !== 200) {
@@ -337,4 +344,5 @@ checkDatAvailable();
 	  
       });
 
+document.getElementById("version-notice").textContent=" v"+chrome.runtime.getManifest().version;
 };
