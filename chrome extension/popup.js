@@ -60,7 +60,6 @@ const cachedFetch = (url, options) => {
 }
 
 function checkDatJSON() {
-
 	chrome.tabs.query (
                 { currentWindow: true, active: true }, 
                 function(tabs) {
@@ -80,7 +79,7 @@ function checkDatJSON() {
 
 					return;
 				} else {
-					
+
 					var siteURL = document.getElementById("site-url");
 					siteURL.innerText = activeTab.url;
 					
@@ -116,6 +115,7 @@ function checkDatJSON() {
 					var datUrlHash = currentURLRequest.hash;
 					*/
 					siteURL.innerText = "dat://" + currentURLhostNoTLD + currentURLRequest.pathname + currentURLRequest.search + currentURLRequest.hash;
+
 					document.getElementById("copy-link").href = "dat://" + currentURLhostNoTLD + currentURLRequest.pathname + currentURLRequest.search + currentURLRequest.hash;
 					
 					document.getElementById("qr-iframe").src="/qr_code.html?link=" + "dat://" + currentURLhostNoTLD + currentURLRequest.pathname + currentURLRequest.search + currentURLRequest.hash;
@@ -250,6 +250,7 @@ function checkTab() {
 					currentURLRequest.href = activeTab.url;
 					
 					var currentTLD = currentURLRequest.hostname.split(".").pop();
+
 					//console.log(currentTLD);
 					
 				if (currentTLD != 'dat_site') {

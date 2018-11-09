@@ -127,5 +127,4 @@ chrome.permissions.request({
 }
 
 });
-
 }

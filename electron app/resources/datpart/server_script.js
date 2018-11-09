@@ -13,6 +13,9 @@
 
 	var host = "127.0.0.1";
 	var port = "9989";
+	var commandPort = "9988";
+	
+	var versionNumber = require('electron').remote.getGlobal('sharedObject').appVersionNumber;
 	
 	var versionNumber = require('electron').remote.getGlobal('sharedObject').appVersionNumber;
 	
@@ -115,6 +118,79 @@
 	if (!fs.existsSync(__dirname + '/../../dats/')) {
 		fs.mkdirSync(__dirname + '/../../dats/');
 	}
+	
+app.use(bodyParser.urlencoded({extended : true}));
+
+   app.post("/pin/", function(request, response) {
+	   console.log("pin");
+	   console.log(request);
+	   console.log(request.headers.task);
+	   console.log(request.headers.type);
+	   console.log(request.headers.dat);
+	   
+	   if (request.headers.task == "pin") {
+			if (!fs.existsSync(__dirname + '/../../dats/')) {
+				fs.mkdirSync(__dirname + '/../../dats/');
+			}
+	   }
+	   
+	   if (request.headers.task == "pin" && request.headers.type == "dat" ) {
+
+			localStorage.setItem(request.headers.dat, '{temp: false, sparse: false}');
+			console.log("Storing "+request.headers.dat+" offline "+localStorage.getItem("request.headers.dat").toString());
+		   	datMap[request.headers.dat] = localStorage.getItem(request.headers.dat).toString();
+		   
+			dat( __dirname + '/../../dats/'+request.headers.dat, {
+			  key: request.headers.dat, temp: datMap[request.headers.dat].temp, sparse: datMap[request.headers.dat].sparse // (a 64 character hash from above)
+			}, function (err, dat) {
+			  if (err) {throw err;console.log(err)}
+			  
+			  var stats = dat.trackStats()
+
+			dat.joinNetwork();
+			
+	   	   console.log("Pinning dat "+request.headers.dat);
+			});
+	   }
+	   
+   });
+   
+      app.post("/unpin/", function(request, response) {
+	   console.log("unpin");
+	   console.log(request);
+	   console.log(request.headers.task);
+	   console.log(request.headers.type);
+	   console.log(request.headers.dat);
+	   
+	   if (request.headers.task == "unpin" && request.headers.type == "dat" ) {
+
+			localStorage.removeItem(request.headers.dat);
+			datMap[request.headers.dat] = {temp: true, sparse: true};
+			console.log("Deleting "+request.headers.dat);
+		   
+		   	if (fs.existsSync(__dirname + '/../../dats/'+request.headers.dat+'/')) {
+				
+			var deleteFolderRecursive = function(path) {
+			  if( fs.existsSync(path) ) {
+				fs.readdirSync(path).forEach(function(file,index){
+				  var curPath = path + "/" + file;
+				  if(fs.lstatSync(curPath).isDirectory()) { // recurse
+					deleteFolderRecursive(curPath);
+				  } else { // delete file
+					fs.unlinkSync(curPath);
+				  }
+				});
+				fs.rmdirSync(path);
+			  }
+			};
+			
+			deleteFolderRecursive(__dirname + '/../../dats/'+request.headers.dat+'/');
+			
+			}
+	   }
+	  });
+
+app.listen(commandPort);
 
 const requestHandler = (request, response) => {
   console.log(request.url);
@@ -141,7 +217,7 @@ if(request.method == 'GET' && currentTLD == 'dat_site') {
 	datMap[currentURLhostNoTLD] = {};
 dat( __dirname + '/../../dats/'+currentURLhostNoTLD, {
   // 2. Tell Dat what link I want
-  key: currentURLhostNoTLD, temp: true, sparse: true // (a 64 character hash from above)
+  key: currentURLhostNoTLD, temp: datMap[currentURLhostNoTLD].temp, sparse: datMap[currentURLhostNoTLD].sparse // (a 64 character hash from above)
 }, function (err, dat) {
   if (err) {throw err;console.log(err);}
   
@@ -179,7 +255,6 @@ dat( __dirname + '/../../dats/'+currentURLhostNoTLD, {
 		}
 		if (err) {throw err; console.log(err);}
 	  });
-	  
   });
 
   datMap[currentURLhostNoTLD].fourOhFourFallback = new Promise(function(resolve, reject) {
