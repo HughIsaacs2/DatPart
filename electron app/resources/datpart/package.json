@@ -62,7 +62,7 @@
   },
   "devDependencies": {
     "dat-node": "^3.5.11",
-    "electron": "2.0.0",
+    "electron": "3.0.8",
     "electron-rebuild": "^1.7.3"
   }
 }
