@@ -48,12 +48,20 @@ Basically all this does is use the Chrome Extension WebRequest API and Proxy API
 * Internet Explorer support? (I'm being ridiculous here, but again unsure if this is possible)
 
 ## To-Do [Short term + more specific list]
-* Dat URL for current tab in the extension pop up.
+* ~~Dat URL for current tab in the extension pop up.~~
 * Support for 404 pages by reading “fallback_page” in dat.json.
-* An button in the extension pop up to tell the app to download the entire Dat.
+* A button in the extension pop up to tell the app to download the entire Dat.
 * A button in the extension pop up to tell the app to delete the entire Dat.
-* A landing page for introducing users to the extension/app.
+* ~~A landing page for introducing users to the extension/app.~~ (Could use some improving)
 * A page for deleting torrents/dats and other information.
-* The ability to submit dat links or hashes as searches in the extension (needs Dat parse for web).
-* Grey out extension icon when not on a Dat site.
+* ~~The ability to submit dat links or hashes as searches in the extension (needs Dat parse for web).~~ (Works via hacky method, needs lots of improving)
+* ~~Grey out extension icon when not on a Dat site.~~ (Did this differently via badges, but accomplishes the same thing)
 
+## Credits
+* dat-node - https://github.com/datproject/dat-node (MIT License)
+* jsQR - https://github.com/cozmo/jsQR (Apache License 2.0)
+* qrcode-svg - https://github.com/papnkukn/qrcode-svg (MIT License)
+* Font Awesome v4.7.0 - https://fontawesome.com/v4.7.0/ (CC BY 4.0 License)
+
+## Donate
+Donate to the [Dat Project](https://donate.datproject.org/) and the [Beaker Browser](https://opencollective.com/beaker?referral=17298) teams, we're not affiliated but this relies on their work.
