@@ -7,7 +7,7 @@ For example you can load the Acrylic Style Dat site at http://1c7639eedaf8f7533f
 
 Oh also, Chrome's Omnibar treats all non-standard TLDs as searches, so you'll have to type the inital HTTP:// or put a slash at the end of the URL for it to load the site.
 
-(BitTorrent/WebTorrent support coming soon, it's already coded into the extension just not the server app. Also it'll load the same torrent sites as [PeerCloud](https://github.com/jhiesey/peercloud))
+(BitTorrent/WebTorrent support coming soon, it's already coded into the extension just not the server app. Also it'll load the same torrent sites as [PeerCloud](https://github.com/jhiesey/peercloud) and [BitTorrent Maelstrom](http://blog.bittorrent.com/2014/12/10/project-maelstrom-the-internet-we-build-next/))
 
 ### Try it
 
@@ -54,12 +54,21 @@ Basically all this does is use the Chrome Extension WebRequest API and Proxy API
 * ~~A button in the extension pop up to tell the app to delete the entire Dat.~~
 * ~~A landing page for introducing users to the extension/app.~~
 * ~~Display a badge for Dat sites.~~
+* ~~The ability to submit dat links or hashes as searches in the extension (needs [Dat parse](https://github.com/pfrazee/parse-dat-url "parse-dat-url") for web).~~ (Works via hacky method, needs lots of improving)
 * Fix how much the server app checks for the dat.json file (it seriously goes nuts, checks the network for dat.json again on every HTTP request).
 * Code something to let the extension know to hide the "Pin" or "Unpin" button (likely going to be more HTTP headers, for now).
 * Build a web page that displays a list of the Dats stored offline for clarity (this is the last thing I need before building a Mac OS X and Linux version).
 * A page for deleting dats and other information.
 * Get Travis CI working with this repo to auto-build Mac OS X and Linux versions.
-* The ability to submit dat links or hashes as searches in the extension (needs [Dat parse](https://github.com/pfrazee/parse-dat-url "parse-dat-url") for web).
 * Get AppVeyor working with this repo to auto-build Windows versions.
 * Provide an optional feature to convert dat:// URLs that aren't anchor links to anchor links (Useful for sites like Twitter).
   * Provide an option to have said links either stay in the dat:// URL format for Beaker Browser or other Dat apps, or to have them switch to the .dat_site domain name format for DatPart to open them (consider providing a context menu item for letting users on the fly decide what should be done).
+
+## Credits
+* dat-node - https://github.com/datproject/dat-node (MIT License)
+* jsQR - https://github.com/cozmo/jsQR (Apache License 2.0)
+* qrcode-svg - https://github.com/papnkukn/qrcode-svg (MIT License)
+* Font Awesome v4.7.0 - https://fontawesome.com/v4.7.0/ (CC BY 4.0 License)
+
+## Donate
+Donate to the [Dat Project](https://donate.datproject.org/) and the [Beaker Browser](https://opencollective.com/beaker?referral=17298) teams, we're not affiliated but this relies on their work.
