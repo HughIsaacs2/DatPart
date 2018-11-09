@@ -3,20 +3,19 @@
 	//const {shell} = require('electron');
 	const http = require('http');
 	const url = require("url");
-	const path = require("path");
 	const dat = require('dat-node');
 	const fs = require('fs');
-	
-	const express = require("express");
-	const bodyParser = require("body-parser");
-	const app = express();
+	const path = require("path");
 	
 	//    "chrome-native-messaging": "^0.2.0",
-    //    "node-dat-archive": "^1.5.0"
+    //    "node-dat-archive": "^1.5.0",
+    //    "pauls-dat-api": "^8.0.1"
 
 	var host = "127.0.0.1";
 	var port = "9989";
 	var commandPort = "9988";
+	
+	var versionNumber = require('electron').remote.getGlobal('sharedObject').appVersionNumber;
 	
 	var versionNumber = require('electron').remote.getGlobal('sharedObject').appVersionNumber;
 	
@@ -106,12 +105,14 @@
 	var HTTPheaders = {
 	  "Server": "DatPart "+versionNumber,
 	  "X-Powered-By": "DatPart "+versionNumber,
-	  "Cache-Control": "no-cache, no-store, must-revalidate, no-transform",
-	  "Pragma": "no-cache",
-	  "Expires": "0",
+	  //"Cache-Control": "no-cache, no-store, must-revalidate, no-transform",
+	  //"Pragma": "no-cache",
+	  //"Expires": "0",
+	  "Cache-Control": "public, max-age: 60, no-transform",
 	  "Accept-Charset": "utf-8",
 	  "Access-Control-Allow-Origin": "*",
-	  "Content-Security-Policy": "frame-ancestors 'self' https://* http://*.dat_site"
+	  "Content-Security-Policy": "",
+	  "Upgrade-Insecure-Requests": "1"
 	};
 	
 	if (!fs.existsSync(__dirname + '/../../dats/')) {
@@ -212,90 +213,193 @@ const requestHandler = (request, response) => {
 	
 	console.log(datPath);
 
-if(request.method == 'GET' && currentTLD == 'dat_site' && fs.existsSync(__dirname + "/../../dats/")) {
-
-	if(	localStorage.getItem(currentURLhostNoTLD) != null ){
-			console.log(" dat://"+currentURLhostNoTLD+" Settings: "+localStorage.getItem(currentURLhostNoTLD).toString());
-			console.log(localStorage.getItem(currentURLhostNoTLD));
-			datMap[currentURLhostNoTLD] = localStorage.getItem(currentURLhostNoTLD).toString();
-		} else {
-			console.log(" dat://"+currentURLhostNoTLD+" No settings.");
-			datMap[currentURLhostNoTLD] = {temp: true, sparse: true};
-		}
-		/*
-			if(datMap[currentURLhostNoTLD] != undefined){
-				
-			} else {
-				datMap[currentURLhostNoTLD] = {temp: true, sparse: true};
-			}
-*/
+if(request.method == 'GET' && currentTLD == 'dat_site') {
+	datMap[currentURLhostNoTLD] = {};
 dat( __dirname + '/../../dats/'+currentURLhostNoTLD, {
   // 2. Tell Dat what link I want
   key: currentURLhostNoTLD, temp: datMap[currentURLhostNoTLD].temp, sparse: datMap[currentURLhostNoTLD].sparse // (a 64 character hash from above)
 }, function (err, dat) {
-  if (err) {throw err;console.log(err)}
+  if (err) {throw err;console.log(err);}
   
-  console.log(datMap[currentURLhostNoTLD]);
-  
-  var stats = dat.trackStats()
+  //var stats = dat.trackStats();
+  //console.log(dat.stats.get());
 
   // 3. Join the network & download (files are automatically downloaded)
   dat.joinNetwork();
-  
-  var datJSON;
+  /*
+  dat.joinNetwork(function (err) {
+  if (err) { throw err; }
 
-  dat.archive.readFile('/dat.json', function (err, content) {
-    console.log(JSON.parse(content));
-	datJSON = JSON.parse(content);
-	console.log("Fallback page: " + datJSON["fallback_page"]);
-	if (err) {throw err; console.log(err)}
+    if (!dat.network.connected || !dat.network.connecting) {
+      console.error('No users currently online for dat://'+currentURLhostNoTLD);
+      process.exit(1);
+    }
+  });
+  */
+  
+  datMap[currentURLhostNoTLD].datJSON = new Promise(function(resolve, reject) {
+	  
+	  dat.archive.readFile('/dat.json', function (err, content) {
+		if (content != null) {
+			console.log("Got dat.json for "+ currentURLhostNoTLD);
+			console.log(datMap[currentURLhostNoTLD]);
+			resolve(JSON.parse(content.toString()));
+			
+			//datMap[currentURLhostNoTLD].fourOhFourFallback = JSON.parse(content.toString()).fallback_page;
+			
+			datMap[currentURLhostNoTLD].contentSecurityPolicy = JSON.parse(content.toString()).content_security_policy;
+			
+		} else {
+			console.log("dat.json not found for "+ currentURLhostNoTLD);
+			reject("dat.json not found for "+ currentURLhostNoTLD);
+		}
+		if (err) {throw err; console.log(err);}
+	  });
   });
 
-  var lastChar = request.url.substr(-1); // Selects the last character
+  datMap[currentURLhostNoTLD].fourOhFourFallback = new Promise(function(resolve, reject) {
+	datMap[currentURLhostNoTLD].datJSON.then(function(result) {
+		
+	  console.log("Grabbing JSON for fallback_page "+JSON.stringify(result));
+	  
+		dat.archive.readFile(result.fallback_page, function (err, fallbackContent) {
+			if (fallbackContent != null) {
+				console.log("Got fallback page for dat://"+ currentURLhostNoTLD +" " + result.fallback_page);
+				resolve(fallbackContent);
+			} else {
+				console.log("fallback_page not found for dat://"+ currentURLhostNoTLD);
+				reject("fallback_page not found for dat://"+ currentURLhostNoTLD);
+			}
+		});
+		
+	}, function(err) {
+	  console.log(err);
+	});
+  });
+/*
+    datMap[currentURLhostNoTLD].contentSecurityPolicy = new Promise(function(resolve, reject) {
+	datMap[currentURLhostNoTLD].datJSON.then(function(result) {
+		
+	  console.log("Grabbing JSON for content_security_policy "+JSON.stringify(result));
+	  
+		dat.archive.readFile(result.content_security_policy, function (err, cspContent) {
+			if (cspContent != null) {
+				console.log("Got fallback page for dat://"+ currentURLhostNoTLD +" " + result.content_security_policy);
+				resolve(cspContent);
+			} else {
+				console.log("content_security_policy not found for dat://"+ currentURLhostNoTLD);
+				reject("content_security_policy not found for dat://"+ currentURLhostNoTLD);
+			}
+		});
+		
+	}, function(err) {
+	  console.log(err);
+	});
+  });
+*/
+var lastChar = request.url.substr(-1); // Selects the last character
 if (lastChar == '/') {         // If the last character is not a slash
   
   dat.archive.readFile(datPath+'/index.html', function (err, content) {
-    console.log(content);
-	
-	var newHeaders = HTTPheaders;
-	newHeaders["Content-Type"] = "text/html";
-	newHeaders["Alt-Svc"] = "dat='dat://"+currentURLhostNoTLD+datPath+"'";
-	newHeaders["Dat-Url"] = "dat://"+currentURLhostNoTLD+datPath;
-	
-	response.writeHead(200, newHeaders);
-	//response.setHeader('Alt-Svc', 'dat="'+currentURLhostNoTLD+datPath+'"');
-	response.end(content);
-	if (err) {throw err; console.log(err)}
+
+	if (content != null) {
+		console.log(datPath);
+		var newHeaders = HTTPheaders;
+		delete newHeaders["X-Frame-Options"];
+		delete newHeaders["Location"];
+		newHeaders["Content-Type"] = "text/html; charset=utf8";
+		newHeaders["Alt-Svc"] = "dat='dat://"+currentURLhostNoTLD+datPath+"'";
+		newHeaders["Dat-Url"] = "dat://"+currentURLhostNoTLD+datPath;
+		newHeaders["Hyperdrive-Key"] = currentURLhostNoTLD;
+		newHeaders["Hyperdrive-Version"] = "";
+		newHeaders["Content-Security-Policy"] = datMap[currentURLhostNoTLD].contentSecurityPolicy;
+		
+		response.writeHead(200, newHeaders);
+		response.end(content);
+	} else {
+		console.log("File "+datPath+" not found!");
+		
+		var newHeaders = HTTPheaders;
+		delete newHeaders["X-Frame-Options"];
+		delete newHeaders["Location"];
+		newHeaders["Content-Security-Policy"] = "";
+		newHeaders["X-Frame-Options"] = "DENY";
+		
+		datMap[currentURLhostNoTLD].fourOhFourFallback.then(function(result) {
+					console.log(result);
+					
+					newHeaders["Alt-Svc"] = "dat='dat://"+currentURLhostNoTLD+datPath+"'";
+					newHeaders["Dat-Url"] = "dat://"+currentURLhostNoTLD+datPath;
+					newHeaders["Hyperdrive-Key"] = currentURLhostNoTLD;
+					newHeaders["Hyperdrive-Version"] = "";
+					
+  					response.writeHead(404, newHeaders);
+					response.end(result);
+		}, function(err) {
+					console.log(err);
+					response.writeHead(204, newHeaders);
+					response.end("Nothing");
+		});
+
+	}
+	if (err) {throw err; console.log(err);}
   });
 
 } else {
 
   dat.archive.readFile(datPath, function (err, content) {
-	  console.log(err);
-	if (err) {
-		throw err;
-
-		console.log("readFile Error!");
-		console.log(err);
-		
-		response.writeHead(301,{"Location": "http://"+currentURLhostNoTLD+".dat_site/"+datJSON['fallback_page']});
-		response.end("hello world\n");
-		//response.redirect(301, datJSON["fallback_page"]);
-	} else if (!err) {
-		console.log(content);
+	
+	if (content != null) {
+		console.log(datPath);
 		
 		var newHeaders = HTTPheaders;
+		delete newHeaders["X-Frame-Options"];
+		delete newHeaders["Location"];
 		newHeaders["Content-Type"] = mimeType;
 		newHeaders["Alt-Svc"] = "dat='dat://"+currentURLhostNoTLD+datPath+"'";
 		newHeaders["Dat-Url"] = "dat://"+currentURLhostNoTLD+datPath;
+		newHeaders["Hyperdrive-Key"] = currentURLhostNoTLD;
+		newHeaders["Hyperdrive-Version"] = "";
+
+		delete newHeaders["X-Frame-Options"];
+		delete newHeaders["Location"];
+		
+		newHeaders["Content-Security-Policy"] = datMap[currentURLhostNoTLD].contentSecurityPolicy;
 		
 		response.writeHead(200, newHeaders);
-		//response.setHeader('Alt-Svc', 'dat="'+currentURLhostNoTLD+datPath+'"');
-		response.end(content); 
+		response.end(content);
+	} else {
+		console.log("File "+datPath+" not found!");
+		
+		var newHeaders = HTTPheaders;
+		delete newHeaders["X-Frame-Options"];
+		delete newHeaders["Location"];
+		newHeaders["Content-Security-Policy"] = "frame-ancestors 'none'";
+		newHeaders["X-Frame-Options"] = "DENY";
+		
+		datMap[currentURLhostNoTLD].fourOhFourFallback.then(function(result) {
+					console.log(result);
+					
+					newHeaders["Alt-Svc"] = "dat='dat://"+currentURLhostNoTLD+datPath+"'";
+					newHeaders["Dat-Url"] = "dat://"+currentURLhostNoTLD+datPath;
+					newHeaders["Hyperdrive-Key"] = currentURLhostNoTLD;
+					newHeaders["Hyperdrive-Version"] = "";
+					
+  					response.writeHead(404, newHeaders);
+					response.end(result);
+		}, function(err) {
+					console.log(err);
+					response.writeHead(204, newHeaders);
+					response.end("Nothing");
+		});
+		
 	}
+	if (err) {throw err; console.log(err);}
   });
 
 }
+  
+  //dat.leaveNetwork();
   
 });
 

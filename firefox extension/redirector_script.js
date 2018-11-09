@@ -26,13 +26,6 @@ if (datUrl.substring(0, 4) == "web+") {
 	document.body.textContent = "Redirecting to "+datUrl;
 }
 
-  var firstBracket = datUrl.indexOf('dat://');
-  var secondBracket = datUrl.indexOf(0, firstBracket+1);
-  console.log(datUrl.substring(firstBracket, secondBracket));
-
-var datPartUrl = "http://"+datUrl.substring(6, 70)+".dat_site"+datUrl.substring(70, datUrl.length);
-
-	document.body.appendChild(document.createElement('br'));
 	document.body.appendChild(document.createElement('br'));
 	
     var redirectLink = document.createElement('a');
@@ -49,4 +42,3 @@ var datPartUrl = "http://"+datUrl.substring(6, 70)+".dat_site"+datUrl.substring(
 	
 	document.location.replace("http://"+datUrl.substring(6, 70)+".dat_site"+datUrl.substring(70, datUrl.length));
 	window.location.replace("http://"+datUrl.substring(6, 70)+".dat_site"+datUrl.substring(70, datUrl.length));
-	

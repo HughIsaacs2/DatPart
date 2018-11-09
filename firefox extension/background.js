@@ -1,9 +1,7 @@
+browser.proxy.register('pac.js'); //Firefox specific
 
-var chromeos_server_app_id = chrome.runtime.getManifest().externally_connectable.ids[0]; //Chrome specific
-
-
-var defaultproxyaccess = "PROXY";
-var defaultproxyurl = "localhost:9989";
+var appip = "127.0.0.1";
+var port = "9989";
 
 function fakeDisable() {
     chrome.browserAction.setBadgeText({
@@ -190,17 +188,6 @@ chrome.runtime.onInstalled.addListener(function(details) {
         chrome.tabs.create({
             url: chrome.runtime.getURL("/welcome.html")
         });
-		var theGate = {};
-		theGate = {
-			'proxyurl': defaultproxyurl,
-			'proxyaccess': defaultproxyaccess
-		};
-		var gatewaySet = {};
-		gatewaySet["gatewaySettings"] = theGate;
-		chrome.storage.local.set(gatewaySet, function() {
-			console.log('First run. Gateway settings set to ' + theGate);
-			console.log(theGate);
-		});
     }
     else if (details.reason == "update") {
         console.log("Updated from " + details.previousVersion + " to " + chrome.runtime.getManifest().version + ".");
@@ -241,93 +228,22 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
     decideEnable(currentTLD);
 });
 
-var appip = "127.0.0.1";
-var port = "9989";
-
-function fakeDisable() {
-	chrome.browserAction.setBadgeText({text: ""});
-	//chrome.browserAction.setBadgeBackgroundColor({color: "red"});
-	//chrome.browserAction.setPopup({popup: "other_popup.html"});
-	//chrome.browserAction.disable();
-}
-
-function fakeEnable() {
-	chrome.browserAction.setBadgeText({text: "1"});
-	chrome.browserAction.setBadgeBackgroundColor({color: "[0, 0, 0, 1]"});
-	chrome.browserAction.setPopup({popup: chrome.runtime.getManifest().browser_action.default_popup});
-	//chrome.browserAction.enable();
-}
-
-function decideEnable(currentTLD) {
-					
-				if (currentTLD != 'dat_site') {
-					fakeDisable();
-				} else {
-					fakeEnable();
-				}
-
-}
-
-chrome.runtime.onInstalled.addListener(function(details){
-    if(details.reason == "install"){
-        console.log("First install.");
-		chrome.tabs.create({url: chrome.runtime.getURL("/welcome.html")});
-    }else if(details.reason == "update"){
-        console.log("Updated from " + details.previousVersion + " to " + chrome.runtime.getManifest().version + ".");
-    }
-});
-
-chrome.tabs.onActivated.addListener(function (tab) {
-	console.log(tab);
-	
-		  chrome.tabs.query (
-                { currentWindow: true, active: true }, 
-                function(tabs) {
-                    var activeTab = tabs[0];
-                    console.log(JSON.stringify(activeTab));
-					
-					var currentURLRequest = document.createElement('a');
-					currentURLRequest.href = activeTab.url;
-					
-					var currentTLD = currentURLRequest.hostname.split(".").pop();
-					console.log(currentTLD);
-					
-				decideEnable(currentTLD);
-
-      });
-});
-
-chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
-	console.log(changeInfo); console.log(changeInfo.url);
-	
-					var currentURLRequest = document.createElement('a');
-					currentURLRequest.href = changeInfo.url;
-					
-					var currentTLD = currentURLRequest.hostname.split(".").pop();
-					console.log(currentTLD);
-					
-				decideEnable(currentTLD);
-
-});
-
 chrome.omnibox.onInputChanged.addListener(function(text, suggest) {
     console.log('inputChanged: ' + text);
-	if (text.substring(0, 6) == "dat://") {
-		
-		suggest([{
-				content: text,
-				description: "Open " + text + " with DatPart?" + chrome.runtime.getManifest().name[0] + "?" //Create as object in variable first
-			}]);
-	
-	}
+    suggest([{
+            content: text + " one",
+            description: "the first one"
+        },
+        {
+            content: text + " number two",
+            description: "the second entry"
+        }
+    ]);
 });
 
 chrome.omnibox.onInputEntered.addListener(function(text) {
     console.log('inputEntered: ' + text);
 
-	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-		chrome.tabs.update(tabs[0].id, {url: "/redirector.html?dat=" + encodeURIComponent(text)});
-	});
 });
 
 chrome.webNavigation.onBeforeNavigate.addListener(function(details) {
@@ -335,81 +251,23 @@ chrome.webNavigation.onBeforeNavigate.addListener(function(details) {
     currentURLRequest.href = details.url;
     var currentTLD = currentURLRequest.hostname.split(".").pop();
     var currentURLhostNoTLD = currentURLRequest.hostname.split(".")[0];
-	console.log("Before Navigate "+currentURLRequest.hostname);
+console.log("Before Navigate "+currentURLRequest.hostname);
     console.log(details);
     if (currentTLD != 'dat_site') {
         //Do nothing
     }
     else {
-		chrome.runtime.getPlatformInfo(function(info) {
-			console.log(info.os);
-			if (info.os = "cros") {
-			chrome.runtime.sendMessage(chromeos_server_app_id, { launch: true });
-			}
-		});
+        chrome.runtime.sendMessage(chromeos_server_app_id, {
+            launch: true
+        });
         console.log('inputEntered: ' + details.url + "|" + currentTLD);
     }
 });
 
-chrome.webRequest.onBeforeRequest.addListener(function(details) {  //Chrome specific
-    var currentURLRequest = document.createElement('a');
-    currentURLRequest.href = details.url;
-    console.log(details.url);
-    var currentTLD = currentURLRequest.hostname.split(".").pop();
-    var currentURLhostNoTLD = currentURLRequest.hostname.split(".")[0];
-    console.log("Before Request "+currentURLRequest.hostname);
-    console.log(details);
-
-    if (currentTLD != 'dat_site') {
-        return;
-    }
-    else {
-		chrome.runtime.getPlatformInfo(function(info) {
-			console.log(info.os);
-			if (info.os = "cros") {
-			chrome.runtime.sendMessage(chromeos_server_app_id, { launch: true });
-			}
-		});
-    };
-	
-    var dathost = currentURLRequest.hostname;
-	
-	chrome.storage.local.get(["gatewaySettings"], function(result) {
-
-		console.log(result);
-		console.log(result.constructor === Object);
-		console.log(Object.keys(result).length);
-		
-		if (Object.keys(result).length != 0 && result.constructor == Object) {
-			
-			var config = {
-				mode: "pac_script",
-				pacScript: {
-					data: "function FindProxyForURL(url, host) {\n" +
-						"  if (dnsDomainIs(host, '" + dathost + "'))\n" +
-						"    return '" + result.gatewaySettings.proxyaccess + " " + result.gatewaySettings.proxyurl + "';\n" +
-						"  return 'DIRECT';\n" +
-						"}"
-				}
-			};
-
-			chrome.proxy.settings.set({
-				value: config,
-				scope: 'regular'
-			}, function() {});
-			
-			console.log('IP ' + result + ' for ' + dathost + ' found, config is changed: ' + JSON.stringify(config));
-			
-		}
-	});
-
-}, {
-    urls: ["*://*.dat_site/*"]
-}, ["blocking"]);
-
 chrome.webRequest.onErrorOccurred.addListener(function(details) {
     var currentURLRequest = document.createElement('a');
     currentURLRequest.href = details.url;
+    var currentURLpage = currentURLRequest.pathname;
     var currentTLD = currentURLRequest.hostname.split(".").pop();
     var currentURLhostNoTLD = currentURLRequest.hostname.split(".")[0];
     console.log("Error Occurred "+currentURLRequest.hostname);
@@ -417,13 +275,14 @@ chrome.webRequest.onErrorOccurred.addListener(function(details) {
     
     if (currentTLD != 'dat_site') {
         return;
-    } else {
+    }
+    else {
         chrome.tabs.update(details.tabId, {
-            url: "/dat_error.html?dat="+encodeURIComponent("dat://" + currentURLhostNoTLD + currentURLRequest.pathname + currentURLRequest.search + currentURLRequest.hash)
+            url: "/dat_error.html?datHash=" + currentURLhostNoTLD + "&path=" + currentURLpage
         });
     }
 }, {
-    urls: ["*://*.dat_site/*"],
+    urls: ["http://*.dat_site/*"],
     types: ["main_frame"]
 });
 
@@ -440,7 +299,7 @@ chrome.webRequest.onResponseStarted.addListener(function(details) {
 
     decideEnable(currentTLD);
 }, {
-    urls: ["*://*.dat_site/*"],
+    urls: ["http://*.dat_site/*"],
     types: ["main_frame"]
 });
 
@@ -449,7 +308,7 @@ chrome.webRequest.onBeforeRedirect.addListener(function(details) {
     console.log(details);
     console.log(details.responseHeaders);
 }, {
-    urls: ["*://*.dat_site/*"],
+    urls: ["http://*.dat_site/*"],
     types: ["main_frame"]
 });
 
@@ -467,7 +326,7 @@ chrome.webRequest.onCompleted.addListener(function(details) {
 
     decideEnable(currentTLD);
 }, {
-    urls: ["*://*.dat_site/*"],
+    urls: ["http://*.dat_site/*"],
     types: ["main_frame"]
 });
 
@@ -476,7 +335,7 @@ chrome.webRequest.onHeadersReceived.addListener(function(details) {
     console.log(details);
     console.log(details.responseHeaders);
     console.log("HTTP Headers: " + details.responseHeaders);
-	/*
+	
 	if (details.responseHeaders['Site-Pinned'] == "true") {
 		var views = chrome.extension.getViews({
 			type: "popup"
@@ -492,7 +351,7 @@ chrome.webRequest.onHeadersReceived.addListener(function(details) {
 			views[i].document.documentElement.setAttribute('dat-site-pinned', 'false');
 		}
 	}
-	*/
+	
 	var currentURLRequest = document.createElement('a');
     currentURLRequest.href = details.url;
 
@@ -501,65 +360,9 @@ chrome.webRequest.onHeadersReceived.addListener(function(details) {
 
     decideEnable(currentTLD);
 }, {
-    urls: ["*://*.dat_site/*"],
+    urls: ["http://*.dat_site/*"],
     types: ["main_frame"]
 });
-
-chrome.webRequest.onBeforeRequest.addListener(function(details) {  //Chrome specific
-    var currentURLRequest = document.createElement('a');
-    currentURLRequest.href = details.url;
-    console.log(details.url);
-    var currentTLD = currentURLRequest.hostname.split(".").pop();
-    var currentURLhostNoTLD = currentURLRequest.hostname.split(".")[0];
-    console.log("Before Request "+currentURLRequest.hostname);
-    console.log(details);
-
-    if (currentTLD != 'torrent_site') {
-        return;
-    }
-    else {
-		chrome.runtime.getPlatformInfo(function(info) {
-			console.log(info.os);
-			if (info.os = "cros") {
-			chrome.runtime.sendMessage(chromeos_server_app_id, { launch: true });
-			}
-		});
-    };
-
-    var torrenthost = currentURLRequest.hostname;
-	
-	chrome.storage.local.get(["gatewaySettings"], function(result) {
-
-		console.log(result);
-		console.log(result.constructor === Object);
-		console.log(Object.keys(result).length);
-		
-		if (Object.keys(result).length != 0 && result.constructor == Object) {
-			
-			var config = {
-				mode: "pac_script",
-				pacScript: {
-					data: "function FindProxyForURL(url, host) {\n" +
-						"  if (dnsDomainIs(host, '" + torrenthost + "'))\n" +
-						"    return '" + result.gatewaySettings.proxyaccess + " " + result.gatewaySettings.proxyurl + "';\n" +
-						"  return 'DIRECT';\n" +
-						"}"
-				}
-			};
-
-			chrome.proxy.settings.set({
-				value: config,
-				scope: 'regular'
-			}, function() {});
-			
-			console.log('IP ' + result + ' for ' + torrenthost + ' found, config is changed: ' + JSON.stringify(config));
-			
-		}
-	});
-
-}, {
-    urls: ["*://*.torrent_site/*"]
-}, ["blocking"]);
 
 chrome.webRequest.onErrorOccurred.addListener(function(details) {
     var currentURLRequest = document.createElement('a');
@@ -576,7 +379,7 @@ chrome.webRequest.onErrorOccurred.addListener(function(details) {
         });
     }
 }, {
-    urls: ["*://*.torrent_site/*"],
+    urls: ["http://*.torrent_site/*"],
     types: ["main_frame"]
 });
 
@@ -586,53 +389,25 @@ Array.from(document.querySelectorAll('[href^="dat://"],[src^="dat://"]')).forEac
 });
 
 */
-if (chrome.runtime.getURL("/").startsWith('moz-extension://') == "true"){
-function shouldProxyRequest(requestInfo) {
-  return requestInfo.parentFrameId != -1;
-}
 
-function handleProxyRequest(requestInfo) {
-  if (shouldProxyRequest(requestInfo)) {
-    console.log(`Proxying: ${requestInfo.url}`);
-    return {type: "http", host: "127.0.0.1", port: 9989};
-  }
-  return {type: "direct"};
-}
-
-browser.proxy.onRequest.addListener(handleProxyRequest, {
-    urls: ["*://*.dat_site/*"],
-    types: ["main_frame"]
+browser.proxy.onProxyError.addListener(function (error) { //Firefox specific
+  console.error('BDNS: PAC error: ' + error.message);
 });
-}
-/*
-    var dathost = currentURLRequest.hostname;
+  
+chrome.webRequest.onBeforeRequest.addListener(function(details) { //Firefox specific
+    var currentURLRequest = document.createElement('a');
+	currentURLRequest.href = details.url;
+	console.log(details.url);
+	var currentTLD = currentURLRequest.hostname.split(".").pop();
+	var currentURLhostNoTLD = currentURLRequest.hostname.split(".")[0];
 	
-	chrome.storage.local.get(["gatewaySettings"], function(result) {
+	if (currentTLD != 'dat_site') {
+		return;
+	} else {
 
-		console.log(result);
-		console.log(result.constructor === Object);
-		console.log(Object.keys(result).length);
-		
-		if (Object.keys(result).length != 0 && result.constructor == Object) {
-			
-			var config = {
-				mode: "pac_script",
-				pacScript: {
-					data: "function FindProxyForURL(url, host) {\n" +
-						"  if (dnsDomainIs(host, '" + dathost + "'))\n" +
-						"    return '" + result.gatewaySettings.proxyaccess + " " + result.gatewaySettings.proxyurl + "';\n" +
-						"  return 'DIRECT';\n" +
-						"}"
-				}
-			};
-
-			chrome.proxy.settings.set({
-				value: config,
-				scope: 'regular'
-			}, function() {});
-			
-			console.log('IP ' + result + ' for ' + dathost + ' found, config is changed: ' + JSON.stringify(config));
-			
-		}
-	});
-	*/
+	};
+	
+	var dathost = currentURLRequest.hostname;
+	var access = "PROXY";
+	
+}, {urls: ["*://*.dat_site/*"]}, ["blocking"]);

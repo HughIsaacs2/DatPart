@@ -4,7 +4,7 @@
 <meta charset='utf-8' />
 <meta content='text/html; charset=UTF-8' http-equiv='Content-Type'/>
 
-<title>...</title>
+<title>QR Code Generator</title>
 
 <link href='/favicon.ico' rel='shortcut icon' type='image/x-icon' sizes="16x16" lazyload="1" id="ico-favicon"/>
 <link href='/favicon.ico' rel='icon' type='image/vnd.microsoft.icon' sizes="16x16" lazyload="1"/>
@@ -13,12 +13,36 @@
 
 <meta content='width=device-width, minimum-scale=1, initial-scale=1, shrink-to-fit=no' name='viewport'/>
 
-<link type="text/css" href="/style.css" rel="stylesheet" lazyload="1" />
+<!--<link type="text/css" href="/style.css" rel="stylesheet" lazyload="1" />-->
+<script type="text/javascript" src="/qrcode.min.js"></script>
+<script type="text/javascript" src="/qr_code_script.js"></script>
 <script type="text/javascript" src="/protocol_script.js"></script>
-	<script type="text/javascript" src="redirector_script.js" defer="true" lazyload="1"></script>
-    <style type="text/css" src="style.css" lazyload="1"></style>
+<style>
+#qrcode {
+display: block;
+    width: 100%;
+    height: 100%;
+    margin: 0 auto;
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+#qrcode svg {
+    display: block;
+    width: auto;
+    height: 100%;
+	max-width: 100%;
+	margin: 0 auto;
+    image-rendering: pixelated;
+	-ms-interpolation-mode: nearest-neighbor;
+	border-radius: 4px;
+}
+</style>
 </head>
 <body>
-...
+<main>
+<div id="qrcode"></div>
+</main>
 </body>
 </html>
