@@ -13,9 +13,6 @@
 
 	var host = "127.0.0.1";
 	var port = "9989";
-	var commandPort = "9988";
-	
-	var versionNumber = require('electron').remote.getGlobal('sharedObject').appVersionNumber;
 	
 	var versionNumber = require('electron').remote.getGlobal('sharedObject').appVersionNumber;
 	
@@ -111,86 +108,13 @@
 	  "Cache-Control": "public, max-age: 60, no-transform",
 	  "Accept-Charset": "utf-8",
 	  "Access-Control-Allow-Origin": "*",
-	  "Content-Security-Policy": "",
+	  //"Content-Security-Policy": "",
 	  "Upgrade-Insecure-Requests": "1"
 	};
 	
 	if (!fs.existsSync(__dirname + '/../../dats/')) {
 		fs.mkdirSync(__dirname + '/../../dats/');
 	}
-	
-app.use(bodyParser.urlencoded({extended : true}));
-
-   app.post("/pin/", function(request, response) {
-	   console.log("pin");
-	   console.log(request);
-	   console.log(request.headers.task);
-	   console.log(request.headers.type);
-	   console.log(request.headers.dat);
-	   
-	   if (request.headers.task == "pin") {
-			if (!fs.existsSync(__dirname + '/../../dats/')) {
-				fs.mkdirSync(__dirname + '/../../dats/');
-			}
-	   }
-	   
-	   if (request.headers.task == "pin" && request.headers.type == "dat" ) {
-
-			localStorage.setItem(request.headers.dat, '{temp: false, sparse: false}');
-			console.log("Storing "+request.headers.dat+" offline "+localStorage.getItem("request.headers.dat").toString());
-		   	datMap[request.headers.dat] = localStorage.getItem(request.headers.dat).toString();
-		   
-			dat( __dirname + '/../../dats/'+request.headers.dat, {
-			  key: request.headers.dat, temp: datMap[request.headers.dat].temp, sparse: datMap[request.headers.dat].sparse // (a 64 character hash from above)
-			}, function (err, dat) {
-			  if (err) {throw err;console.log(err)}
-			  
-			  var stats = dat.trackStats()
-
-			dat.joinNetwork();
-			
-	   	   console.log("Pinning dat "+request.headers.dat);
-			});
-	   }
-	   
-   });
-   
-      app.post("/unpin/", function(request, response) {
-	   console.log("unpin");
-	   console.log(request);
-	   console.log(request.headers.task);
-	   console.log(request.headers.type);
-	   console.log(request.headers.dat);
-	   
-	   if (request.headers.task == "unpin" && request.headers.type == "dat" ) {
-
-			localStorage.removeItem(request.headers.dat);
-			datMap[request.headers.dat] = {temp: true, sparse: true};
-			console.log("Deleting "+request.headers.dat);
-		   
-		   	if (fs.existsSync(__dirname + '/../../dats/'+request.headers.dat+'/')) {
-				
-			var deleteFolderRecursive = function(path) {
-			  if( fs.existsSync(path) ) {
-				fs.readdirSync(path).forEach(function(file,index){
-				  var curPath = path + "/" + file;
-				  if(fs.lstatSync(curPath).isDirectory()) { // recurse
-					deleteFolderRecursive(curPath);
-				  } else { // delete file
-					fs.unlinkSync(curPath);
-				  }
-				});
-				fs.rmdirSync(path);
-			  }
-			};
-			
-			deleteFolderRecursive(__dirname + '/../../dats/'+request.headers.dat+'/');
-			
-			}
-	   }
-	  });
-
-app.listen(commandPort);
 
 const requestHandler = (request, response) => {
   console.log(request.url);
@@ -213,16 +137,20 @@ const requestHandler = (request, response) => {
 	
 	console.log(datPath);
 
-if(request.method == 'GET' && currentTLD == 'dat_site') {
+if(request.method == 'GET' && currentTLD == 'dat_site' || request.method == 'GET' && currentTLD == 'datsite') {
 	datMap[currentURLhostNoTLD] = {};
 dat( __dirname + '/../../dats/'+currentURLhostNoTLD, {
   // 2. Tell Dat what link I want
-  key: currentURLhostNoTLD, temp: datMap[currentURLhostNoTLD].temp, sparse: datMap[currentURLhostNoTLD].sparse // (a 64 character hash from above)
+  key: currentURLhostNoTLD, temp: true, sparse: true // (a 64 character hash from above)
 }, function (err, dat) {
   if (err) {throw err;console.log(err);}
   
-  //var stats = dat.trackStats();
-  //console.log(dat.stats.get());
+  var stats = dat.trackStats();
+  console.log(currentURLhostNoTLD+" "+dat.stats.get());
+  console.log(dat.stats.get());
+  console.log("Dat Version: "+dat.stats.get().version);
+  
+  var fourOhFourPage = null;
 
   // 3. Join the network & download (files are automatically downloaded)
   dat.joinNetwork();
@@ -237,34 +165,47 @@ dat( __dirname + '/../../dats/'+currentURLhostNoTLD, {
   });
   */
   
-  datMap[currentURLhostNoTLD].datJSON = new Promise(function(resolve, reject) {
-	  
-	  dat.archive.readFile('/dat.json', function (err, content) {
+  datMap[currentURLhostNoTLD].fourOhFourFallback = null;
+  
+  datMap[currentURLhostNoTLD].contentSecurityPolicy = "";
+
+  /*
+	  dat.archive.readFile(datPath+'/dat.json', function (err, content) {
 		if (content != null) {
 			console.log("Got dat.json for "+ currentURLhostNoTLD);
 			console.log(datMap[currentURLhostNoTLD]);
-			resolve(JSON.parse(content.toString()));
 			
-			//datMap[currentURLhostNoTLD].fourOhFourFallback = JSON.parse(content.toString()).fallback_page;
-			
-			datMap[currentURLhostNoTLD].contentSecurityPolicy = JSON.parse(content.toString()).content_security_policy;
+			if (JSON.parse(content.toString()).content_security_policy != null || JSON.parse(content.toString()).content_security_policy != undefined) {
+				datMap[currentURLhostNoTLD].contentSecurityPolicy = JSON.parse(content.toString()).content_security_policy;
+				console.log(JSON.parse(content.toString()).content_security_policy);
+			} else {
+				datMap[currentURLhostNoTLD].contentSecurityPolicy = "";
+			}
+
+			if (JSON.parse(content.toString()).fallback_page != null || JSON.parse(content.toString()).fallback_page != undefined) {
+				datMap[currentURLhostNoTLD].fallback_page = JSON.parse(content.toString()).fallback_page;
+				console.log(JSON.parse(content.toString()).fallback_page);
+			} else {
+				datMap[currentURLhostNoTLD].fallback_page = "";
+			}
 			
 		} else {
 			console.log("dat.json not found for "+ currentURLhostNoTLD);
-			reject("dat.json not found for "+ currentURLhostNoTLD);
+			
 		}
 		if (err) {throw err; console.log(err);}
 	  });
-  });
+	  */
 
+/*
   datMap[currentURLhostNoTLD].fourOhFourFallback = new Promise(function(resolve, reject) {
-	datMap[currentURLhostNoTLD].datJSON.then(function(result) {
+	dat.archive.readFile('/dat.json', function (err, content) {
 		
-	  console.log("Grabbing JSON for fallback_page "+JSON.stringify(result));
+	  console.log("Grabbing JSON for fallback_page "+JSON.stringify(content));
 	  
-		dat.archive.readFile(result.fallback_page, function (err, fallbackContent) {
+		dat.archive.readFile(content.fallback_page, function (err, fallbackContent) {
 			if (fallbackContent != null) {
-				console.log("Got fallback page for dat://"+ currentURLhostNoTLD +" " + result.fallback_page);
+				console.log("Got fallback page for dat://"+ currentURLhostNoTLD +" " + content.fallback_page);
 				resolve(fallbackContent);
 			} else {
 				console.log("fallback_page not found for dat://"+ currentURLhostNoTLD);
@@ -276,6 +217,7 @@ dat( __dirname + '/../../dats/'+currentURLhostNoTLD, {
 	  console.log(err);
 	});
   });
+  */
 /*
     datMap[currentURLhostNoTLD].contentSecurityPolicy = new Promise(function(resolve, reject) {
 	datMap[currentURLhostNoTLD].datJSON.then(function(result) {
@@ -311,8 +253,8 @@ if (lastChar == '/') {         // If the last character is not a slash
 		newHeaders["Alt-Svc"] = "dat='dat://"+currentURLhostNoTLD+datPath+"'";
 		newHeaders["Dat-Url"] = "dat://"+currentURLhostNoTLD+datPath;
 		newHeaders["Hyperdrive-Key"] = currentURLhostNoTLD;
-		newHeaders["Hyperdrive-Version"] = "";
-		newHeaders["Content-Security-Policy"] = datMap[currentURLhostNoTLD].contentSecurityPolicy;
+		newHeaders["Hyperdrive-Version"] = dat.stats.get().version;
+		//newHeaders["Content-Security-Policy"] = datMap[currentURLhostNoTLD].contentSecurityPolicy;
 		
 		response.writeHead(200, newHeaders);
 		response.end(content);
@@ -322,24 +264,24 @@ if (lastChar == '/') {         // If the last character is not a slash
 		var newHeaders = HTTPheaders;
 		delete newHeaders["X-Frame-Options"];
 		delete newHeaders["Location"];
-		newHeaders["Content-Security-Policy"] = "";
+		//newHeaders["Content-Security-Policy"] = "";
 		newHeaders["X-Frame-Options"] = "DENY";
 		
-		datMap[currentURLhostNoTLD].fourOhFourFallback.then(function(result) {
-					console.log(result);
-					
-					newHeaders["Alt-Svc"] = "dat='dat://"+currentURLhostNoTLD+datPath+"'";
-					newHeaders["Dat-Url"] = "dat://"+currentURLhostNoTLD+datPath;
-					newHeaders["Hyperdrive-Key"] = currentURLhostNoTLD;
-					newHeaders["Hyperdrive-Version"] = "";
-					
-  					response.writeHead(404, newHeaders);
-					response.end(result);
-		}, function(err) {
-					console.log(err);
-					response.writeHead(204, newHeaders);
-					response.end("Nothing");
-		});
+		if(datMap[currentURLhostNoTLD].fourOhFourFallback != null) {
+			console.log(result);
+			
+			newHeaders["Alt-Svc"] = "dat='dat://"+currentURLhostNoTLD+datPath+"'";
+			newHeaders["Dat-Url"] = "dat://"+currentURLhostNoTLD+datPath;
+			newHeaders["Hyperdrive-Key"] = currentURLhostNoTLD;
+			newHeaders["Hyperdrive-Version"] = dat.stats.get().version;
+			
+			response.writeHead(404, newHeaders);
+			response.end(result);
+		} else {
+			console.log(err);
+			response.writeHead(204, newHeaders);
+			response.end("Nothing");
+		}
 
 	}
 	if (err) {throw err; console.log(err);}
@@ -359,12 +301,12 @@ if (lastChar == '/') {         // If the last character is not a slash
 		newHeaders["Alt-Svc"] = "dat='dat://"+currentURLhostNoTLD+datPath+"'";
 		newHeaders["Dat-Url"] = "dat://"+currentURLhostNoTLD+datPath;
 		newHeaders["Hyperdrive-Key"] = currentURLhostNoTLD;
-		newHeaders["Hyperdrive-Version"] = "";
+		newHeaders["Hyperdrive-Version"] = dat.stats.get().version;
 
 		delete newHeaders["X-Frame-Options"];
 		delete newHeaders["Location"];
 		
-		newHeaders["Content-Security-Policy"] = datMap[currentURLhostNoTLD].contentSecurityPolicy;
+		//newHeaders["Content-Security-Policy"] = datMap[currentURLhostNoTLD].contentSecurityPolicy;
 		
 		response.writeHead(200, newHeaders);
 		response.end(content);
@@ -377,21 +319,21 @@ if (lastChar == '/') {         // If the last character is not a slash
 		newHeaders["Content-Security-Policy"] = "frame-ancestors 'none'";
 		newHeaders["X-Frame-Options"] = "DENY";
 		
-		datMap[currentURLhostNoTLD].fourOhFourFallback.then(function(result) {
-					console.log(result);
-					
-					newHeaders["Alt-Svc"] = "dat='dat://"+currentURLhostNoTLD+datPath+"'";
-					newHeaders["Dat-Url"] = "dat://"+currentURLhostNoTLD+datPath;
-					newHeaders["Hyperdrive-Key"] = currentURLhostNoTLD;
-					newHeaders["Hyperdrive-Version"] = "";
-					
-  					response.writeHead(404, newHeaders);
-					response.end(result);
-		}, function(err) {
-					console.log(err);
-					response.writeHead(204, newHeaders);
-					response.end("Nothing");
-		});
+		if(datMap[currentURLhostNoTLD].fourOhFourFallback != null) {
+			console.log(result);
+			
+			newHeaders["Alt-Svc"] = "dat='dat://"+currentURLhostNoTLD+datPath+"'";
+			newHeaders["Dat-Url"] = "dat://"+currentURLhostNoTLD+datPath;
+			newHeaders["Hyperdrive-Key"] = currentURLhostNoTLD;
+			newHeaders["Hyperdrive-Version"] = dat.stats.get().version;
+			
+			response.writeHead(404, newHeaders);
+			response.end(result);
+		} else {
+			console.log(err);
+			response.writeHead(204, newHeaders);
+			response.end("Nothing");
+		}
 		
 	}
 	if (err) {throw err; console.log(err);}
@@ -402,6 +344,16 @@ if (lastChar == '/') {         // If the last character is not a slash
   //dat.leaveNetwork();
   
 });
+
+} else if(request.method == 'GET' && currentTLD != 'dat_site' && currentTLD != 'datsite') {
+
+	console.log("Non Dat Site request "+request);
+	console.log(request);
+
+	//var newHeaders;
+	//newHeaders["location"] = "http://0.0.0.0/";
+	//response.writeHead(301, newHeaders);
+	response.end();
 
 } else if(fs.existsSync(__dirname + "/../../dats/")) {
 

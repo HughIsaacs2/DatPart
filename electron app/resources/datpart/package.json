@@ -7,7 +7,7 @@
     "type": "git",
     "url": "https://github.com/HughIsaacs2/DatPart.git"
   },
-  "version": "0.0.7",
+  "version": "0.0.15",
   "author": "Hugh Isaacs II <hughisaacs@acrylicstyle.com>",
   "license": "MIT",
   "main": "launch.js",
@@ -60,9 +60,15 @@
       ]
     }
   },
+  "scripts": {
+    "postinstall": "install-app-deps",
+    "start": "npm install && electron ./",
+    "pack": "build --dir",
+    "dist": "build"
+  },
   "devDependencies": {
-    "dat-node": "^3.5.11",
-    "electron": "3.0.8",
+    "dat-node": "^3.5.13",
+    "electron": "4.0.0",
     "electron-rebuild": "^1.7.3"
   }
 }

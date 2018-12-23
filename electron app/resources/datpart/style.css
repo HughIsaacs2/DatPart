@@ -1,3 +1,63 @@
+@font-face {
+  font-family: emoji;
+
+  /* Fonts for text outside emoji blocks */
+  src: local('Droid Sans Mono'),
+       local('Lucida Console'),
+       local('Arial Monospaced'),
+       local(Arial);
+}
+@font-face {
+  font-family: emoji;
+
+  src: local('Apple Color Emoji'),
+       local('Android Emoji'),
+       local('Segoe UI'),
+	   local('Segoe UI Symbol'),
+       local(EmojiSymbols),
+       local(Symbola),/*,
+       url('fonts/Symbola-Emoji.eot?#iefix') format('embedded-opentype'),
+       url('fonts/Symbola-Emoji.woff') format('woff'),
+       url('fonts/Symbola-Emoji.ttf') format('truetype')*/
+       local(emoji);
+
+  /* Emoji unicode blocks */
+  unicode-range: U+1F300-1F5FF, U+1F600-1F64F, U+1F680-1F6FF, U+2600-26FF;
+}
+
+@font-face {
+  font-family: emoji;
+
+  /* Fonts for text outside emoji blocks */
+  src: local('Droid Sans Mono'),
+       local('Lucida Console'),
+       local('Arial Monospaced'),
+       local(Arial);
+}
+@font-face {
+  font-family: emoji;
+
+  src: local('Apple Color Emoji'),
+       local('Android Emoji'),
+	   local('Segoe UI Emoji'),
+       local('Segoe UI'),
+	   local('Segoe UI Symbol'),
+       local(EmojiSymbols),
+       local(Symbola),
+       local(emoji);
+
+  /* Emoji unicode blocks */
+  unicode-range: U+1F300-1F5FF, U+1F600-1F64F, U+1F680-1F6FF, U+2600-26FF;
+}
+
+
+:root {
+  //--widget-color: rgba(51, 105, 158, 0.9);
+  --widget-color: rgba(41, 147, 251, 0.9);
+}
+
+/* background-color: #bada55; */
+
 html {
 font-size: 100%;
 -webkit-text-size-adjust: 100%;
@@ -36,7 +96,7 @@ overflow: auto;
 -ms-touch-action: auto;
 touch-action: auto;
 scroll-behavior: smooth;
-font-family: -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, Lucida Sans, Lucida Grande, Lucida Sans Unicode, HelveticaNeue-Light, HelveticaNeue, Helvetica, Arial, Verdana, sans-serif, caption, noto, 'Segoe UI Symbol', 'emoji', 'Apple Color Emoji','EmojiSymbols', 'Symbola';
+font-family: -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, Lucida Sans, Lucida Grande, Lucida Sans Unicode, HelveticaNeue-Light, HelveticaNeue, Helvetica, Arial, Verdana, sans-serif, caption, noto, 'Segoe UI Emoji', 'Segoe UI Symbol', 'emoji', 'Apple Color Emoji','EmojiSymbols', 'Symbola';
 background-attachment: fixed;
 z-index: -1;
 -ms-word-break: break-all;
@@ -52,52 +112,38 @@ background-color: #424242;
 color: #ffffff;
 }
 
+#universe {
+display: block;
+clear: both;
+margin-left: auto;
+margin-right: auto;
+height: auto;
+min-height: 150px;
+//padding-top: 2px;
+padding-bottom: 2px;
+border-radius: 4px;
+width: calc(100% - 4px);
+background-color: #424242;
+color: #ffffff;
+}
+
 a, a:visited {
     color: #ffffff;
 }
 
-#browser {
-    display: block;
-    border: 0;
-    padding: 0;
-    margin: 0;
-width: 100%;
-height: 100%;
-overflow: auto;
--ms-overflow-style: scrollbar;
--webkit-overflow-scrolling: touch;
--ms-touch-action: auto;
-touch-action: auto;
-scroll-behavior: smooth;
-background-color: #ffffff;
+*[hidden] {
+    display: none !important;
 }
 
-@font-face {
-  font-family: emoji;
-
-  /* Fonts for text outside emoji blocks */
-  src: local('Droid Sans Mono'),
-       local('Lucida Console'),
-       local('Arial Monospaced'),
-       local(Arial);
+.icon {
+display: inline-block;
+width: 1em;
+height: 1em;
+//width: 1.4em;
+//height: 1.4em;
+margin-top: 0.4em;
 }
-@font-face {
-  font-family: emoji;
 
-  src: local('Apple Color Emoji'),
-       local('Android Emoji'),
-       local('Segoe UI'),
-	   local('Segoe UI Symbol'),
-       local(EmojiSymbols),
-       local(Symbola),/*,
-       url('fonts/Symbola-Emoji.eot?#iefix') format('embedded-opentype'),
-       url('fonts/Symbola-Emoji.woff') format('woff'),
-       url('fonts/Symbola-Emoji.ttf') format('truetype')*/
-       local(emoji);
-
-  /* Emoji unicode blocks */
-  unicode-range: U+1F300-1F5FF, U+1F600-1F64F, U+1F680-1F6FF, U+2600-26FF;
-}
 
 .button {
 border: 0;
@@ -116,8 +162,7 @@ display: block;
 display: inline-block;
 position: relative;
 color: #ffffff;
-background-color: #262C32;
-background-color: rgba(38, 44, 50, 0.9);
+background-color: var(--widget-color);
 font-size: 80%;
 padding-left: 1em;
 padding-right: 1em;
@@ -130,7 +175,7 @@ max-width: 80%;
 height: auto;
 line-height: 2.125em;
 text-decoration: none;
-text-transform: uppercase;
+//text-transform: uppercase;
 text-shadow: none;
 border-radius: 4px;
 background-repeat: repeat;
@@ -159,6 +204,152 @@ border-top: 1px solid transparent;
 color: #ffffff;
 }
 
-#logger, #links, #progress, #log, #info {
-	display: none;
+.button[hidden] {
+visibility: hidden;
+display: none;
+opacity: 0;
+}
+
+.dropdown {
+border: 0;
+outline: 0;
+-webkit-appearance: menulist;
+-moz-appearance: menulist;
+-webkit-user-select: none;
+-khtml-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+user-select: none;
+cursor: pointer;
+vertical-align: middle;
+text-decoration: none;
+display: block;
+display: inline-block;
+position: relative;
+color: #ffffff;
+background-color: var(--widget-color);
+font-size: 80%;
+padding-left: 1em;
+padding-right: 1em;
+margin-top: 1px;
+margin-bottom: 1px;
+text-align: center;
+display: inline-block;
+min-height: 2.1em;
+max-width: 80%;
+height: auto;
+line-height: 2.125em;
+text-decoration: none;
+//text-transform: uppercase;
+text-shadow: none;
+border-radius: 2px;
+background-repeat: repeat;
+box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
+border: none;
+border-bottom: 1px solid transparent;
+}
+
+input[type=checkbox].toggle {
+	height: 0;
+	width: 0;
+	visibility: hidden;
+}
+
+label.toggle {
+	cursor: pointer;
+	text-indent: -9999px;
+	width: 2em;
+	height: 1em;
+	background-color: grey;
+	display: inline-block;
+	border-radius: 100px;
+	position: relative;
+	top: 0.2em;
+	overflow: hidden;
+}
+
+label.toggle:after {
+	content: '';
+	position: absolute;
+    top: 0.05em;
+	left: 0.05em;
+    width: 0.9em;
+    height: 0.9em;
+	background-color: #fff;
+	border-radius: 90px;
+	transition-duration: 0.3s;
+	transition-property: transform;
+	transform: scaleX(1);
+}
+
+input.toggle:checked + label.toggle {
+	background-color: var(--widget-color);
+}
+
+input.toggle:checked + label.toggle:after {
+	transform: translateX(1em);
+}
+
+label.toggle:active:after {
+	transform: scaleX(2);
+}
+
+input.toggle:checked + label.toggle:active:after {
+	transform: scaleX(2);
+}
+
+.button, input.toggle:checked + label.toggle {
+	background-color: var(--widget-color);
+}
+
+input.textbox {
+    border-radius: 4px;
+    border: 0;
+    outline: 0;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    vertical-align: middle;
+    font-size: 80%;
+    padding-left: 1em;
+    padding-right: 1em;
+    margin-top: 1px;
+    margin-bottom: 1px;
+    text-align: center;
+    display: inline-block;
+    min-height: 2.1em;
+    max-width: 80%;
+    height: auto;
+    line-height: 2.125em;
+    text-decoration: none;
+    border: none;
+    box-shadow: inset 0 2px 5px 0 rgba(0, 0, 0, 0.26);
+}
+
+.info-box {
+	display: inline-block;
+	font-family: monospace;
+	background-color: #313131;
+	padding: 4px;
+	border-radius: 4px;
+	//max-width: 20%;
+	//max-width: calc(20% - 8px);
+}
+
+#version-notice {
+	display: block;
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	float: left;
+	opacity: 0.5;
+}
+
+#app-user-agent {
+	position: fixed;
+    bottom: 0;
+    left: 0;
+    text-align: left;
+    font-size: 10px;
+    color: rgba(255,255,255,0.5);
+    z-index: -1;
 }

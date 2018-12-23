@@ -80,7 +80,11 @@ function createWindow () {
   })
 
 }
-
+app.requestSingleInstanceLock()
+app.on('second-instance', (event, argv, cwd) => {
+  app.quit()
+})
+/*
   const isSecondInstance = app.makeSingleInstance((commandLine, workingDirectory) => {
   // Someone tried to run a second instance, we should focus our window.
 	  if (win) {
@@ -93,7 +97,7 @@ function createWindow () {
 	if (isSecondInstance) {
 	  app.quit()
 	}
-
+*/
 app.on('ready', () => {
 	if (!fs.existsSync(__dirname + '/../../dats/')) {
 		fs.mkdirSync(__dirname + '/../../dats/');

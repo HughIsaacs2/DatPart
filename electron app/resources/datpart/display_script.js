@@ -6,6 +6,8 @@
 	
 	document.getElementById("version-number").textContent = versionNumber;
 	
+	document.getElementById("app-user-agent").textContent = navigator.userAgent;
+	
 	document.querySelectorAll("a.external-link").forEach(function (el) {
 		el.onclick = function(){shell.openExternal(el.href);return false;};
 	});
