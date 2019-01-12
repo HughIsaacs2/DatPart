@@ -49,7 +49,7 @@
 			document.getElementById("output-datlink").href = code.data;
 			document.getElementById("output-datlink").title = code.data;
 			document.getElementById("output-datlink").hidden = false;
-			document.getElementById("output-qrlink").href = "/qr_generator.html?link=" + code.data;
+			document.getElementById("output-qrlink").href = "/qr_generator.html?code_URL=" + code.data;
 			document.getElementById("output-qrlink").hidden = false;
 			document.getElementById("output-link").href = "/redirector.html?link="+code.data;
 			document.getElementById("output-link").hidden = false;
@@ -57,7 +57,7 @@
 			document.getElementById("output-link").href = code.data;
 			document.getElementById("output-link").hidden = false;
 			document.getElementById("output-datlink").hidden = true;
-			document.getElementById("output-qrlink").href = "/qr_generator.html?link=" + code.data;
+			document.getElementById("output-qrlink").href = "/qr_generator.html?code_URL=" + code.data;
 			document.getElementById("output-qrlink").hidden = false;
 		  }
         } else {

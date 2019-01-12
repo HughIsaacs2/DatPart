@@ -18,5 +18,7 @@ var qrUrl = unescape(code_URL);
 window.onload = function() {
 document.getElementById("code_image").src = "/qr_code.html?link="+ qrUrl;
 document.getElementById("code_image").title = "QR Code for "+ qrUrl;
+document.getElementById("code_link").href = qrUrl;
+document.getElementById("code_link").textContent = qrUrl;
 document.getElementById("version-notice").textContent="This is version "+chrome.runtime.getManifest().version+" of  "+chrome.runtime.getManifest().short_name+".";
 }

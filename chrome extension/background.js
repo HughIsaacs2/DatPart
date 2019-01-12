@@ -1,9 +1,10 @@
-
 var chromeos_server_app_id = chrome.runtime.getManifest().externally_connectable.ids[0]; //Chrome specific
-
 
 var defaultproxyaccess = "PROXY";
 var defaultproxyurl = "localhost:9989";
+var extensionTitle = chrome.runtime.getManifest().short_name + " v" + chrome.runtime.getManifest().version_name;
+
+chrome.browserAction.setTitle({title: extensionTitle});
 
 function fakeDisable() {
     chrome.browserAction.setBadgeText({
@@ -14,6 +15,7 @@ function fakeDisable() {
 }
 
 function fakeEnable() {
+	var datExtensionTitle = extensionTitle + " ."; //Later on replace the "." with the current site's dat url.
     chrome.browserAction.setBadgeText({
         text: "Dat"
     });
@@ -21,6 +23,7 @@ function fakeEnable() {
         color: "#2aca4b"
     }); //Dat logo color
     //chrome.browserAction.setPopup({popup: chrome.runtime.getManifest().browser_action.default_popup});
+	chrome.browserAction.setTitle({title: datExtensionTitle});
 }
 
 function datAvailable() {

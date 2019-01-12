@@ -22,6 +22,7 @@ if (datUrl.substring(0, 4) == "web+") {
 
 var siteInfo = document.createElement('span');
 siteInfo.id = "error-site-info";
+siteInfo.className = "info-box";
 siteInfo.innerText = datUrl;
 document.body.appendChild(siteInfo);
 
