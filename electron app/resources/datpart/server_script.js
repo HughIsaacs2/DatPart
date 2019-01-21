@@ -67,6 +67,7 @@
       "mp3": "audio/mpeg",
       "weba": "audio/webm",
 	//application file formats
+      "sxg": "application/signed-exchange",
       "wasm": "application/wasm",
       "nexe": "application/x-nacl",
       "xml": "application/xml",
