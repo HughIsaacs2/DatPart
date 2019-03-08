@@ -40,9 +40,8 @@ Basically all this does is use the Chrome Extension WebRequest API and Proxy API
   * Let the user set the port of the local server via options using the [Native Messaging API](https://developer.chrome.com/apps/nativeMessaging).
 * Optional background functionality.
 * Maybe support regular domain names [the way Beaker Browser does](https://beakerbrowser.com/2017/02/22/beaker-0-6-1.html), I don't know how this would be done via a browser extension but I feel like it might be possible (if well executed this could be useful for easing bandwidth/data use on certain sites).
-* Edge support? (Not possible yet, needs the Proxy API, if it ever gets it)
-* Safari support? (I'm unsure if this is possible)
-* Internet Explorer support? (I'm being ridiculous here, but again unsure if this is possible)
+* Safari support?
+* Internet Explorer support?
 
 ## To-Do [Short term + more specific list]
 * ~~Dat URL for current tab in the extension pop up.~~ ✓
