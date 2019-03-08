@@ -28,8 +28,8 @@ Basically all this does is use the Chrome Extension WebRequest API and Proxy API
 * Opera support.
 * Mac OS support.
 * Linux support.
-* ~~Chrome OS support (aka a Chrome packaged app).~~(In the works!)
-* ~~WebRTC support (for Chrome OS and providing a web proxy).~~(In the works!)
+* ~~Chrome OS support (aka a Chrome packaged app).~~ (In the works!)
+* ~~WebRTC support (for Chrome OS and providing a web proxy).~~ (In the works!)
 * UDP support on Chrome OS.
 * dat:// link support.
   * This'll require coming up with a way to simply parse Dat URLs in a regular web browser, as [parse-dat-url](https://github.com/pfrazee/parse-dat-url "parse-dat-url") doesn't work very well on the web (there's likely a fix that can be done with regular expressions but I suck at them so... yeah).
