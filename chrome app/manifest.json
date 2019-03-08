@@ -1,0 +1,40 @@
+{
+        "name": "DatPart [App]",
+          "short_name": "DatPart",
+  "description": "DatPart server app.",
+         "manifest_version": 2,
+          
+  "version": "0.0.19",
+  "version_name": "0.0.19 alpha (Debug)",
+  "permissions": [ "browser", "webview", "*://*.dat_site/*", "*://*.torrent_site/*", "storage", "unlimitedStorage", "fileSystem",
+		"system.network", "alarms", "power", {"fileSystem":["write","directory","retainEntries"]}],
+		"optional_permissions": [ "notifications", "*://*/" ],
+		"externally_connectable": { "ids": [ "hnblaajbillhajijlbaepnjglfgepdgm" ] },
+          "icons": {
+            "16": "logo_16.png",
+            "24": "logo.png",
+            "32": "logo.png",
+			"128": "logo_128.png"
+          },
+    "sockets": {
+       "udp": {
+         "send": [""],
+         "bind": [""],
+         "multicastMembership": ""
+       },
+       "tcp": {
+         "connect": [""]
+       },
+       "tcpServer": {
+         "listen": ["*"]
+       }
+    },
+  "manifest_version": 2,
+  "minimum_chrome_version": "72",
+  "offline_enabled": true,
+  "app": {
+    "background": {
+      "scripts": ["launch.js"]
+    }
+  }
+}

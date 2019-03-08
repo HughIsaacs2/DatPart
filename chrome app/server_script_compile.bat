@@ -1,0 +1,1 @@
+browserify server_script_noncompile.js -o server_script.js
