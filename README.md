@@ -33,10 +33,10 @@ Basically all this does is use the Chrome Extension WebRequest API and Proxy API
 * UDP support on Chrome OS.
 * dat:// link support.
   * This'll require coming up with a way to simply parse Dat URLs in a regular web browser, as [parse-dat-url](https://github.com/pfrazee/parse-dat-url "parse-dat-url") doesn't work very well on the web (there's likely a fix that can be done with regular expressions but I suck at them so... yeah).
-* Provide the dat:// URL to the current site via the extension popup.
+* ~~Provide the dat:// URL to the current site via the extension popup.~~ ✓
 * Have the extension automatically open the app in the background when a .dat_site is requested via the [Native Messaging API](https://developer.chrome.com/apps/nativeMessaging).
-* Polyfill [the Beaker Browser APIs](https://beakerbrowser.com/docs/apis/) (don't necessarily need all of them, just the ones to make sure certain sites are viewable, e.g. Rotonde sites).
-* Notifications! For everything possible (optional of course).
+* Polyfill [the Beaker Browser APIs](https://beakerbrowser.com/docs/apis/) (doesn't need all of them, just the ones to make sure certain sites are viewable, e.g. Rotonde sites).
+* ~~Notifications! For everything possible (optional of course).~~ ✓
 * Options! (A real options page)
   * Let the user set the port of the local server via options using the [Native Messaging API](https://developer.chrome.com/apps/nativeMessaging).
 * Use the [omnibox API](https://developer.chrome.com/extensions/omnibox) to let users just type the dat:// URL or the hash itself as a search to load the site.
@@ -48,12 +48,12 @@ Basically all this does is use the Chrome Extension WebRequest API and Proxy API
 * Internet Explorer support? (I'm being ridiculous here, but again unsure if this is possible)
 
 ## To-Do [Short term + more specific list]
-* ~~Dat URL for current tab in the extension pop up.~~
-* ~~Support for 404 pages by reading “fallback_page” in dat.json (updated this further to work the same way it does in Beaker Browser).~~
-* ~~An button in the extension pop up to tell the app to download the entire Dat.~~
-* ~~A button in the extension pop up to tell the app to delete the entire Dat.~~
-* ~~A landing page for introducing users to the extension/app.~~
-* ~~Display a badge for Dat sites.~~
+* ~~Dat URL for current tab in the extension pop up.~~ ✓
+* ~~Support for 404 pages by reading “fallback_page” in dat.json (updated this further to work the same way it does in Beaker Browser).~~ ✓
+* A button in the extension pop up to tell the app to download the entire Dat.
+* A button in the extension pop up to tell the app to delete the entire Dat.
+* ~~A landing page for introducing users to the extension/app.~~ ✓
+* ~~Display a badge for Dat sites.~~ ✓
 * ~~The ability to submit dat links or hashes as searches in the extension (needs [Dat parse](https://github.com/pfrazee/parse-dat-url "parse-dat-url") for web).~~ (Works via hacky method, needs lots of improving)
 * Fix how much the server app checks for the dat.json file (it seriously goes nuts, checks the network for dat.json again on every HTTP request).
 * Code something to let the extension know to hide the "Pin" or "Unpin" button (likely going to be more HTTP headers, for now).
