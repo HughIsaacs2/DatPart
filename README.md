@@ -34,7 +34,7 @@ Basically all this does is use the Chrome Extension WebRequest API and Proxy API
 * dat:// link support.
   * This'll require coming up with a way to simply parse Dat URLs in a regular web browser, as [parse-dat-url](https://github.com/pfrazee/parse-dat-url "parse-dat-url") doesn't work very well on the web (there's likely a fix that can be done with regular expressions but I suck at them so... yeah).
 * Have the extension automatically open the app in the background when a .dat_site is requested via the [Native Messaging API](https://developer.chrome.com/apps/nativeMessaging).
-* Polyfill [the Beaker Browser APIs](https://beakerbrowser.com/docs/apis/) (doesn't need all of them, just the ones to make sure certain sites are viewable, e.g. Rotonde sites).
+* Polyfill [the Beaker Browser APIs](https://beakerbrowser.com/docs/apis/) (doesn't need all of them, just the ones to make sure certain sites are viewable, e.g. [Fritter](https://github.com/beakerbrowser/fritter) and [Rotonde](https://github.com/Rotonde/rotonde-client) sites).
 * ~~Notifications! For everything possible (optional of course).~~ ✓
 * ~~Options! (A real options page)~~ ✓
   * Let the user set the port of the local server via options using the [Native Messaging API](https://developer.chrome.com/apps/nativeMessaging).
