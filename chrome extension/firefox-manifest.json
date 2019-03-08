@@ -3,7 +3,7 @@
 	"short_name": "DatPart",
 	"description": "DatPart extension.",
 	"manifest_version": 2,
-	"version": "0.0.15",
+	"version": "0.0.19",
 	"applications": {
 		"gecko": {
 			"strict_min_version": "57"
