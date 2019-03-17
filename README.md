@@ -67,6 +67,7 @@ Basically all this does is use the Chrome Extension WebRequest API and Proxy API
 * jsQR - https://github.com/cozmo/jsQR (Apache License 2.0)
 * qrcode-svg - https://github.com/papnkukn/qrcode-svg (MIT License)
 * Font Awesome v4.7.0 - https://fontawesome.com/v4.7.0/ (CC BY 4.0 License)
+* Chrome Apps Samples Web Server - https://github.com/GoogleChrome/chrome-app-samples/tree/master/samples/webserver (Apache License 2.0)
 
 ## Donate
 Donate to the [Dat Project](https://donate.datproject.org/) and the [Beaker Browser](https://opencollective.com/beaker?referral=17298) teams, we're not affiliated but this relies on their work.
