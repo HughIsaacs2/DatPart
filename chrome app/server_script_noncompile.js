@@ -4,6 +4,7 @@ var pump = require('pump');
 var db = require('random-access-idb')('dats');
 
 var dat = new Dat({
+  signalhub: 'https://signalhubws.mauve.moe/',
   gateway: 'ws://gateway.mauve.moe:3000',
   db: db
 });
@@ -68,7 +69,6 @@ var dat = new Dat({
       "otf": "font/opentype",
       "eot": "application/vnd.ms-fontobject",
 	//video formats
-      "av1": "video/av1",
       "webm": "video/webm",
       "mp4": "video/mp4",
       "m4v": "video/m4v",
@@ -155,8 +155,8 @@ function readDirectory(insertDir) {
 	  entries.forEach(function(entry) {
 		if (entry.isDirectory){
         
-		console.log("Folder: "+entry.name);
-		console.log(entry);
+		logToScreen("Folder: "+entry.name);
+		logToScreen(entry);
 		
 			readDirectory(entry);
 		
@@ -169,14 +169,14 @@ function readDirectory(insertDir) {
     fileEntry.file(function(realFile) {
 
 	   	filesMap[entry.fullPath] = realFile;
-		console.log('Path: ' + entry.fullPath);
-        console.log('Name: ' + entry.name);
-        console.log('Size: ' + realFile.size);
-        console.log('Type: ' + realFile.type);
-        console.log(entry);
-        console.log(entry.file);
-        console.log(realFile);
-		console.log('filesMap location: '+ entry.fullPath);
+		logToScreen('Path: ' + entry.fullPath);
+        logToScreen('Name: ' + entry.name);
+        logToScreen('Size: ' + realFile.size);
+        logToScreen('Type: ' + realFile.type);
+        logToScreen(entry);
+        logToScreen(entry.file);
+        logToScreen(realFile);
+		logToScreen('filesMap location: '+ entry.fullPath);
 	   
     });
   });
@@ -212,13 +212,6 @@ chrome.runtime.getPackageDirectoryEntry(function(packageDirectory){
     return str;
   };
   
-  var logToScreen = function(log) {
-	console.log(log);
-	//var logger = document.getElementById("logger");
-    //logger.textContent += log + "\n";
-    //logger.scrollTop = logger.scrollHeight;
-  };
-  
   var destroySocketById = function(socketId) {
     tcpSocket.disconnect(socketId, function() {
       tcpSocket.close(socketId);
@@ -249,7 +242,7 @@ chrome.runtime.getPackageDirectoryEntry(function(packageDirectory){
       tcpSocket.setKeepAlive(socketId, keepAlive, 1, function() {
         if (!chrome.runtime.lastError) {
           tcpSocket.send(socketId, buffer, function(writeInfo) {
-            console.log("WRITE", writeInfo);
+            logToScreen("WRITE", writeInfo);
 
             if (!keepAlive || chrome.runtime.lastError) {
               destroySocketById(socketId);
@@ -335,11 +328,11 @@ chrome.runtime.getPackageDirectoryEntry(function(packageDirectory){
     if (acceptInfo.socketId != serverSocketId)
       return;
 
-    console.log("ACCEPT", acceptInfo);
+    logToScreen("ACCEPT", acceptInfo);
   };
   
   var onReceive = function(receiveInfo) {
-    console.log("READ", receiveInfo);
+    logToScreen("READ", receiveInfo);
     var socketId = receiveInfo.socketId;
 
     // Parse the request.
@@ -373,13 +366,13 @@ chrome.runtime.getPackageDirectoryEntry(function(packageDirectory){
 	
 	var fileSearch = currentURLRequest.pathname + currentURLRequest.search;
 	
-	console.log("TLD: " + currentTLD + " Hash: " + currentURLhostNoTLD);
+	logToScreen("TLD: " + currentTLD + " Hash: " + currentURLhostNoTLD);
 	
 	var file = filesMap[fileSearch];
 	
-	console.log("URI: " + uri);
-	console.log("URIEnd: " + uriEnd);
-	console.log("File: " + fileSearch);
+	logToScreen("URI: " + uri);
+	logToScreen("URIEnd: " + uriEnd);
+	logToScreen("File: " + fileSearch);
 	
 	if (currentTLD == 'dat_site') {
 		var repo = dat.get('dat://'+currentURLhostNoTLD);
@@ -411,16 +404,16 @@ chrome.runtime.getPackageDirectoryEntry(function(packageDirectory){
 		  }
 		  
 		  var datFile = new Blob([data.toString()], {type : mimeType});
-		  console.log('Name: ' + datFile.name);
-		  console.log('Size: ' + datFile.size);
-		  console.log('Type: ' + datFile.type);
-		  console.log('Designated MIMEType: ' + mimeType);
+		  logToScreen('Name: ' + datFile.name);
+		  logToScreen('Size: ' + datFile.size);
+		  logToScreen('Type: ' + datFile.type);
+		  logToScreen('Designated MIMEType: ' + mimeType);
 		  
 		  logToScreen("GET 200 " + uri);
 		  write200Response(socketId, datFile, keepAlive);
 		}));
 		
-	} else if (currentTLD == 'torrent_site') { 
+	} else if (currentTLD == 'torrent_site') {
 		
 	} else {
 		write200Response(socketId, filesMap["/crxfs/nothing.html"], keepAlive);
@@ -434,7 +427,7 @@ chrome.runtime.getPackageDirectoryEntry(function(packageDirectory){
       serverSocketId = socketInfo.socketId;
 
       tcpServer.listen(serverSocketId, host, parseInt(port, 10), 50, function(result) {
-        console.log("LISTENING:", result);
+        logToScreen("LISTENING:", result);
 
         tcpServer.onAccept.addListener(onAccept);
         tcpSocket.onReceive.addListener(onReceive);
@@ -458,9 +451,9 @@ rootDir.getDirectory('torrent', {create: true}, function(dirEntry) {
 
   }, errorHandler);
 
-console.log(fs);
-console.log(fs.root);
-console.log(rootDir);
+logToScreen(fs);
+logToScreen(fs.root);
+logToScreen(rootDir);
 
 readDirectory(rootDir);
 

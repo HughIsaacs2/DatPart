@@ -353,3 +353,22 @@ input.textbox {
     color: rgba(255,255,255,0.5);
     z-index: -1;
 }
+
+#logger {
+	display: block;
+	overflow: auto;
+    overflow-y: auto;
+	white-space: pre;
+	-ms-word-break: break-all;
+	word-break: break-all;
+	word-break: break-word;
+	overflow-wrap: break-word;
+	word-wrap: break-word;
+	-webkit-hyphens: auto;
+	-ms-hyphens: auto;
+	-moz-hyphens: auto;
+	hyphens: auto;
+	max-height: 250px;
+    border-top: solid 1px #c6c6c6;
+    border-bottom: solid 1px #c6c6c6;
+}
