@@ -14,11 +14,21 @@ function queryObj() {
 
 var datLink = queryObj()["dat"];
 
+var datDomainQuery = queryObj()["dat_domain"];
+
 var datUrl = unescape(datLink);
+
+var datDomain = unescape(datDomainQuery);
 
 if (datUrl.substring(0, 4) == "web+") {
 	datUrl = datUrl.substring(4, datUrl.length);
 }
+
+if (datDomain == "notyet") {
+    document.getElementById("message").textContent = "Sorry. Dat Domains aren't supported in " + chrome.runtime.getManifest().short_name + " yet.";
+}
+
+document.body.appendChild(document.createElement('br'));
 
 var siteInfo = document.createElement('span');
 siteInfo.id = "error-site-info";
@@ -29,12 +39,14 @@ document.body.appendChild(siteInfo);
 document.body.appendChild(document.createElement('br'));
 document.body.appendChild(document.createElement('br'));
 
-var retryLink = document.createElement('a');
-retryLink.href = "http://"+datUrl.substring(6, 70)+".dat_site"+datUrl.substring(70, datUrl.length);
-retryLink.innerText = "Retry";
-retryLink.title = "Try loading the page again";
-retryLink.className = "button";
-document.body.appendChild(retryLink);
+if (datDomain !== "notyet") {
+    var retryLink = document.createElement('a');
+    retryLink.href = "http://" + datUrl.substring(6, 70) + ".dat_site" + datUrl.substring(70, datUrl.length);
+    retryLink.innerText = "Retry";
+    retryLink.title = "Try loading the page again";
+    retryLink.className = "button";
+    document.body.appendChild(retryLink);
+}
 
 document.body.appendChild(document.createElement('br'));
 document.body.appendChild(document.createElement('br'));

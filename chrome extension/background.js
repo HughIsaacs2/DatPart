@@ -247,10 +247,17 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
 chrome.omnibox.onInputChanged.addListener(function(text, suggest) {
     console.log('inputChanged: ' + text);
 	if (text.substring(0, 6) == "dat://") {
-		
+	
 		suggest([{
 				content: text,
-				description: "Open " + text + " with DatPart?" + chrome.runtime.getManifest().name[0] + "?" //Create as object in variable first
+				description: "Open " + text + " with " + chrome.runtime.getManifest().short_name + "?"
+			}]);
+	
+	} else if (text.indexOf('.') !== -1) {
+	
+		suggest([{
+				content: text,
+				description: "Dat Domains not supported yet."
 			}]);
 	
 	}
@@ -258,10 +265,19 @@ chrome.omnibox.onInputChanged.addListener(function(text, suggest) {
 
 chrome.omnibox.onInputEntered.addListener(function(text) {
     console.log('inputEntered: ' + text);
+    if (text.indexOf('.') !== -1) {
+		
+    	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+    		chrome.tabs.update(tabs[0].id, {url: "/dat_error.html?dat_domain=notyet&dat=" + encodeURIComponent(text)});
+    	});
 	
-	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-		chrome.tabs.update(tabs[0].id, {url: "/redirector.html?dat=" + encodeURIComponent(text)});
-	});
+	} else {
+	 
+    	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+    		chrome.tabs.update(tabs[0].id, {url: "/redirector.html?dat=" + encodeURIComponent(text)});
+    	});
+	    
+	}
 });
 
 chrome.webNavigation.onBeforeNavigate.addListener(function(details) {
