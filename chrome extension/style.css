@@ -125,6 +125,10 @@ border-radius: 4px;
 width: calc(100% - 4px);
 background-color: #424242;
 color: #ffffff;
+
+position: relative;
+top: 2px;
+margin-bottom: 3px;
 }
 
 a, a:visited {
@@ -338,8 +342,8 @@ input.textbox {
 #version-notice {
 	display: block;
 	position: fixed;
-	bottom: 0;
-	left: 0;
+	bottom: 2px;
+	left: 4px;
 	float: left;
 	opacity: 0.5;
 }
@@ -352,4 +356,23 @@ input.textbox {
     font-size: 10px;
     color: rgba(255,255,255,0.5);
     z-index: -1;
+}
+
+#logger {
+	display: block;
+	overflow: auto;
+    overflow-y: auto;
+	white-space: pre;
+	-ms-word-break: break-all;
+	word-break: break-all;
+	word-break: break-word;
+	overflow-wrap: break-word;
+	word-wrap: break-word;
+	-webkit-hyphens: auto;
+	-ms-hyphens: auto;
+	-moz-hyphens: auto;
+	hyphens: auto;
+	max-height: 250px;
+    border-top: solid 1px #c6c6c6;
+    border-bottom: solid 1px #c6c6c6;
 }
