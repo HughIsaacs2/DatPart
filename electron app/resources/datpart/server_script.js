@@ -16,7 +16,7 @@
 	
 	var versionNumber = require('electron').remote.getGlobal('sharedObject').appVersionNumber;
 	
-	console.log("DatPart Server Version "+versionNumber);
+	logToScreen("DatPart Server Version "+versionNumber);
 	
 	var datMap = {};
 
@@ -66,7 +66,6 @@
       "otf": "font/opentype",
       "eot": "application/vnd.ms-fontobject",
 	//video formats
-      "av1": "video/av1",
       "webm": "video/webm",
       "mp4": "video/mp4",
       "m4v": "video/m4v",
@@ -160,8 +159,8 @@
 	}
 
 const requestHandler = (request, response) => {
-  console.log(request.url);
-    console.log(request);
+  logToScreen(request.url);
+  logToScreen(request);
   
     var uri = url.parse(request.url).pathname,
       filename = path.join(process.cwd(), uri);
@@ -178,7 +177,7 @@ const requestHandler = (request, response) => {
 	
 	var datPath = url.parse(request.url).pathname;
 	
-	console.log(datPath);
+	logToScreen(datPath);
 
 if(request.method == 'GET' && currentTLD == 'dat_site' || request.method == 'GET' && currentTLD == 'datsite') {
 	datMap[currentURLhostNoTLD] = {};
@@ -186,12 +185,13 @@ dat( __dirname + '/../../dats/'+currentURLhostNoTLD, {
   // 2. Tell Dat what link I want
   key: currentURLhostNoTLD, temp: true, sparse: true // (a 64 character hash from above)
 }, function (err, dat) {
-  if (err) {throw err;console.log(err);}
+  if (err) {throw err;logToScreen(err);}
   
   var stats = dat.trackStats();
-  console.log(currentURLhostNoTLD+" "+dat.stats.get());
-  console.log(dat.stats.get());
-  console.log("Dat Version: "+dat.stats.get().version);
+  logToScreen(currentURLhostNoTLD+" "+dat.stats.get());
+  logToScreen(dat.stats.get());
+  logToScreen("Dat Version: "+dat.stats.get().version);
+  logToScreen("Number of files: "+dat.stats.get().files);
   
   var fourOhFourPage = null;
 
@@ -215,28 +215,28 @@ dat( __dirname + '/../../dats/'+currentURLhostNoTLD, {
   /*
 	  dat.archive.readFile(datPath+'/dat.json', function (err, content) {
 		if (content != null) {
-			console.log("Got dat.json for "+ currentURLhostNoTLD);
-			console.log(datMap[currentURLhostNoTLD]);
+			logToScreen("Got dat.json for "+ currentURLhostNoTLD);
+			logToScreen(datMap[currentURLhostNoTLD]);
 			
 			if (JSON.parse(content.toString()).content_security_policy != null || JSON.parse(content.toString()).content_security_policy != undefined) {
 				datMap[currentURLhostNoTLD].contentSecurityPolicy = JSON.parse(content.toString()).content_security_policy;
-				console.log(JSON.parse(content.toString()).content_security_policy);
+				logToScreen(JSON.parse(content.toString()).content_security_policy);
 			} else {
 				datMap[currentURLhostNoTLD].contentSecurityPolicy = "";
 			}
 
 			if (JSON.parse(content.toString()).fallback_page != null || JSON.parse(content.toString()).fallback_page != undefined) {
 				datMap[currentURLhostNoTLD].fallback_page = JSON.parse(content.toString()).fallback_page;
-				console.log(JSON.parse(content.toString()).fallback_page);
+				logToScreen(JSON.parse(content.toString()).fallback_page);
 			} else {
 				datMap[currentURLhostNoTLD].fallback_page = "";
 			}
 			
 		} else {
-			console.log("dat.json not found for "+ currentURLhostNoTLD);
+			logToScreen("dat.json not found for "+ currentURLhostNoTLD);
 			
 		}
-		if (err) {throw err; console.log(err);}
+		if (err) {throw err; logToScreen(err);}
 	  });
 	  */
 
@@ -244,20 +244,20 @@ dat( __dirname + '/../../dats/'+currentURLhostNoTLD, {
   datMap[currentURLhostNoTLD].fourOhFourFallback = new Promise(function(resolve, reject) {
 	dat.archive.readFile('/dat.json', function (err, content) {
 		
-	  console.log("Grabbing JSON for fallback_page "+JSON.stringify(content));
+	  logToScreen("Grabbing JSON for fallback_page "+JSON.stringify(content));
 	  
 		dat.archive.readFile(content.fallback_page, function (err, fallbackContent) {
 			if (fallbackContent != null) {
-				console.log("Got fallback page for dat://"+ currentURLhostNoTLD +" " + content.fallback_page);
+				logToScreen("Got fallback page for dat://"+ currentURLhostNoTLD +" " + content.fallback_page);
 				resolve(fallbackContent);
 			} else {
-				console.log("fallback_page not found for dat://"+ currentURLhostNoTLD);
+				logToScreen("fallback_page not found for dat://"+ currentURLhostNoTLD);
 				reject("fallback_page not found for dat://"+ currentURLhostNoTLD);
 			}
 		});
 		
 	}, function(err) {
-	  console.log(err);
+	  logToScreen(err);
 	});
   });
   */
@@ -265,20 +265,20 @@ dat( __dirname + '/../../dats/'+currentURLhostNoTLD, {
     datMap[currentURLhostNoTLD].contentSecurityPolicy = new Promise(function(resolve, reject) {
 	datMap[currentURLhostNoTLD].datJSON.then(function(result) {
 		
-	  console.log("Grabbing JSON for content_security_policy "+JSON.stringify(result));
+	  logToScreen("Grabbing JSON for content_security_policy "+JSON.stringify(result));
 	  
 		dat.archive.readFile(result.content_security_policy, function (err, cspContent) {
 			if (cspContent != null) {
-				console.log("Got fallback page for dat://"+ currentURLhostNoTLD +" " + result.content_security_policy);
+				logToScreen("Got fallback page for dat://"+ currentURLhostNoTLD +" " + result.content_security_policy);
 				resolve(cspContent);
 			} else {
-				console.log("content_security_policy not found for dat://"+ currentURLhostNoTLD);
+				logToScreen("content_security_policy not found for dat://"+ currentURLhostNoTLD);
 				reject("content_security_policy not found for dat://"+ currentURLhostNoTLD);
 			}
 		});
 		
 	}, function(err) {
-	  console.log(err);
+	  logToScreen(err);
 	});
   });
 */
@@ -288,7 +288,7 @@ if (lastChar == '/') {         // If the last character is not a slash
   dat.archive.readFile(datPath+'/index.html', function (err, content) {
 
 	if (content != null) {
-		console.log(datPath);
+		logToScreen(datPath);
 		var newHeaders = HTTPheaders;
 		delete newHeaders["X-Frame-Options"];
 		delete newHeaders["Location"];
@@ -302,7 +302,7 @@ if (lastChar == '/') {         // If the last character is not a slash
 		response.writeHead(200, newHeaders);
 		response.end(content);
 	} else {
-		console.log("File "+datPath+" not found!");
+		logToScreen("File "+datPath+" not found!");
 		
 		var newHeaders = HTTPheaders;
 		delete newHeaders["X-Frame-Options"];
@@ -311,7 +311,7 @@ if (lastChar == '/') {         // If the last character is not a slash
 		newHeaders["X-Frame-Options"] = "DENY";
 		
 		if(datMap[currentURLhostNoTLD].fourOhFourFallback != null) {
-			console.log(result);
+			logToScreen(result);
 			
 			newHeaders["Alt-Svc"] = "dat='dat://"+currentURLhostNoTLD+datPath+"'";
 			newHeaders["Dat-Url"] = "dat://"+currentURLhostNoTLD+datPath;
@@ -321,13 +321,13 @@ if (lastChar == '/') {         // If the last character is not a slash
 			response.writeHead(404, newHeaders);
 			response.end(result);
 		} else {
-			console.log(err);
+			logToScreen(err);
 			response.writeHead(204, newHeaders);
 			response.end("Nothing");
 		}
 
 	}
-	if (err) {throw err; console.log(err);}
+	if (err) {throw err; logToScreen(err);}
   });
 
 } else {
@@ -335,7 +335,7 @@ if (lastChar == '/') {         // If the last character is not a slash
   dat.archive.readFile(datPath, function (err, content) {
 	
 	if (content != null) {
-		console.log(datPath);
+		logToScreen(datPath);
 		
 		var newHeaders = HTTPheaders;
 		delete newHeaders["X-Frame-Options"];
@@ -354,7 +354,7 @@ if (lastChar == '/') {         // If the last character is not a slash
 		response.writeHead(200, newHeaders);
 		response.end(content);
 	} else {
-		console.log("File "+datPath+" not found!");
+		logToScreen("File "+datPath+" not found!");
 		
 		var newHeaders = HTTPheaders;
 		delete newHeaders["X-Frame-Options"];
@@ -363,7 +363,7 @@ if (lastChar == '/') {         // If the last character is not a slash
 		newHeaders["X-Frame-Options"] = "DENY";
 		
 		if(datMap[currentURLhostNoTLD].fourOhFourFallback != null) {
-			console.log(result);
+			logToScreen(result);
 			
 			newHeaders["Alt-Svc"] = "dat='dat://"+currentURLhostNoTLD+datPath+"'";
 			newHeaders["Dat-Url"] = "dat://"+currentURLhostNoTLD+datPath;
@@ -373,13 +373,13 @@ if (lastChar == '/') {         // If the last character is not a slash
 			response.writeHead(404, newHeaders);
 			response.end(result);
 		} else {
-			console.log(err);
+			logToScreen(err);
 			response.writeHead(204, newHeaders);
 			response.end("Nothing");
 		}
 		
 	}
-	if (err) {throw err; console.log(err);}
+	if (err) {throw err; logToScreen(err);}
   });
 
 }
@@ -390,8 +390,8 @@ if (lastChar == '/') {         // If the last character is not a slash
 
 } else if(request.method == 'GET' && currentTLD != 'dat_site' && currentTLD != 'datsite') {
 
-	console.log("Non Dat Site request "+request);
-	console.log(request);
+	logToScreen("Non Dat Site request "+request);
+	logToScreen(request);
 
 	//var newHeaders;
 	//newHeaders["location"] = "http://0.0.0.0/";
@@ -400,7 +400,7 @@ if (lastChar == '/') {         // If the last character is not a slash
 
 } else if(fs.existsSync(__dirname + "/../../dats/")) {
 
-console.log(request.url);
+logToScreen(request.url);
 
 	var currentTLD = url.parse(request.url).hostname.split(".").pop();
 	
@@ -408,14 +408,14 @@ console.log(request.url);
 	
 	var datPath = url.parse(request.url).pathname;
 	
-	console.log(datPath);
+	logToScreen(datPath);
 	
-	console.log("TLD: " + currentTLD + " Hash: " + currentURLhostNoTLD);
+	logToScreen("TLD: " + currentTLD + " Hash: " + currentURLhostNoTLD);
 
 } else {
 	
 	fs.mkdirSync(appPath + "/dats/");
-	console.log(request.url);
+	logToScreen(request.url);
 	
 }
 
@@ -425,8 +425,8 @@ const server = http.createServer(requestHandler);
 
 server.listen(port, (err) => {
   if (err) {
-    return console.log('something bad happened', err);
+    return logToScreen('something bad happened', err);
   }
 
-  console.log(`server is listening on ${port}`);
+  logToScreen(`server is listening on ${port}`);
 });
