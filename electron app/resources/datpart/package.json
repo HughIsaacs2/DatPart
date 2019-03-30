@@ -1,7 +1,7 @@
 {
   "name": "DatPart",
   "productName": "DatPart",
-  "description": "Load Dat's in your web browser.",
+  "description": "DatPart server app.",
   "homepage": "https://github.com/HughIsaacs2/DatPart",
   "repository": {
     "type": "git",
@@ -11,7 +11,9 @@
   "author": "Hugh Isaacs II <hughisaacs@acrylicstyle.com>",
   "license": "MIT",
   "main": "launch.js",
-  "dependencies": {},
+  "dependencies": {
+    "dat-node": "3.5.14"
+  },
   "build": {
     "files": [
       "node_modules/",
@@ -66,8 +68,12 @@
     "pack": "build --dir",
     "dist": "build"
   },
+  "electronVersion": "4.1.2",
+  "electronDownload": {
+    "version": "4.1.2"
+  },
   "devDependencies": {
     "dat-node": "3.5.14",
-    "electron": "4.0.8"
+    "electron": "4.1.2"
   }
 }

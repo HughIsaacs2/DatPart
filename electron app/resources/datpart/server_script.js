@@ -183,7 +183,7 @@ if(request.method == 'GET' && currentTLD == 'dat_site' || request.method == 'GET
 	datMap[currentURLhostNoTLD] = {};
 dat( __dirname + '/../../dats/'+currentURLhostNoTLD, {
   // 2. Tell Dat what link I want
-  key: currentURLhostNoTLD, temp: true, sparse: true // (a 64 character hash from above)
+  key: currentURLhostNoTLD, temp: false, sparse: true // (a 64 character hash from above)
 }, function (err, dat) {
   if (err) {throw err;logToScreen(err);}
   
