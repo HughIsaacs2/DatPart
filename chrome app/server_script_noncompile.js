@@ -12,6 +12,10 @@ var dat = new Dat({
   var host = "127.0.0.1";
   var port = "9989";
   
+  var versionNumber = chrome.runtime.getManifest().version;
+  
+  logToScreen("DatPart Server Version "+versionNumber);
+  
   var serverSocketId = null;
   var filesMap = {};
   
@@ -155,8 +159,8 @@ function readDirectory(insertDir) {
 	  entries.forEach(function(entry) {
 		if (entry.isDirectory){
         
-		logToScreen("Folder: "+entry.name);
-		logToScreen(entry);
+		console.log("Folder: "+entry.name);
+		console.log(entry);
 		
 			readDirectory(entry);
 		
@@ -169,14 +173,14 @@ function readDirectory(insertDir) {
     fileEntry.file(function(realFile) {
 
 	   	filesMap[entry.fullPath] = realFile;
-		logToScreen('Path: ' + entry.fullPath);
-        logToScreen('Name: ' + entry.name);
-        logToScreen('Size: ' + realFile.size);
-        logToScreen('Type: ' + realFile.type);
-        logToScreen(entry);
-        logToScreen(entry.file);
-        logToScreen(realFile);
-		logToScreen('filesMap location: '+ entry.fullPath);
+		console.log('Path: ' + entry.fullPath);
+        console.log('Name: ' + entry.name);
+        console.log('Size: ' + realFile.size);
+        console.log('Type: ' + realFile.type);
+        console.log(entry);
+        console.log(entry.file);
+        console.log(realFile);
+		console.log('filesMap location: '+ entry.fullPath);
 	   
     });
   });
@@ -375,13 +379,17 @@ chrome.runtime.getPackageDirectoryEntry(function(packageDirectory){
 	logToScreen("File: " + fileSearch);
 	
 	if (currentTLD == 'dat_site') {
-		var repo = dat.get('dat://'+currentURLhostNoTLD);
+		
+		var repo = dat.get('dat://'+currentURLhostNoTLD, { db: db });
+		
+		var datPath = currentURLRequest.pathname;
 		
 		var lastChar = uri.substr(-1); // Selects the last character
 		if (lastChar == '/') {
-			var readStream = repo.archive.createReadStream('index.html');
+			logToScreen(datPath);
+			var readStream = repo.archive.createReadStream(datPath+'index.html');
 		} else {
-			var readStream = repo.archive.createReadStream(currentURLRequest.pathname);
+			var readStream = repo.archive.createReadStream(datPath);
 		}
 		
 		pump(readStream, concat(function (data) {
@@ -399,12 +407,15 @@ chrome.runtime.getPackageDirectoryEntry(function(packageDirectory){
 			mimeType = 'text/html';
 		  }
 		  
-		  if (mimeType == 'text/plain'||'text/html') {
+	      var datFile = new Blob(data, {type : mimeType});
+		  
+		  if (mimeType == 'text/plain'||'text/html'||'text/html') {
 			console.log(data.toString());
+			datFile = new Blob([data.toString()], {type : mimeType});
 		  }
 		  
-		  var datFile = new Blob([data.toString()], {type : mimeType});
 		  logToScreen('Name: ' + datFile.name);
+		  logToScreen('Path: ' + datPath);
 		  logToScreen('Size: ' + datFile.size);
 		  logToScreen('Type: ' + datFile.type);
 		  logToScreen('Designated MIMEType: ' + mimeType);
@@ -427,6 +438,8 @@ chrome.runtime.getPackageDirectoryEntry(function(packageDirectory){
       serverSocketId = socketInfo.socketId;
 
       tcpServer.listen(serverSocketId, host, parseInt(port, 10), 50, function(result) {
+		
+        logToScreen('server is listening on '+port);
         logToScreen("LISTENING:", result);
 
         tcpServer.onAccept.addListener(onAccept);
