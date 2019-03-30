@@ -3,7 +3,7 @@
 	"short_name": "DatPart",
 	"description": "DatPart extension.",
 	"manifest_version": 2,
-	"version": "0.0.19",
+	"version": "0.0.20",
 	"applications": {
 		"gecko": {
 			"strict_min_version": "57"
@@ -40,7 +40,7 @@
 		{
 		  "matches": ["*://*.dat_site/*"],
 		  "run_at": "document_start",
-		  "js": ["datparse.js"]
+		  "js": ["datsite.js"]
 		}
 	],
 	"icons": {
