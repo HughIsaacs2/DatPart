@@ -23,6 +23,7 @@ Basically all this does is use the Chrome Extension WebRequest API and Proxy API
 
 ### To-Do
 
+* Update to [Hypercore/Hyperdrive](https://blog.datproject.org/2020/05/15/dat-protocol-renamed-hypercore-protocol/).
 * Firefox support (this is trouble as [the Firefox WebExtension Proxy API](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/proxy) is different, I'm just being lazy here).
   * Firefox for Android support.
 * Opera support.
