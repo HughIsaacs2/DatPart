@@ -74,6 +74,6 @@
   },
   "devDependencies": {
     "dat-node": "3.5.14",
-    "electron": "9.1.0"
+    "electron": "10.1.3"
   }
 }
