@@ -1,7 +1,7 @@
 const isNode = typeof window === 'undefined'
 const parse = isNode ? require('url').parse : browserParse
 
-const SCHEME_REGEX = /[a-z]+:\/\//i
+const SCHEME_REGEX = /^[a-z]+:\/\//i
 //                   1          2      3        4
 const VERSION_REGEX = /^(dat:\/\/)?([^/]+)(\+[^/]+)(.*)$/i
 
